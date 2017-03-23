@@ -10,20 +10,24 @@
 		<div class="container-fluid">
 			<div class="col-md-10">
 				<div class="row">
-					<div class="form-group">
-						<label for="chatRoomSelect">Room</label>
-						<select id="chatRoomSelect" class="form-control">
-							<option>The Annex</option>
-							<option>The Arena</option>
-							<option>The Outback</option>
-							<option>The Red Dragon Inn</option>
-							<option>Twilight Isle</option>
-						</select>
-					</div>
+					<form class="form-inline">
+						<div class="form-group">
+							<labelclass="sr-only" for="chatRoomSelect">Room</label>
+							<select id="chatRoomSelect" class="form-control">
+								<option>The Annex</option>
+								<option>The Arena</option>
+								<option>The Outback</option>
+								<option>The Red Dragon Inn</option>
+								<option>Twilight Isle</option>
+							</select>
+						</div>
+					</form>
 				</div>
 				<div class="row">
 					<div class="container">
-						Here be a chat window eventually?
+						<div class="panel panel-default">
+							<div class="panel-body">Chat window</div>
+						</div>
 					</div>
 				</div>
 				<div class="row">
@@ -37,7 +41,10 @@
 				</div>
 			</div>
 			<div class="col-md-2">
-				Who's Online?
+				<div class="panel panel-default">
+					<div class="panel-header">Who's Online?</div>
+					<div class="panel-body">No one</div>
+				</div>
 			</div>
 		</div>
 	</body>
