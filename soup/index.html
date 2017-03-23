@@ -10,17 +10,30 @@
 		<div class="container-fluid">
 			<div class="col-md-10">
 				<div class="row">
-					Pick your chat room
-					<select class="form-control">
-						<option>The Annex</option>
-						<option>The Arena</option>
-						<option>The Outback</option>
-						<option>The Red Dragon Inn</option>
-						<option>Twilight Isle</option>
-					</select>
+					<div class="form-group">
+						<label for="chatRoomSelect">Room</label>
+						<select id="chatRoomSelect" class="form-control">
+							<option>The Annex</option>
+							<option>The Arena</option>
+							<option>The Outback</option>
+							<option>The Red Dragon Inn</option>
+							<option>Twilight Isle</option>
+						</select>
+					</div>
 				</div>
 				<div class="row">
-					Here be a chat window eventually?
+					<div class="container">
+						Here be a chat window eventually?
+					</div>
+				</div>
+				<div class="row">
+					<form class="form-inline">
+						<div class="form-group">
+							<label class="sr-only" for="chatMessage">Message</label>
+							<input type="text" class="form-control" id="chatMessage" placeholder="Type here to send to room">
+						</div>
+						<button type="submit" class="btn btn-default">Send</button>
+					</form>
 				</div>
 			</div>
 			<div class="col-md-2">
