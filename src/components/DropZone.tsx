@@ -1,6 +1,6 @@
 import React from 'react'
 
-export function DropZone({ onFile }: { onFile: (f: File) => Promise<void> | void }) {
+export default function DropZone({ onFile }: { onFile: (f: File) => Promise<void> | void }) {
   const onDrop: React.DragEventHandler<HTMLDivElement> = async (e) => {
     e.preventDefault()
     const f = e.dataTransfer.files?.[0]

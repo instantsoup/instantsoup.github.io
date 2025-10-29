@@ -1,6 +1,6 @@
 import React from 'react'
 
-export function ImportExportBar({
+export default function ImportExportBar({
   persistLocal, exportJson, onPickFile, fileInputRef, resetAll,
 }: {
   persistLocal: () => void

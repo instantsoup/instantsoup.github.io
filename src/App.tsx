@@ -1,8 +1,9 @@
 import React from 'react'
 import { useCharacter } from './hooks/useCharacter'
-import { AbilityGrid } from './components/AbilityGrid'
-import { ImportExportBar } from './components/ImportExportBar'
-import { DropZone } from './components/DropZone'
+import AbilityGrid from './components/AbilityGrid'
+import ImportExportBar from './components/ImportExportBar'
+import DropZone from './components/DropZone'
+import UtilitiesPanel from './components/UtilitiesPanel'
 
 export default function App() {
   const {
@@ -39,6 +40,8 @@ export default function App() {
       <DropZone onFile={importFromFile} />
 
       <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
+      
+      <UtilitiesPanel />
 
       {error && <p style={{ marginTop:12, color:'#b00' }}>{error}</p>}
 
