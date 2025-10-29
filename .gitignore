@@ -1,0 +1,36 @@
+# Node / Vite build artifacts
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Editor / IDE
+.vscode/
+.idea/
+*.sw?
+*.swo
+.DS_Store
+Thumbs.db
+
+# Env / local config
+.env
+.env.local
+.env.*.local
+
+# GitHub Codespaces / VS Code temp
+.history/
+.vscode-server/
+
+# Mac and system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary zips / exports
+*.zip
