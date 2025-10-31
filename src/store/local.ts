@@ -1,4 +1,4 @@
-import { CharacterSchemaV1, type CharacterV1 } from '../schema'
+import { CharacterSchemaV1, type CharacterV1 } from '../schema/schema'
 import { emptyScores } from '../types'
 
 const KEY = 'v0-char'

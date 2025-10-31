@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
 import { computeMods } from '../lib/mods'
-import { CharacterSchemaV1, VERSION, migrateToLatest, type CharacterV1 } from '../schema'
+import { CharacterSchemaV1, VERSION, migrateToLatest, type CharacterV1 } from '../schema/schema'
 import { emptyScores, type Scores } from '../types'
 import { downloadJson } from '../lib/download'
 import { loadLocal, saveLocal, clearLocal } from '../store/local'
