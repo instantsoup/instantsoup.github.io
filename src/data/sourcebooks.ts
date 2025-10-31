@@ -1,5 +1,18 @@
-/** 3.5e rulebook abbreviations allowed in campaign */
-export const SOURCEBOOKS = {
+// src/data/sourcebooks.ts
+
+import ABBR from "./sourcebook-abbrevs.json" assert { type: "json" }
+
+/**
+ * Canonical list of all accepted source abbreviations (single source of truth comes from JSON).
+ */
+export const ALL_SOURCE_ABBREVS = ABBR as readonly string[]
+export type SourceAbbrev = typeof ALL_SOURCE_ABBREVS[number]
+
+/**
+ * Human-readable names for each abbreviation.
+ * Include both the generally allowed books and those that require GM approval.
+ */
+export const SOURCEBOOK_NAMES: Record<SourceAbbrev, string> = {
   AEG: "Arms and Equipment Guide",
   BoED: "Book of Exalted Deeds",
   BoVD: "Book of Vile Darkness",
@@ -22,11 +35,12 @@ export const SOURCEBOOKS = {
   Epic: "Epic Level Handbook",
   EoE: "Exemplars of Evil",
   EPH: "Expanded Psionics Handbook",
-  FC1: "Fiendish Codex I",
-  FC2: "Fiendish Codex II",
+  FC1: "Fiendish Codex I: Hordes of the Abyss",
+  FC2: "Fiendish Codex II: Tyrants of the Nine Hells",
   Frb: "Frostburn",
   HoB: "Heroes of Battle",
   HoH: "Heroes of Horror",
+  Kan: "Player's Guide to Kanderra",
   LM: "Libris Mortis",
   LoM: "Lords of Madness",
   MIC: "Magic Item Compendium",
@@ -52,49 +66,63 @@ export const SOURCEBOOKS = {
   Strm: "Stormwrack",
   ToM: "Tome of Magic",
   WoL: "Weapons of Legacy",
-} as const
-
-/** Books that require explicit GM approval before use */
-export const CHECK_WITH_GM = {
   FF: "Fiend Folio",
   SBG: "Stronghold Builder's Guidebook",
   UA: "Unearthed Arcana",
-} as const
+}
 
-/** Convenience map of all sources */
-export const ALL_SOURCES = { ...SOURCEBOOKS, ...CHECK_WITH_GM } as const
-
-export type SourceAbbrev = keyof typeof ALL_SOURCES
-
-/** High-level categories for color coding */
+/**
+ * High-level categories for UI hints/badges.
+ */
 export type SourceCategory = "Core" | "Supplement" | "CheckWithGM"
 
-/** Core books (for visual emphasis) */
-const CORE_SET = new Set<SourceAbbrev>(["PHB", "DMG1", "MM1"] as const)
+/**
+ * Which abbreviations are considered "core" for emphasis.
+ */
+const CORE_SET = new Set<SourceAbbrev>(["PHB", "DMG1", "MM1"])
 
-/** Helpers */
+/**
+ * Which abbreviations require explicit GM approval.
+ */
+const CHECK_WITH_GM_SET = new Set<SourceAbbrev>(["FF", "SBG", "UA"])
+
+/**
+ * Utility: get full name from abbreviation.
+ */
 export function getSourceFullName(abbrev: string): string | undefined {
-  return (ALL_SOURCES as Record<string, string>)[abbrev]
+  const key = abbrev as SourceAbbrev
+  return SOURCEBOOK_NAMES[key]
 }
 
+/**
+ * Utility: does this source require GM approval?
+ */
 export function isCheckWithGM(abbrev: string): boolean {
-  return Object.prototype.hasOwnProperty.call(CHECK_WITH_GM, abbrev)
+  return CHECK_WITH_GM_SET.has(abbrev as SourceAbbrev)
 }
 
+/**
+ * Derive category from abbreviation.
+ */
 export function getSourceCategory(abbrev: string): SourceCategory | undefined {
-  if (!getSourceFullName(abbrev)) return undefined
-  if (isCheckWithGM(abbrev)) return "CheckWithGM"
+  if (!SOURCEBOOK_NAMES[abbrev as SourceAbbrev]) return undefined
+  if (CHECK_WITH_GM_SET.has(abbrev as SourceAbbrev)) return "CheckWithGM"
   if (CORE_SET.has(abbrev as SourceAbbrev)) return "Core"
   return "Supplement"
 }
 
-/** Safe coercion: uppercases and returns undefined if not recognized */
+/**
+ * Coerce an arbitrary input to a recognized abbreviation.
+ * Returns undefined if not recognized.
+ */
 export function coerceSourceAbbrev(input: string): SourceAbbrev | undefined {
-  const key = input.trim().toUpperCase()
-  return (ALL_SOURCES as Record<string, string>)[key] ? (key as SourceAbbrev) : undefined
+  const key = String(input).trim()
+  return (SOURCEBOOK_NAMES as Record<string, string>)[key] ? (key as SourceAbbrev) : undefined
 }
 
-/** Optional: list utilities */
+/**
+ * List all known abbreviations.
+ */
 export function listAllAbbrevs(): SourceAbbrev[] {
-  return Object.keys(ALL_SOURCES) as SourceAbbrev[]
+  return [...ALL_SOURCE_ABBREVS] as SourceAbbrev[]
 }
