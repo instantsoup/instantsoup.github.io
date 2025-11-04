@@ -4,7 +4,7 @@ import { adjustTo28, rollStatLine, type StatLine, totalCost } from '../lib/statl
 
 const sortDesc = (arr: number[]) => [...arr].sort((a, b) => b - a);
 
-export function RollCharacter() {
+export function RollCharacterPanel() {
   const [raw, setRaw] = useState<StatLine | null>(null);
   const [adj, setAdj] = useState<StatLine | null>(null);
 
@@ -22,9 +22,8 @@ export function RollCharacter() {
   const adjCost = adj ? totalCost(adj) : null;
 
   return (
-    <section className="card">
+    <div>
       <div className="flex-row justify-between items-center gap-2 wrap">
-        <h3 className="fs-18 m-0">Roll Character</h3>
         <button
           onClick={onRoll}
           title="Roll 3d6 six times and normalize toward 28 points"
@@ -71,6 +70,6 @@ export function RollCharacter() {
         lowest-first when reducing and highest-first when raising, evenly distributed and never
         crossing 28 total points.
       </p>
-    </section>
+    </div>
   );
 }
