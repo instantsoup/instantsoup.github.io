@@ -59,7 +59,6 @@ export function App() {
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
 
         {error && <p className="text-error mt-12">{error}</p>}
-
       </main>
     </div>
   );
