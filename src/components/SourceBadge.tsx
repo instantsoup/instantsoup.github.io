@@ -24,7 +24,7 @@ function colorsForCategory(cat: SourceCategory) {
   }
 }
 
-export default function SourceBadge({ abbr, compact, titleOverride }: Props) {
+export function SourceBadge({ abbr, compact, titleOverride }: Props) {
   const key = typeof abbr === 'string' ? coerceSourceAbbrev(abbr) : abbr
   if (!key) {
     return (

@@ -8,7 +8,8 @@
     "build": "vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "validate:feats": "node scripts/validate-feats.mjs src/data/feats.json"
+    "validate:feats": "node scripts/validate-feats.mjs src/data/feats.json",
+    "validate:skills": "node scripts/validate-skills.mjs src/data/skills.json"
   },
   "dependencies": {
     "react": "^18.3.1",

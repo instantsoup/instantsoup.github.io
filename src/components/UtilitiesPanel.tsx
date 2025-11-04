@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import RollCharacter from './RollCharacter'
+import { RollCharacter } from './RollCharacter'
 
-export default function UtilitiesPanel() {
+export function UtilitiesPanel() {
   const [open, setOpen] = useState(false)
   return (
     <section style={{ marginTop:16 }}>

@@ -3,7 +3,7 @@ import { adjustTo28, rollStatLine, totalCost, type StatLine } from '../lib/statl
 
 const sortDesc = (arr: number[]) => [...arr].sort((a, b) => b - a)
 
-export default function RollCharacter() {
+export function RollCharacter() {
   const [raw, setRaw] = useState<StatLine | null>(null)
   const [adj, setAdj] = useState<StatLine | null>(null)
 

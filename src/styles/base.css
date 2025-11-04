@@ -1,0 +1,39 @@
+/* CSS variables and base element defaults */
+
+:root {
+  --clr-bg: #f1f5f9;             /* slate-100 */
+  --clr-border: #e5e7eb;         /* gray-200 */
+  --clr-border-strong: #cbd5e1;  /* gray-300 */
+
+  --clr-panel-closed-bg: #e5e7eb;  /* gray-200 */
+  --clr-panel-closed-fg: #111827;  /* gray-900 */
+  --clr-panel-open-bg: #1f2937;    /* slate-800 */
+  --clr-panel-open-fg: #ffffff;
+  --clr-panel-content-bg: #f8fafc; /* slate-50 */
+
+  --clr-btn: #ffffff;
+  --clr-btn-border: #cbd5e1;
+
+  --clr-primary-border: #0ea5e9;  /* sky-500 */
+  --clr-primary-bg: #e0f2fe;      /* sky-100 */
+
+  --clr-danger-border: #ef4444;   /* red-500 */
+  --clr-danger-bg: #fee2e2;       /* red-100 */
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: #0f172a; /* slate-900 */
+  background: #ffffff;
+}

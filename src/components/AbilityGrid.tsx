@@ -1,7 +1,7 @@
 import React from 'react'
 import type { Scores } from '../types'
 
-export default function AbilityGrid({
+export function AbilityGrid({
   scores,
   mods,
   onNum,
