@@ -1,7 +1,7 @@
 # D&D 3.5e Character Sheet (Single Page App)
 
 This project is a client-only React/Vite webapp hosted on GitHub Pages at  
-https://instantsoup.github.io/.
+[https://instantsoup.github.io/](https://instantsoup.github.io/)
 
 The app models D&D 3.5e character sheets, beginning with ability scores → modifiers, and will iteratively grow toward full offline JSON-based sheet management.
 
@@ -16,18 +16,20 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 | Layer | Purpose |
 |-------|----------|
 | React (Vite SPA) | UI + client logic only |
-| TypeScript + Zod | Schema validation for character + feat + skill data |
+| TypeScript + Zod | Schema validation for character, feat, and skill data |
 | localStorage | Optional convenience cache for the current character |
 | JSON Download/Upload | True persistence format — no backend |
-| GitHub Pages | Hosting (via `main` branch `/dist` build) |
+| GitHub Pages | Static hosting (via `main` branch `/dist` build) |
 
 ### Core Design Goals
 
 - Full offline support  
 - Incremental, testable iteration  
 - Data formats portable as JSON  
-- Modular components + utilities  
-- Co-located tests (next to the module or data they verify)
+- Modular, self-contained components + utilities  
+- Schema-driven validation with Zod  
+- Class-based CSS (no inline styles)  
+- Named exports for all modules (except `App.tsx`, which is default)
 
 ---
 
@@ -44,14 +46,18 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │   ├── convert-feats.mjs         # CSV → JSON converter
 │   ├── validate-feats.mjs        # Zod validator for feats.json
 │   ├── validate-skills.mjs       # Zod validator for skills.json
-│   └── ...                       # (other data validators/converters)
+│   └── ...                       # other data validators/converters
 │
 ├── src/
-│   ├── App.tsx                   # main component (save/export/import/reset)
-│   ├── main.tsx                  # entrypoint
+│   ├── App.tsx                   # main layout (default export)
+│   ├── main.tsx                  # entrypoint (imports global CSS)
 │   ├── types.ts                  # shared Scores + emptyScores
 │
 │   ├── components/
+│   │   ├── LeftSidebar.tsx       # sidebar with collapsible panels
+│   │   ├── PanelSection.tsx      # reusable collapsible panel
+│   │   ├── DiceRollerPanel.tsx   # dice roller UI
+│   │   ├── UtilitiesPanel.tsx    # general character tools
 │   │   ├── AbilityGrid.tsx
 │   │   ├── DropZone.tsx
 │   │   ├── ImportExportBar.tsx
@@ -64,90 +70,120 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │   │   ├── skills.json
 │   │   ├── sourcebook-abbrevs.json
 │   │   ├── sourcebooks.ts
-│   │   ├── skills.ts             # typed skill loader + helpers
-│   │   └── skills.test.ts        # validates schema + core rules
+│   │   ├── skills.ts
+│   │   └── skills.test.ts
 │
 │   ├── hooks/
 │   │   └── useCharacter.ts       # manages character state
 │
 │   ├── lib/
 │   │   ├── download.ts           # JSON download helper
-│   │   ├── mods.ts               # ability modifier calc
-│   │   ├── statline.ts           # roll + adjustTo28 normalization
-│   │   └── statline.test.ts      # tests verifying normalization logic
+│   │   ├── mods.ts               # ability modifier logic
+│   │   ├── statline.ts           # roll + 28-point normalization
+│   │   ├── statline.test.ts
+│   │   ├── dice.ts               # dice utilities
+│   │   └── dice.test.ts
 │
 │   ├── schema/
 │   │   └── schema.ts             # CharacterSchemaV1 + migrateToLatest()
 │
 │   ├── store/
-│   │   └── local.ts              # localStorage save/load/clear utilities
+│   │   └── local.ts              # localStorage save/load/clear
+│
+│   ├── styles/
+│   │   ├── index.css             # imports all partials below
+│   │   ├── base.css              # variables, resets, body defaults
+│   │   ├── layout.css            # app grid and main area
+│   │   ├── sidebar.css           # sidebar + panels
+│   │   ├── buttons.css           # shared button styles
+│   │   ├── dice.css              # dice roller
+│   │   └── utilities.css         # small utility classes
 │
 │   └── types/
-│       ├── feat.ts               # Feat schema + type
-│       └── skill.ts              # Skill schema + type
+│       ├── feat.ts
+│       └── skill.ts
 │
 └── dist/                         # vite build output
 ```
 
 ---
 
-## Core Data Structures
+## UI Layout
 
-### Character JSON (v1)
-```json
-{
-  "version": 1,
-  "name": "Mialee",
-  "scores": { "str": 10, "dex": 14, "con": 12, "int": 16, "wis": 10, "cha": 8 }
-}
+The app uses a two-column grid layout defined in `layout.css`:
+
+```
++----------------+--------------------------------+
+|  Left Sidebar  |           Main Area            |
+|  (260px wide)  |   Character sheet + content    |
++----------------+--------------------------------+
 ```
 
-### Feat JSON entry
-```json
-{
-  "name": "Ancestral Relic",
-  "source": { "abbr": "BoED", "page": 39 },
-  "types": ["General"],
-  "bonusFeat": false,
-  "prerequisites": "Any good alignment, character level 3rd",
-  "description": "Create personal magic item"
-}
-```
+### Left Sidebar
+- Built by `LeftSidebar.tsx`
+- Contains collapsible panels using `PanelSection.tsx`
+- Default panels:
+  - **Dice Roller** (open by default) — manages a dice pool, roll, and clear
+  - **Utilities** (closed by default) — wraps the `UtilitiesPanel`
 
-### Skill JSON entry
-```json
-{
-  "name": "Balance",
-  "ability": "dex",
-  "trainedOnly": false,
-  "armorCheckPenalty": true,
-  "description": "Keep your footing on narrow or slippery surfaces.",
-  "source": { "abbr": "PHB", "page": 67 }
-}
-```
+### Dice Roller
+- Buttons add dice (e.g., `4` → d4, `6` → d6)
+- "Roll" computes totals using logic from `lib/dice.ts`
+- "Clear" empties the pool
+- Uses CSS classes `.btn`, `.btn--primary`, `.btn--danger`, and `.btn-row`
 
 ---
 
-## Scripts
+## Styling
+
+- All styles live in `/src/styles/` and are imported globally via `index.css`
+- No inline styles anywhere
+- Common layout classes:
+  - `.app-grid` → main two-column layout
+  - `.app-main` → right-hand content area
+  - `.sidebar` → left column
+  - `.panel__header` / `.panel__header--open` / `.panel__content`
+  - `.btn`, `.btn--primary`, `.btn--danger`, `.btn-row`
+  - `.dice__pool`, `.dice__result`
+- Shared utilities (e.g. `.mb-8`) live in `utilities.css`
+
+---
+
+## Code Conventions
+
+| Type | Export Style |
+|-------|---------------|
+| Components | Named exports (`export function ComponentName`) |
+| Hooks | Named exports |
+| Utilities | Named exports |
+| Schemas | Named exports |
+| App.tsx | Single default export |
+
+---
+
+## Testing
+
+- Uses **Vitest** for all tests
+- Tests live **next to the files they verify**
+  - `lib/statline.test.ts` → `lib/statline.ts`
+  - `lib/dice.test.ts` → `lib/dice.ts`
+  - `data/skills.test.ts` → `data/skills.json` and `data/skills.ts`
+- Run all tests via:
+  ```bash
+  npm run test
+  ```
+
+---
+
+## Validation and Scripts
 
 | Script | Purpose | Example |
 |---------|----------|---------|
-| `convert-feats.mjs` | Converts `/scripts/feats.csv` → `/src/data/feats.json` | `node scripts/convert-feats.mjs` |
-| `validate-feats.mjs` | Validates feats.json against Zod + shared abbrev list | `npm run validate:feats` |
-| `validate-skills.mjs` | Validates skills.json against Zod | `npm run validate:skills` |
-| `vite dev/build` | Runs local dev server / builds production bundle | `npm run dev`, `npm run build` |
-| `test` | Runs Vitest tests (schema + logic) | `npm run test` |
-
----
-
-## Schema Summary
-
-| Schema | File | Description |
-|---------|------|-------------|
-| `CharacterSchemaV1` | `src/schema/schema.ts` | Zod schema for current character format |
-| `FeatSchema` | `src/types/feat.ts` | Zod schema for feats |
-| `SkillSchema` | `src/types/skill.ts` | Zod schema for skills |
-| `SourceAbbrev` | `src/data/sourcebook-abbrevs.json` | Canonical allowed sources (shared) |
+| `convert-feats.mjs` | Convert `/scripts/feats.csv` → `/src/data/feats.json` | `node scripts/convert-feats.mjs` |
+| `validate-feats.mjs` | Validate feats.json with Zod | `npm run validate:feats` |
+| `validate-skills.mjs` | Validate skills.json with Zod | `npm run validate:skills` |
+| `vite dev/build` | Dev server or build | `npm run dev`, `npm run build` |
+| `test` | Run all Vitest suites | `npm run test` |
 
 ---
 
@@ -159,48 +195,40 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 
 ---
 
-## Statline Rules Recap
+## Statline Rules
 
 Roll 3d6 six times → base stat line.  
 Adjust toward 28-point buy:
 
-- When over 28: drop lowest stat first, round-robin until ≤28.  
-- When under 28: raise highest stat first, round-robin until ≥28.  
-- Scores clamped 3–18.  
-- Adjustment distributes evenly (no greedy loops).  
-- Verified by `src/lib/statline.test.ts`.
+- If total > 28: drop lowest stat(s) round-robin until ≤ 28  
+- If total < 28: raise highest stat(s) round-robin until ≥ 28  
+- Clamp scores 3–18  
+- Even distribution (no greedy loops)  
+- Verified by `lib/statline.test.ts`
 
 ---
 
-## Deployment (GitHub Pages)
+## Build and Deployment
 
 - Hosted at [https://instantsoup.github.io/](https://instantsoup.github.io/)  
 - Branch: `main`  
-- Build command: `npm run build`  
+- Build command:
+  ```bash
+  npm run build
+  ```
 - Output directory: `dist/`  
-- Ensure `404.html` exists (for SPA routing fallback)
+- Ensure `404.html` exists for client-side routing fallback  
 
 ---
 
-## Test Checklist (for development)
+## Quick Reference
 
-| Area | Validation |
-|-------|-------------|
-| Schema | `npm run validate:feats`, `npm run validate:skills` |
-| Statline Logic | `npm run test` |
-| Build | `npm run build` then open `dist/index.html` |
-| Deploy | Push to `main`, verify at instantsoup.github.io |
+- No backend — client-only SPA
+- All logic is local, schema-validated with Zod
+- Tests live next to source files
+- Styles are modular CSS classes
+- Components are all named exports (except App)
+- Sidebar layout provides expandable **Dice Roller** and **Utilities** panels
+- Every feature is self-contained, type-safe, and incremental
 
 ---
-
-## Quick Context Recap (for ChatGPT resets)
-
-If ChatGPT forgets context, paste this README and remind it that:
-
-- This is a **Vite React SPA** hosted at `instantsoup.github.io`.  
-- No server — only **localStorage + JSON download/upload**.  
-- Uses **Zod schemas** for validation (`CharacterV1`, `Feat`, `Skill`).  
-- Has **data + validator scripts** in `/scripts/`.  
-- Uses **TypeScript, Vitest, GitHub Pages**.  
-- Tests live **next to the module or data they test**.  
-- Built incrementally — each feature is self-contained and modular.
