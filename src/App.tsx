@@ -1,6 +1,3 @@
-// src/App.tsx
-import React from 'react';
-
 import { AbilityGrid } from './components/AbilityGrid';
 import { DropZone } from './components/DropZone';
 import { ImportExportBar } from './components/ImportExportBar';
@@ -63,9 +60,6 @@ export function App() {
 
         {error && <p className="text-error mt-12">{error}</p>}
 
-        <p className="note mt-16">
-          Persistence: Export/Import JSON. Local Save is optional convenience for this device only.
-        </p>
       </main>
     </div>
   );

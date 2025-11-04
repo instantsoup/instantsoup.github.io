@@ -28,10 +28,6 @@ export function ImportExportBar({
         Clear / Reset
       </button>
 
-      <button className="btn" onClick={persistLocal} title="Save to localStorage">
-        Save (local)
-      </button>
-
       <button className="btn" onClick={exportJson} title="Download character.json">
         Export JSON
       </button>
@@ -40,6 +36,12 @@ export function ImportExportBar({
         Import JSON
       </button>
 
+      <button className="btn" onClick={persistLocal} title="Save to localStorage">
+        Save (local)
+      </button>
+      <p className="note mt-16">
+        Persistence: Export/Import JSON. Local Save is optional convenience for this device only.
+      </p>
       <input
         ref={fileInputRef}
         type="file"
