@@ -4,8 +4,6 @@ import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
 import { useCharacter } from './hooks/useCharacter';
 
-// NOTE: Global styles are imported in main.tsx via styles/index.css
-
 export function App() {
   const {
     name,
@@ -36,12 +34,14 @@ export function App() {
             exportJson={exportJson}
             onPickFile={() => {
               onPickFile?.();
-            }} // ensure () => void
+            }}
             onFileChange={onFileChange}
             fileInputRef={fileInputRef}
             resetAll={resetAll}
           />
         </header>
+
+        <DropZone onFile={importFromFile} />
 
         <label className="field mb-12">
           <span className="field__label mb-4">Name</span>
@@ -53,8 +53,6 @@ export function App() {
             placeholder="Mialee"
           />
         </label>
-
-        <DropZone onFile={importFromFile} />
 
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
 
