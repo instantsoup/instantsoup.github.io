@@ -87,7 +87,7 @@ export default [
     languageOptions: {
       sourceType: 'module',
       globals: {
-        ...globals.node,        // process, console, __dirname (CJS note), etc.
+        ...globals.node, // process, console, __dirname (CJS note), etc.
         structuredClone: 'readonly',
       },
     },

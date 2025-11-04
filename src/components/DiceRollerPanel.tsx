@@ -1,12 +1,10 @@
 import { useState } from 'react';
 
-import { formatPool, rollMany } from '../lib/dice';
-
-const COMMON = [4, 6, 8, 10, 12, 20] as const;
+import { SUPPORTED_DICE, formatPool, rollManyDetailed, type DetailedGroup } from '../lib/dice';
 
 export function DiceRollerPanel() {
   const [pool, setPool] = useState<number[]>([]);
-  const [last, setLast] = useState<{ total: number; rolls: number[] } | null>(null);
+  const [last, setLast] = useState<DetailedGroup[] | null>(null);
 
   function addDie(sides: number) {
     setPool((p) => [...p, sides]);
@@ -18,27 +16,26 @@ export function DiceRollerPanel() {
   }
 
   function roll() {
-    if (pool.length === 0) {
-      setLast({ total: 0, rolls: [] });
-      return;
-    }
-    setLast(rollMany(pool));
+    setLast(rollManyDetailed(pool));
   }
 
   return (
     <div>
-      <div className="btn-row mb-8">
-        {COMMON.map((s) => (
+      <div className="btn-row mb-12">
+        {SUPPORTED_DICE.map((s) => (
           <button
             key={s}
             type="button"
-            className="btn"
+            className="btn btn-outline"
             onClick={() => addDie(s)}
             aria-label={`Add d${s}`}
           >
-            {s}
+            d{s}
           </button>
         ))}
+        <button type="button" className="btn btn--danger" onClick={clearAll}>
+          Clear
+        </button>
       </div>
 
       <div className="dice__pool">
@@ -49,20 +46,19 @@ export function DiceRollerPanel() {
         <button type="button" className="btn btn--primary" onClick={roll}>
           Roll
         </button>
-        <button type="button" className="btn btn--danger" onClick={clearAll}>
-          Clear
-        </button>
       </div>
 
       {last && (
         <div className="dice__result">
-          <div>
-            <strong>Total:</strong> {last.total}
-          </div>
-          {last.rolls.length > 0 && (
-            <div>
-              <strong>Rolls:</strong> {last.rolls.join(', ')}
-            </div>
+          {/* No summation — show rolls split by die */}
+          {last.length === 0 ? (
+            <div>No dice in pool.</div>
+          ) : (
+            last.map((g) => (
+              <div key={g.sides}>
+                <strong>d{g.sides}</strong>: {g.rolls.join(', ')}
+              </div>
+            ))
           )}
         </div>
       )}
