@@ -40,7 +40,7 @@ Keep all builds passing (npm run build).
 
 ❌ Committing build artifacts (dist/), dependencies (node_modules/), or local settings files.
 
-❌ Adding environment variables or secret files (.env*).
+❌ Adding environment variables or secret files (.env\*).
 
 ❌ Including non-SRD or copyrighted D&D content.
 
@@ -74,7 +74,7 @@ src/types.ts → static TypeScript types
 
 Git & Build Rules
 
-node_modules/, dist/, and .env* must remain in .gitignore.
+node_modules/, dist/, and .env\* must remain in .gitignore.
 
 Use the provided npm scripts:
 

@@ -1,14 +1,22 @@
-import React from 'react'
-import { SourceBadge } from './SourceBadge'
-import type { SourceAbbrev } from '../data/sourcebooks'
+import React from 'react';
 
-export function SourceBadges({ items, compact }: { items: (SourceAbbrev | string)[]; compact?: boolean }) {
-  if (!items?.length) return null
+import type { SourceAbbrev } from '../data/sourcebooks';
+import { SourceBadge } from './SourceBadge';
+
+export function SourceBadges({
+  items,
+  compact,
+}: {
+  items: (SourceAbbrev | string)[];
+  compact?: boolean;
+}) {
+  if (!items?.length) return null;
+
   return (
-    <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+    <div className="flex-row gap-2 wrap">
       {items.map((abbr, i) => (
         <SourceBadge key={`${abbr}-${i}`} abbr={abbr} compact={compact} />
       ))}
     </div>
-  )
+  );
 }

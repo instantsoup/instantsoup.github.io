@@ -13,22 +13,22 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 
 ### Architecture
 
-| Layer | Purpose |
-|-------|----------|
-| React (Vite SPA) | UI + client logic only |
-| TypeScript + Zod | Schema validation for character, feat, and skill data |
-| localStorage | Optional convenience cache for the current character |
-| JSON Download/Upload | True persistence format — no backend |
-| GitHub Pages | Static hosting (via `main` branch `/dist` build) |
+| Layer                | Purpose                                               |
+| -------------------- | ----------------------------------------------------- |
+| React (Vite SPA)     | UI + client logic only                                |
+| TypeScript + Zod     | Schema validation for character, feat, and skill data |
+| localStorage         | Optional convenience cache for the current character  |
+| JSON Download/Upload | True persistence format — no backend                  |
+| GitHub Pages         | Static hosting (via `main` branch `/dist` build)      |
 
 ### Core Design Goals
 
-- Full offline support  
-- Incremental, testable iteration  
-- Data formats portable as JSON  
-- Modular, self-contained components + utilities  
-- Schema-driven validation with Zod  
-- Class-based CSS (no inline styles)  
+- Full offline support
+- Incremental, testable iteration
+- Data formats portable as JSON
+- Modular, self-contained components + utilities
+- Schema-driven validation with Zod
+- Class-based CSS (no inline styles)
 - Named exports for all modules (except `App.tsx`, which is default)
 
 ---
@@ -120,6 +120,7 @@ The app uses a two-column grid layout defined in `layout.css`:
 ```
 
 ### Left Sidebar
+
 - Built by `LeftSidebar.tsx`
 - Contains collapsible panels using `PanelSection.tsx`
 - Default panels:
@@ -127,6 +128,7 @@ The app uses a two-column grid layout defined in `layout.css`:
   - **Utilities** (closed by default) — wraps the `UtilitiesPanel`
 
 ### Dice Roller
+
 - Buttons add dice (e.g., `4` → d4, `6` → d6)
 - "Roll" computes totals using logic from `lib/dice.ts`
 - "Clear" empties the pool
@@ -151,13 +153,13 @@ The app uses a two-column grid layout defined in `layout.css`:
 
 ## Code Conventions
 
-| Type | Export Style |
-|-------|---------------|
+| Type       | Export Style                                    |
+| ---------- | ----------------------------------------------- |
 | Components | Named exports (`export function ComponentName`) |
-| Hooks | Named exports |
-| Utilities | Named exports |
-| Schemas | Named exports |
-| App.tsx | Single default export |
+| Hooks      | Named exports                                   |
+| Utilities  | Named exports                                   |
+| Schemas    | Named exports                                   |
+| App.tsx    | Single default export                           |
 
 ---
 
@@ -177,20 +179,20 @@ The app uses a two-column grid layout defined in `layout.css`:
 
 ## Validation and Scripts
 
-| Script | Purpose | Example |
-|---------|----------|---------|
-| `convert-feats.mjs` | Convert `/scripts/feats.csv` → `/src/data/feats.json` | `node scripts/convert-feats.mjs` |
-| `validate-feats.mjs` | Validate feats.json with Zod | `npm run validate:feats` |
-| `validate-skills.mjs` | Validate skills.json with Zod | `npm run validate:skills` |
-| `vite dev/build` | Dev server or build | `npm run dev`, `npm run build` |
-| `test` | Run all Vitest suites | `npm run test` |
+| Script                | Purpose                                               | Example                          |
+| --------------------- | ----------------------------------------------------- | -------------------------------- |
+| `convert-feats.mjs`   | Convert `/scripts/feats.csv` → `/src/data/feats.json` | `node scripts/convert-feats.mjs` |
+| `validate-feats.mjs`  | Validate feats.json with Zod                          | `npm run validate:feats`         |
+| `validate-skills.mjs` | Validate skills.json with Zod                         | `npm run validate:skills`        |
+| `vite dev/build`      | Dev server or build                                   | `npm run dev`, `npm run build`   |
+| `test`                | Run all Vitest suites                                 | `npm run test`                   |
 
 ---
 
 ## Local Persistence
 
-- **Local save key:** `v0-char`  
-- **Stored format:** validated `CharacterV1`  
+- **Local save key:** `v0-char`
+- **Stored format:** validated `CharacterV1`
 - **Source:** `src/store/local.ts`
 
 ---
@@ -200,24 +202,24 @@ The app uses a two-column grid layout defined in `layout.css`:
 Roll 3d6 six times → base stat line.  
 Adjust toward 28-point buy:
 
-- If total > 28: drop lowest stat(s) round-robin until ≤ 28  
-- If total < 28: raise highest stat(s) round-robin until ≥ 28  
-- Clamp scores 3–18  
-- Even distribution (no greedy loops)  
+- If total > 28: drop lowest stat(s) round-robin until ≤ 28
+- If total < 28: raise highest stat(s) round-robin until ≥ 28
+- Clamp scores 3–18
+- Even distribution (no greedy loops)
 - Verified by `lib/statline.test.ts`
 
 ---
 
 ## Build and Deployment
 
-- Hosted at [https://instantsoup.github.io/](https://instantsoup.github.io/)  
-- Branch: `main`  
+- Hosted at [https://instantsoup.github.io/](https://instantsoup.github.io/)
+- Branch: `main`
 - Build command:
   ```bash
   npm run build
   ```
-- Output directory: `dist/`  
-- Ensure `404.html` exists for client-side routing fallback  
+- Output directory: `dist/`
+- Ensure `404.html` exists for client-side routing fallback
 
 ---
 

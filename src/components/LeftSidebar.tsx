@@ -1,6 +1,7 @@
 import React from 'react';
-import { PanelSection } from './PanelSection';
+
 import { DiceRollerPanel } from './DiceRollerPanel';
+import { PanelSection } from './PanelSection';
 import { RollCharacter } from './RollCharacter';
 
 export function LeftSidebar() {

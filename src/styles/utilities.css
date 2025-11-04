@@ -1,0 +1,198 @@
+/* ================================
+   Utilities — Layout & Grid
+=================================== */
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.items-center {
+  align-items: center;
+}
+.items-baseline {
+  align-items: baseline;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.wrap {
+  flex-wrap: wrap;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* ================================
+   Utilities — Spacing
+=================================== */
+
+.gap-1 {
+  gap: 4px;
+}
+.gap-2 {
+  gap: 8px;
+}
+.gap-3 {
+  gap: 12px;
+}
+
+.p-2 {
+  padding: 8px;
+}
+.p-3 {
+  padding: 12px;
+}
+
+.mt-8 {
+  margin-top: 8px;
+}
+.mt-10 {
+  margin-top: 10px;
+}
+.mt-12 {
+  margin-top: 12px;
+}
+.m-0 {
+  margin: 0;
+}
+
+.mb-12 {
+  margin-bottom: 12px;
+}
+
+/* ================================
+   Utilities — Typography & Alignment
+=================================== */
+
+.tt-up {
+  text-transform: uppercase;
+}
+.fs-18 {
+  font-size: 18px;
+}
+.fs-12 {
+  font-size: 12px;
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.text-muted {
+  color: #666;
+}
+.text-subtle {
+  color: #999;
+}
+
+.text-right {
+  text-align: right;
+}
+.text-center {
+  text-align: center;
+}
+
+/* ================================
+   Utilities — Surfaces
+=================================== */
+
+.border {
+  border: 1px solid #ddd;
+}
+.border-dashed {
+  border: 1px dashed #bbb;
+}
+
+.rounded-12 {
+  border-radius: 12px;
+}
+.rounded-pill {
+  border-radius: 999px;
+}
+
+.bg-faint {
+  background: #fafafa;
+}
+
+/* ================================
+   Elements & Common Components
+=================================== */
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: inherit;
+}
+
+.btn-outline {
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+}
+
+.arrow-sep {
+  text-align: center;
+  color: #999;
+}
+
+/* Grid helpers */
+.col-span-3 {
+  grid-column: 1 / span 3;
+}
+
+/* Inputs */
+.ability-input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+/* ================================
+   Badges
+=================================== */
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #ddd;
+  font-size: 13px;
+  line-height: 1;
+  letter-spacing: 0.2px;
+  text-decoration: none;
+  cursor: default;
+}
+
+.badge-compact {
+  padding: 2px 8px;
+  font-size: 12px;
+}
+
+.badge-core {
+  background: #e6f4ea;
+  border-color: #a7d7b7;
+  color: #106b21;
+}
+
+.badge-supplement {
+  background: #eef2ff;
+  border-color: #c7d2fe;
+  color: #3730a3;
+}
+
+.badge-checkgm {
+  background: #fff7ed;
+  border-color: #fed7aa;
+  color: #9a3412;
+}

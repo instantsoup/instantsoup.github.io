@@ -9,28 +9,28 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 
 ## Project Rules and Constraints
 
-- No backend, API, or database — this is a **fully client-only** application.  
-- Persistence is via **localStorage** (optional) and **JSON import/export** (primary).  
-- All data must be validated with **Zod schemas**.  
-- The build must stay **modular, type-safe, and schema-driven**.  
-- Components, utilities, and schemas must remain **independent and testable**.  
-- **Iterative development** — add one small, self-contained feature at a time.  
-- **Never suggest** any backend, server, or API-based features.  
-- Always generate **Vite-compatible**, **TypeScript-valid**, and **buildable** code.  
-- All styles must use **CSS classes only** (no inline styles).  
+- No backend, API, or database — this is a **fully client-only** application.
+- Persistence is via **localStorage** (optional) and **JSON import/export** (primary).
+- All data must be validated with **Zod schemas**.
+- The build must stay **modular, type-safe, and schema-driven**.
+- Components, utilities, and schemas must remain **independent and testable**.
+- **Iterative development** — add one small, self-contained feature at a time.
+- **Never suggest** any backend, server, or API-based features.
+- Always generate **Vite-compatible**, **TypeScript-valid**, and **buildable** code.
+- All styles must use **CSS classes only** (no inline styles).
 - Components must use **named exports** (except `App.tsx`, which remains the single `default export`).
 
 ---
 
 ## Architecture Summary
 
-| Layer | Purpose |
-|-------|----------|
-| React (Vite SPA) | UI + client logic only |
-| TypeScript + Zod | Strong typing and schema validation |
-| localStorage | Optional local cache for current character |
-| JSON Download/Upload | True persistence format |
-| GitHub Pages | Static hosting (build from `/dist` on `main`) |
+| Layer                | Purpose                                       |
+| -------------------- | --------------------------------------------- |
+| React (Vite SPA)     | UI + client logic only                        |
+| TypeScript + Zod     | Strong typing and schema validation           |
+| localStorage         | Optional local cache for current character    |
+| JSON Download/Upload | True persistence format                       |
+| GitHub Pages         | Static hosting (build from `/dist` on `main`) |
 
 ---
 
@@ -121,6 +121,7 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 ```
 
 ### Left Sidebar
+
 - Built via `LeftSidebar.tsx`.
 - Contains collapsible `PanelSection`s.
 - Default panels:
@@ -129,12 +130,14 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 - Collapsible behavior handled by `PanelSection.tsx`.
 
 ### Dice Roller
+
 - Add dice by clicking buttons (`d4`, `d6`, `d8`, etc).
 - Click **Roll** to roll the pool; **Clear** empties it.
 - Uses reusable `.btn` and `.btn-row` classes.
 - Logic handled by `lib/dice.ts`.
 
 ### Utilities Panel
+
 - Contains other tools (character reset, import/export, etc.).
 - Hidden when collapsed.
 
@@ -145,10 +148,11 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 - **All styles use class-based CSS**, never inline styles.
 - Styles live in `/src/styles/` and are imported through `index.css`.
 - Each component imports no CSS directly — `main.tsx` imports `index.css` globally.
-- Class naming follows a **block__element--modifier** pattern when needed.
+- Class naming follows a **block\_\_element--modifier** pattern when needed.
 - Shared small utility classes (e.g., `.mb-8`) go in `utilities.css`.
 
 Example CSS references:
+
 ```html
 <div className="panel__content">
   <div className="btn-row mb-8">
@@ -162,13 +166,13 @@ Example CSS references:
 
 ## Code Export Conventions
 
-| Type | Export Style |
-|-------|---------------|
-| Components | **Named exports** (`export function ComponentName`) |
-| Hooks | **Named exports** |
-| Lib utilities | **Named exports** |
-| Schemas | **Named exports** |
-| `App.tsx` | **Default export** (single entrypoint) |
+| Type          | Export Style                                        |
+| ------------- | --------------------------------------------------- |
+| Components    | **Named exports** (`export function ComponentName`) |
+| Hooks         | **Named exports**                                   |
+| Lib utilities | **Named exports**                                   |
+| Schemas       | **Named exports**                                   |
+| `App.tsx`     | **Default export** (single entrypoint)              |
 
 ---
 
@@ -188,33 +192,33 @@ Example CSS references:
 
 ## Validation and Scripts
 
-| Script | Purpose |
-|---------|----------|
-| `validate-feats.mjs` | Ensures feats.json matches FeatSchema |
+| Script                | Purpose                                 |
+| --------------------- | --------------------------------------- |
+| `validate-feats.mjs`  | Ensures feats.json matches FeatSchema   |
 | `validate-skills.mjs` | Ensures skills.json matches SkillSchema |
-| `convert-feats.mjs` | Converts CSV → JSON for feats |
-| `npm run test` | Runs all Vitest suites |
-| `npm run build` | Compiles for GitHub Pages |
+| `convert-feats.mjs`   | Converts CSV → JSON for feats           |
+| `npm run test`        | Runs all Vitest suites                  |
+| `npm run build`       | Compiles for GitHub Pages               |
 
 ---
 
 ## Deployment and Build
 
-- Build: `npm run build`  
-- Output: `/dist`  
-- Hosted: GitHub Pages (branch `main`)  
+- Build: `npm run build`
+- Output: `/dist`
+- Hosted: GitHub Pages (branch `main`)
 - SPA fallback: `404.html` at repo root
 
 ---
 
 ## Statline Rules
 
-- Roll 3d6 six times → base statline  
-- Adjust toward 28-point buy:  
-  - If > 28: drop lowest stats round-robin until ≤28  
-  - If < 28: raise highest stats round-robin until ≥28  
-- Clamp scores 3–18  
-- Even distribution (no greedy loop)  
+- Roll 3d6 six times → base statline
+- Adjust toward 28-point buy:
+  - If > 28: drop lowest stats round-robin until ≤28
+  - If < 28: raise highest stats round-robin until ≥28
+- Clamp scores 3–18
+- Even distribution (no greedy loop)
 - Verified in `statline.test.ts`
 
 ---
@@ -223,12 +227,12 @@ Example CSS references:
 
 When ChatGPT (GPT-5) is re-initialized or loses memory:
 
-1. Re-read this file.  
-2. Remember: this is a **client-only Vite + React SPA**, no backend.  
-3. Follow all **CSS class-based** and **named export** conventions.  
-4. Maintain modular structure and co-located tests.  
-5. Preserve build and schema validation compatibility.  
-6. All UI changes must fit into the sidebar layout and style system.  
+1. Re-read this file.
+2. Remember: this is a **client-only Vite + React SPA**, no backend.
+3. Follow all **CSS class-based** and **named export** conventions.
+4. Maintain modular structure and co-located tests.
+5. Preserve build and schema validation compatibility.
+6. All UI changes must fit into the sidebar layout and style system.
 7. Every new feature should be a **self-contained, TypeScript-safe, schema-validated module**.
 
 ---

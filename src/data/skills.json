@@ -12,24 +12,89 @@
   { "name": "Disguise", "ability": "cha", "trainedOnly": false, "armorCheckPenalty": false },
   { "name": "Escape Artist", "ability": "dex", "trainedOnly": false, "armorCheckPenalty": true },
   { "name": "Forgery", "ability": "int", "trainedOnly": false, "armorCheckPenalty": false },
-  { "name": "Gather Information", "ability": "cha", "trainedOnly": false, "armorCheckPenalty": false },
+  {
+    "name": "Gather Information",
+    "ability": "cha",
+    "trainedOnly": false,
+    "armorCheckPenalty": false
+  },
   { "name": "Handle Animal", "ability": "cha", "trainedOnly": true, "armorCheckPenalty": false },
   { "name": "Heal", "ability": "wis", "trainedOnly": false, "armorCheckPenalty": false },
   { "name": "Hide", "ability": "dex", "trainedOnly": false, "armorCheckPenalty": true },
   { "name": "Intimidate", "ability": "cha", "trainedOnly": false, "armorCheckPenalty": false },
   { "name": "Jump", "ability": "str", "trainedOnly": false, "armorCheckPenalty": true },
-  { "name": "Knowledge (arcana)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (arch+eng)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (cords)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (dungeon)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (geography)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (history)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (local)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (nature)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (nob+roy)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (psionics)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (religion)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Knowledge (the planes)", "ability": "int", "trainedOnly": true, "armorCheckPenalty": false },
+  {
+    "name": "Knowledge (arcana)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (arch+eng)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (cords)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (dungeon)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (geography)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (history)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (local)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (nature)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (nob+roy)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (psionics)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (religion)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
+  {
+    "name": "Knowledge (the planes)",
+    "ability": "int",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
   { "name": "Listen", "ability": "wis", "trainedOnly": false, "armorCheckPenalty": false },
   { "name": "Move Silently", "ability": "dex", "trainedOnly": false, "armorCheckPenalty": true },
   { "name": "Open Lock", "ability": "dex", "trainedOnly": true, "armorCheckPenalty": false },
@@ -47,7 +112,12 @@
   { "name": "Swim", "ability": "str", "trainedOnly": false, "armorCheckPenalty": true },
   { "name": "Tumble", "ability": "dex", "trainedOnly": true, "armorCheckPenalty": true },
   { "name": "Use Magic Device", "ability": "cha", "trainedOnly": true, "armorCheckPenalty": false },
-  { "name": "Use Psionic Device", "ability": "cha", "trainedOnly": true, "armorCheckPenalty": false },
+  {
+    "name": "Use Psionic Device",
+    "ability": "cha",
+    "trainedOnly": true,
+    "armorCheckPenalty": false
+  },
   { "name": "Use Rope", "ability": "dex", "trainedOnly": false, "armorCheckPenalty": false },
   { "name": "Use Web", "ability": "cha", "trainedOnly": true, "armorCheckPenalty": false }
 ]

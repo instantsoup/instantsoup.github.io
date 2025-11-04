@@ -1,17 +1,22 @@
 // src/components/ImportExportBar.tsx
-import React from 'react'
+import React from 'react';
 
 export type ImportExportBarProps = {
-  persistLocal: () => void
-  exportJson: () => void
-  onPickFile: () => void
-  onFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void
-  fileInputRef: React.RefObject<HTMLInputElement>
-  resetAll: () => void
-}
+  persistLocal: () => void;
+  exportJson: () => void;
+  onPickFile: () => void;
+  onFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  fileInputRef: React.RefObject<HTMLInputElement>;
+  resetAll: () => void;
+};
 
 export function ImportExportBar({
-  persistLocal, exportJson, onPickFile, onFileChange, fileInputRef, resetAll,
+  persistLocal,
+  exportJson,
+  onPickFile,
+  onFileChange,
+  fileInputRef,
+  resetAll,
 }: ImportExportBarProps) {
   return (
     <div className="btn-row">
@@ -23,27 +28,15 @@ export function ImportExportBar({
         Clear / Reset
       </button>
 
-      <button
-        className="btn"
-        onClick={persistLocal}
-        title="Save to localStorage"
-      >
+      <button className="btn" onClick={persistLocal} title="Save to localStorage">
         Save (local)
       </button>
 
-      <button
-        className="btn"
-        onClick={exportJson}
-        title="Download character.json"
-      >
+      <button className="btn" onClick={exportJson} title="Download character.json">
         Export JSON
       </button>
 
-      <button
-        className="btn"
-        onClick={onPickFile}
-        title="Upload a character JSON"
-      >
+      <button className="btn" onClick={onPickFile} title="Upload a character JSON">
         Import JSON
       </button>
 
@@ -55,5 +48,5 @@ export function ImportExportBar({
         onChange={onFileChange}
       />
     </div>
-  )
+  );
 }
