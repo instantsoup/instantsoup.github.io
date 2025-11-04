@@ -39,10 +39,7 @@ export function rollMany(
  */
 export type DetailedGroup = { sides: number; rolls: number[] };
 
-export function rollManyDetailed(
-  pool: number[],
-  rng: RNG = defaultRng,
-): DetailedGroup[] {
+export function rollManyDetailed(pool: number[], rng: RNG = defaultRng): DetailedGroup[] {
   if (pool.length === 0) return [];
 
   // Count dice per side

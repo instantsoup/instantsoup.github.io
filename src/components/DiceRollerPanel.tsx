@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { SUPPORTED_DICE, formatPool, rollManyDetailed, type DetailedGroup } from '../lib/dice';
+import { type DetailedGroup,formatPool, rollManyDetailed, SUPPORTED_DICE } from '../lib/dice';
 
 export function DiceRollerPanel() {
   const [pool, setPool] = useState<number[]>([]);
