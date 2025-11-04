@@ -11,33 +11,72 @@
 }
 
 /* Flow: consistent vertical rhythm between siblings */
-.flow > * + * { margin-top: var(--space-3); }
-.flow-lg > * + * { margin-top: var(--space-4); }
+.flow > * + * {
+  margin-top: var(--space-3);
+}
+.flow-lg > * + * {
+  margin-top: var(--space-4);
+}
 
 /* Common layout tweaks */
-.btn-row { gap: var(--space-2); margin-bottom: var(--space-3); }
-.card { margin-top: var(--space-3); }
-.grid-3 { gap: var(--space-3); }
-.grid-rawadj { gap: var(--space-2) var(--space-4); } /* rows × cols */
+.btn-row {
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+.card {
+  margin-top: var(--space-3);
+}
+.grid-3 {
+  gap: var(--space-3);
+}
+.grid-rawadj {
+  gap: var(--space-2) var(--space-4);
+} /* rows × cols */
 
-.dice__pool { margin: var(--space-2) 0 var(--space-3); }
-.dice__result { margin-top: var(--space-3); }
+.dice__pool {
+  margin: var(--space-2) 0 var(--space-3);
+}
+.dice__result {
+  margin-top: var(--space-3);
+}
 
-.card h1, .card h2, .card h3 { margin: 0 0 var(--space-2); }
-.card p { margin: var(--space-2) 0 0; }
+.card h1,
+.card h2,
+.card h3 {
+  margin: 0 0 var(--space-2);
+}
+.card p {
+  margin: var(--space-2) 0 0;
+}
 
-.container { max-width: 1100px; margin: 0 auto; }
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
 
 /* ================================
    Layout & Grid
 =================================== */
 
-.flex-row { display: flex; flex-direction: row; }
-.items-center { align-items: center; }
-.items-baseline { align-items: baseline; }
-.justify-between { justify-content: space-between; }
-.justify-center { justify-content: center; }
-.wrap { flex-wrap: wrap; }
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.items-center {
+  align-items: center;
+}
+.items-baseline {
+  align-items: baseline;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.wrap {
+  flex-wrap: wrap;
+}
 
 .grid-3 {
   display: grid;
@@ -48,45 +87,91 @@
    Spacing Utilities
 =================================== */
 
-.gap-1 { gap: 4px; }
-.gap-2 { gap: 8px; }
-.gap-3 { gap: 12px; }
+.gap-1 {
+  gap: 4px;
+}
+.gap-2 {
+  gap: 8px;
+}
+.gap-3 {
+  gap: 12px;
+}
 
-.p-2 { padding: 8px; }
-.p-3 { padding: 12px; }
+.p-2 {
+  padding: 8px;
+}
+.p-3 {
+  padding: 12px;
+}
 
-.mt-8 { margin-top: 8px; }
-.mt-10 { margin-top: 10px; }
-.mt-12 { margin-top: 12px; }
-.m-0 { margin: 0; }
-.mb-12 { margin-bottom: 12px; }
+.mt-8 {
+  margin-top: 8px;
+}
+.mt-10 {
+  margin-top: 10px;
+}
+.mt-12 {
+  margin-top: 12px;
+}
+.m-0 {
+  margin: 0;
+}
+.mb-12 {
+  margin-bottom: 12px;
+}
 
 /* ================================
    Typography & Alignment
 =================================== */
 
-.tt-up { text-transform: uppercase; }
-.fs-18 { font-size: 18px; }
-.fs-12 { font-size: 12px; }
-.tabular { font-variant-numeric: tabular-nums; }
+.tt-up {
+  text-transform: uppercase;
+}
+.fs-18 {
+  font-size: 18px;
+}
+.fs-12 {
+  font-size: 12px;
+}
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
 
-.text-muted { color: #666; }
-.text-subtle { color: #999; }
+.text-muted {
+  color: #666;
+}
+.text-subtle {
+  color: #999;
+}
 
-.text-right { text-align: right; }
-.text-center { text-align: center; }
+.text-right {
+  text-align: right;
+}
+.text-center {
+  text-align: center;
+}
 
 /* ================================
    Surfaces & Borders
 =================================== */
 
-.border { border: 1px solid #ddd; }
-.border-dashed { border: 1px dashed #bbb; }
+.border {
+  border: 1px solid #ddd;
+}
+.border-dashed {
+  border: 1px dashed #bbb;
+}
 
-.rounded-12 { border-radius: 12px; }
-.rounded-pill { border-radius: 999px; }
+.rounded-12 {
+  border-radius: 12px;
+}
+.rounded-pill {
+  border-radius: 999px;
+}
 
-.bg-faint { background: #fafafa; }
+.bg-faint {
+  background: #fafafa;
+}
 
 /* ================================
    Elements & Common Components
@@ -115,7 +200,9 @@
   color: #999;
 }
 
-.col-span-3 { grid-column: 1 / span 3; }
+.col-span-3 {
+  grid-column: 1 / span 3;
+}
 
 .ability-input {
   width: 100%;

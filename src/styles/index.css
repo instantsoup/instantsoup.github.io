@@ -3,37 +3,49 @@
 =================================== */
 
 :root {
-  --clr-bg: #f1f5f9;              /* slate-100 */
-  --clr-border: #e5e7eb;          /* gray-200 */
-  --clr-border-strong: #cbd5e1;   /* gray-300 */
+  --clr-bg: #f1f5f9; /* slate-100 */
+  --clr-border: #e5e7eb; /* gray-200 */
+  --clr-border-strong: #cbd5e1; /* gray-300 */
 
   --clr-panel-closed-bg: #e5e7eb; /* gray-200 */
   --clr-panel-closed-fg: #111827; /* gray-900 */
-  --clr-panel-open-bg: #1f2937;   /* slate-800 */
+  --clr-panel-open-bg: #1f2937; /* slate-800 */
   --clr-panel-open-fg: #ffffff;
-  --clr-panel-content-bg: #f8fafc;/* slate-50 */
+  --clr-panel-content-bg: #f8fafc; /* slate-50 */
 
   --clr-btn: #ffffff;
   --clr-btn-border: #cbd5e1;
 
-  --clr-primary-border: #0ea5e9;  /* sky-500 */
-  --clr-primary-bg: #e0f2fe;      /* sky-100 */
+  --clr-primary-border: #0ea5e9; /* sky-500 */
+  --clr-primary-bg: #e0f2fe; /* sky-100 */
 
-  --clr-danger-border: #ef4444;   /* red-500 */
-  --clr-danger-bg: #fee2e2;       /* red-100 */
+  --clr-danger-border: #ef4444; /* red-500 */
+  --clr-danger-bg: #fee2e2; /* red-100 */
 }
 
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
-html, body, #root { height: 100%; }
+html,
+body,
+#root {
+  height: 100%;
+}
 
 body {
   margin: 0;
   font-family:
-    system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
-    "Apple Color Emoji", "Segoe UI Emoji";
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Helvetica,
+    Arial,
+    'Apple Color Emoji',
+    'Segoe UI Emoji';
   color: #0f172a; /* slate-900 */
   background: #ffffff;
 }
@@ -41,10 +53,14 @@ body {
 /* Visually hidden input */
 .input--hidden {
   position: absolute;
-  width: 1px; height: 1px;
-  padding: 0; margin: -1px;
-  overflow: hidden; clip: rect(0 0 0 0);
-  white-space: nowrap; border: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ================================
@@ -67,14 +83,17 @@ body {
 =================================== */
 
 .sidebar {
-  width: 260px; min-width: 260px;
+  width: 260px;
+  min-width: 260px;
   border-right: 1px solid var(--clr-border);
   background: var(--clr-bg);
   height: 100%;
   overflow-y: auto;
 }
 
-.panel { border-bottom: 1px solid var(--clr-border-strong); }
+.panel {
+  border-bottom: 1px solid var(--clr-border-strong);
+}
 
 .panel__header {
   width: 100%;
@@ -107,7 +126,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;              /* aligns with --space-2 in utilities */
+  gap: 8px; /* aligns with --space-2 in utilities */
   flex-wrap: wrap;
   padding-bottom: 8px;
   border-bottom: 1px dashed var(--clr-border);
@@ -119,13 +138,16 @@ body {
   line-height: 1.2;
 }
 
-.field { display: flex; flex-direction: column; }
+.field {
+  display: flex;
+  flex-direction: column;
+}
 
 .field__label {
   font-size: 12px;
   font-weight: 600;
   color: #334155; /* slate-700 */
-  margin-bottom: 8px;    /* same as --space-2 */
+  margin-bottom: 8px; /* same as --space-2 */
 }
 
 .input {
@@ -146,7 +168,11 @@ body {
    (btn-row gap/margins come from utilities.css)
 =================================== */
 
-.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
 
 .btn--primary {
   padding: 8px 12px;
@@ -181,5 +207,9 @@ body {
 
 /* Remove old explicit margins from dice panel to avoid double spacing
    (the flow utilities now control vertical rhythm). */
-.dice__pool { font-size: 14px; }
-.dice__result { font-size: 14px; }
+.dice__pool {
+  font-size: 14px;
+}
+.dice__result {
+  font-size: 14px;
+}
