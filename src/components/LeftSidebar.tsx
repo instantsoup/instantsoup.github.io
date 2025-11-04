@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { DiceRollerPanel } from './DiceRollerPanel';
 import { PanelSection } from './PanelSection';
 import { RollCharacterPanel } from './RollCharacterPanel';
@@ -16,6 +14,6 @@ export function LeftSidebar() {
           <RollCharacterPanel />
         </div>
       </PanelSection>
-    </aside>  
+    </aside>
   );
 }
