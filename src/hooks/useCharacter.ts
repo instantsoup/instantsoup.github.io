@@ -4,7 +4,7 @@ import { ZodError } from 'zod';
 import { downloadJson } from '../lib/download';
 import { computeMods } from '../lib/mods';
 import {
-  type Alignment,
+  type AlignmentCode,
   CharacterSchemaV1,
   type CharacterV1,
   migrateToLatest,
@@ -17,7 +17,7 @@ export function useCharacter() {
   const initial = loadLocal();
   const [name, setName] = useState<string>(initial.name);
   const [scores, setScores] = useState<Scores>(initial.scores);
-  const [alignment, setAlignment] = useState<Alignment | undefined>(initial.alignment);
+  const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);

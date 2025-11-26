@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { ALIGNMENT_CODES } from '../data/alignments';
+
 export const VERSION = 1;
 
 export const ScoresSchema = z.object({
@@ -13,15 +15,16 @@ export const ScoresSchema = z.object({
 
 export const SkillRanksSchema = z.record(z.string(), z.number().int().min(0).max(99));
 
-export const AlignmentSchema = z.enum(['LG', 'NG', 'CG', 'LN', 'N', 'CN', 'LE', 'NE', 'CE']);
+// Derive alignment codes from data layer
+export const AlignmentCodeSchema = z.enum(ALIGNMENT_CODES);
 
-export type Alignment = z.infer<typeof AlignmentSchema>;
+export type AlignmentCode = z.infer<typeof AlignmentCodeSchema>;
 
 export const CharacterSchemaV1 = z.object({
   version: z.literal(1),
   name: z.string().min(0),
   scores: ScoresSchema,
-  alignment: AlignmentSchema.optional(),
+  alignment: AlignmentCodeSchema.optional(),
   skillRanks: SkillRanksSchema.optional().default({}),
   notes: z.string().optional(),
 });
