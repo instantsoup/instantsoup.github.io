@@ -1,0 +1,145 @@
+/* ================================
+   Skills Panel
+=================================== */
+
+.skills-panel {
+  margin-top: var(--space-6);
+}
+
+.skills-panel__title {
+  margin: 0 0 var(--space-3);
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ================================
+   Skills Table
+=================================== */
+
+.skills-table {
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.skills-table__header {
+  display: grid;
+  grid-template-columns: 2fr 80px 80px 80px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background: var(--clr-panel-open-bg);
+  color: var(--clr-panel-open-fg);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.skills-table__row {
+  display: grid;
+  grid-template-columns: 2fr 80px 80px 80px;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--clr-border);
+  align-items: center;
+}
+
+.skills-table__row:hover {
+  background: #f8fafc;
+}
+
+.skills-table__cell {
+  font-size: 14px;
+}
+
+.skills-table__cell--skill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.skills-table__cell--ability {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.skills-table__cell--ranks {
+  text-align: center;
+}
+
+.skills-table__cell--total {
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+
+/* ================================
+   Skill Name & Badges
+=================================== */
+
+.skill-name {
+  flex: 0 0 auto;
+}
+
+.skill-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+
+.skill-badge--trained {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+}
+
+.skill-badge--armor {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+}
+
+/* ================================
+   Skill Input
+=================================== */
+
+.skill-input {
+  width: 60px;
+  padding: 6px 8px;
+  border: 1px solid var(--clr-btn-border);
+  border-radius: 6px;
+  font: inherit;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.skill-input:focus {
+  outline: none;
+  border-color: var(--clr-primary-border);
+  box-shadow: 0 0 0 2px var(--clr-primary-bg);
+}
+
+/* Remove spinner arrows on number inputs */
+.skill-input::-webkit-outer-spin-button,
+.skill-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.skill-input[type='number'] {
+  -moz-appearance: textfield;
+}
