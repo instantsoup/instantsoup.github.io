@@ -1,0 +1,47 @@
+[
+  {
+    "code": "LG",
+    "label": "Lawful Good",
+    "description": "A lawful good character acts as a good person is expected or required to act."
+  },
+  {
+    "code": "NG",
+    "label": "Neutral Good",
+    "description": "A neutral good character does the best that a good person can do."
+  },
+  {
+    "code": "CG",
+    "label": "Chaotic Good",
+    "description": "A chaotic good character acts as their conscience directs with little regard for what others expect."
+  },
+  {
+    "code": "LN",
+    "label": "Lawful Neutral",
+    "description": "A lawful neutral character acts as law, tradition, or a personal code directs."
+  },
+  {
+    "code": "N",
+    "label": "True Neutral",
+    "description": "A neutral character does what seems to be a good idea."
+  },
+  {
+    "code": "CN",
+    "label": "Chaotic Neutral",
+    "description": "A chaotic neutral character follows their whims."
+  },
+  {
+    "code": "LE",
+    "label": "Lawful Evil",
+    "description": "A lawful evil character methodically takes what they want within the limits of their code."
+  },
+  {
+    "code": "NE",
+    "label": "Neutral Evil",
+    "description": "A neutral evil character does whatever they can get away with."
+  },
+  {
+    "code": "CE",
+    "label": "Chaotic Evil",
+    "description": "A chaotic evil character does whatever their greed, hatred, and lust for destruction drive them to do."
+  }
+]

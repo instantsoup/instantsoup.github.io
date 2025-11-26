@@ -3,7 +3,13 @@ import { ZodError } from 'zod';
 
 import { downloadJson } from '../lib/download';
 import { computeMods } from '../lib/mods';
-import { CharacterSchemaV1, type CharacterV1, migrateToLatest, VERSION } from '../schema/schema';
+import {
+  type AlignmentCode,
+  CharacterSchemaV1,
+  type CharacterV1,
+  migrateToLatest,
+  VERSION,
+} from '../schema/schema';
 import { clearLocal, loadLocal, saveLocal } from '../store/local';
 import { emptyScores, type Scores } from '../types';
 
@@ -11,12 +17,13 @@ export function useCharacter() {
   const initial = loadLocal();
   const [name, setName] = useState<string>(initial.name);
   const [scores, setScores] = useState<Scores>(initial.scores);
+  const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const mods = useMemo(() => computeMods(scores), [scores]);
-  const current: CharacterV1 = { version: VERSION, name, scores, skillRanks };
+  const current: CharacterV1 = { version: VERSION, name, scores, alignment, skillRanks };
 
   const onNum = (k: keyof Scores) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseInt(e.target.value || '0', 10);
@@ -53,6 +60,7 @@ export function useCharacter() {
       const migrated = migrateToLatest(json);
       setName(migrated.name);
       setScores(migrated.scores);
+      setAlignment(migrated.alignment);
       setSkillRanks(migrated.skillRanks ?? {});
       saveLocal(migrated);
       setError(null);
@@ -79,6 +87,7 @@ export function useCharacter() {
     if (!window.confirm('Clear this character and local saved copy?')) return;
     setName('');
     setScores(emptyScores);
+    setAlignment(undefined);
     setSkillRanks({});
     setError(null);
     clearLocal();
@@ -94,6 +103,8 @@ export function useCharacter() {
     scores,
     setScores,
     mods,
+    alignment,
+    setAlignment,
     skillRanks,
     setSkillRank,
     error,
