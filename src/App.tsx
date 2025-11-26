@@ -1,4 +1,5 @@
 import { AbilityGrid } from './components/AbilityGrid';
+import { AlignmentSelector } from './components/AlignmentSelector';
 import { DropZone } from './components/DropZone';
 import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
@@ -11,6 +12,8 @@ export function App() {
     setName,
     scores,
     mods,
+    alignment,
+    setAlignment,
     skillRanks,
     setSkillRank,
     onNum,
@@ -56,6 +59,12 @@ export function App() {
             placeholder="Mialee"
           />
         </label>
+
+        <AlignmentSelector
+          alignment={alignment}
+          setAlignment={setAlignment}
+          onBlur={persistLocal}
+        />
 
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
 

@@ -13,10 +13,15 @@ export const ScoresSchema = z.object({
 
 export const SkillRanksSchema = z.record(z.string(), z.number().int().min(0).max(99));
 
+export const AlignmentSchema = z.enum(['LG', 'NG', 'CG', 'LN', 'N', 'CN', 'LE', 'NE', 'CE']);
+
+export type Alignment = z.infer<typeof AlignmentSchema>;
+
 export const CharacterSchemaV1 = z.object({
   version: z.literal(1),
   name: z.string().min(0),
   scores: ScoresSchema,
+  alignment: AlignmentSchema.optional(),
   skillRanks: SkillRanksSchema.optional().default({}),
   notes: z.string().optional(),
 });
