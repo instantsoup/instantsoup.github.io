@@ -11,11 +11,12 @@ export function useCharacter() {
   const initial = loadLocal();
   const [name, setName] = useState<string>(initial.name);
   const [scores, setScores] = useState<Scores>(initial.scores);
+  const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const mods = useMemo(() => computeMods(scores), [scores]);
-  const current: CharacterV1 = { version: VERSION, name, scores };
+  const current: CharacterV1 = { version: VERSION, name, scores, skillRanks };
 
   const onNum = (k: keyof Scores) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseInt(e.target.value || '0', 10);
@@ -52,6 +53,7 @@ export function useCharacter() {
       const migrated = migrateToLatest(json);
       setName(migrated.name);
       setScores(migrated.scores);
+      setSkillRanks(migrated.skillRanks ?? {});
       saveLocal(migrated);
       setError(null);
     } catch (e: unknown) {
@@ -77,8 +79,13 @@ export function useCharacter() {
     if (!window.confirm('Clear this character and local saved copy?')) return;
     setName('');
     setScores(emptyScores);
+    setSkillRanks({});
     setError(null);
     clearLocal();
+  };
+
+  const setSkillRank = (skillName: string, ranks: number) => {
+    setSkillRanks((prev) => ({ ...prev, [skillName]: Math.max(0, Math.min(99, ranks)) }));
   };
 
   return {
@@ -87,6 +94,8 @@ export function useCharacter() {
     scores,
     setScores,
     mods,
+    skillRanks,
+    setSkillRank,
     error,
     setError,
     onNum,

@@ -11,10 +11,13 @@ export const ScoresSchema = z.object({
   cha: z.number().int(),
 });
 
+export const SkillRanksSchema = z.record(z.string(), z.number().int().min(0).max(99));
+
 export const CharacterSchemaV1 = z.object({
   version: z.literal(1),
   name: z.string().min(0),
   scores: ScoresSchema,
+  skillRanks: SkillRanksSchema.optional().default({}),
   notes: z.string().optional(),
 });
 

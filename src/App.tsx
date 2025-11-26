@@ -2,6 +2,7 @@ import { AbilityGrid } from './components/AbilityGrid';
 import { DropZone } from './components/DropZone';
 import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
+import { SkillsPanel } from './components/SkillsPanel';
 import { useCharacter } from './hooks/useCharacter';
 
 export function App() {
@@ -10,6 +11,8 @@ export function App() {
     setName,
     scores,
     mods,
+    skillRanks,
+    setSkillRank,
     onNum,
     persistLocal,
     exportJson,
@@ -55,6 +58,13 @@ export function App() {
         </label>
 
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
+
+        <SkillsPanel
+          mods={mods}
+          skillRanks={skillRanks}
+          setSkillRank={setSkillRank}
+          onBlur={persistLocal}
+        />
 
         {error && <p className="text-error mt-12">{error}</p>}
       </main>
