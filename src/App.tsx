@@ -3,6 +3,7 @@ import { AlignmentSelector } from './components/AlignmentSelector';
 import { DropZone } from './components/DropZone';
 import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
+import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { useCharacter } from './hooks/useCharacter';
 
@@ -16,6 +17,8 @@ export function App() {
     setAlignment,
     skillRanks,
     setSkillRank,
+    saveBonuses,
+    setSaveBonus,
     onNum,
     persistLocal,
     exportJson,
@@ -67,6 +70,13 @@ export function App() {
         />
 
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
+
+        <SavesPanel
+          mods={mods}
+          saveBonuses={saveBonuses}
+          setSaveBonus={setSaveBonus}
+          onBlur={persistLocal}
+        />
 
         <SkillsPanel
           mods={mods}

@@ -1,0 +1,160 @@
+/* ================================
+   Saves Panel
+=================================== */
+
+.saves-panel {
+  margin-top: var(--space-6);
+}
+
+.saves-panel__title {
+  margin: 0 0 var(--space-3);
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+/* ================================
+   Saves Grid
+=================================== */
+
+.saves-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-4);
+}
+
+/* ================================
+   Save Item Card
+=================================== */
+
+.save-item {
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  padding: var(--space-4);
+  background: #ffffff;
+}
+
+.save-item__header {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.save-item__name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.save-item__ability {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+/* ================================
+   Save Item Body
+=================================== */
+
+.save-item__body {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-4);
+  margin-bottom: var(--space-3);
+}
+
+.save-item__input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.save-item__label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+}
+
+.save-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--clr-btn-border);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 16px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.save-input:focus {
+  outline: none;
+  border-color: var(--clr-primary-border);
+  box-shadow: 0 0 0 2px var(--clr-primary-bg);
+}
+
+/* Remove spinner arrows */
+.save-input::-webkit-outer-spin-button,
+.save-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.save-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* ================================
+   Save Total Display
+=================================== */
+
+.save-item__total {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: var(--clr-bg);
+  border: 2px solid var(--clr-primary-border);
+  border-radius: 8px;
+  min-width: 80px;
+}
+
+.save-item__total-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.save-item__total-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0369a1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================
+   Save Description
+=================================== */
+
+.save-item__description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #64748b;
+}
+
+/* ================================
+   Responsive adjustments
+=================================== */
+
+@media (max-width: 640px) {
+  .saves-grid {
+    grid-template-columns: 1fr;
+  }
+}

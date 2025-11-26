@@ -15,6 +15,8 @@ export const ScoresSchema = z.object({
 
 export const SkillRanksSchema = z.record(z.string(), z.number().int().min(0).max(99));
 
+export const SaveBonusesSchema = z.record(z.string(), z.number().int().min(0).max(99));
+
 // Derive alignment codes from data layer
 export const AlignmentCodeSchema = z.enum(ALIGNMENT_CODES);
 
@@ -26,6 +28,7 @@ export const CharacterSchemaV1 = z.object({
   scores: ScoresSchema,
   alignment: AlignmentCodeSchema.optional(),
   skillRanks: SkillRanksSchema.optional().default({}),
+  saveBonuses: SaveBonusesSchema.optional().default({}),
   notes: z.string().optional(),
 });
 

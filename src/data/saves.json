@@ -1,0 +1,17 @@
+[
+  {
+    "name": "Fortitude",
+    "ability": "con",
+    "description": "These saves measure your ability to stand up to physical punishment or attacks against your vitality and health."
+  },
+  {
+    "name": "Reflex",
+    "ability": "dex",
+    "description": "These saves test your ability to dodge area attacks and other attacks that you can escape with agility."
+  },
+  {
+    "name": "Will",
+    "ability": "wis",
+    "description": "These saves reflect your resistance to mental influence and domination as well as many magical effects."
+  }
+]
