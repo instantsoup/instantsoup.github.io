@@ -19,11 +19,19 @@ export function useCharacter() {
   const [scores, setScores] = useState<Scores>(initial.scores);
   const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
+  const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const mods = useMemo(() => computeMods(scores), [scores]);
-  const current: CharacterV1 = { version: VERSION, name, scores, alignment, skillRanks };
+  const current: CharacterV1 = {
+    version: VERSION,
+    name,
+    scores,
+    alignment,
+    skillRanks,
+    saveBonuses,
+  };
 
   const onNum = (k: keyof Scores) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const v = parseInt(e.target.value || '0', 10);
@@ -62,6 +70,7 @@ export function useCharacter() {
       setScores(migrated.scores);
       setAlignment(migrated.alignment);
       setSkillRanks(migrated.skillRanks ?? {});
+      setSaveBonuses(migrated.saveBonuses ?? {});
       saveLocal(migrated);
       setError(null);
     } catch (e: unknown) {
@@ -89,12 +98,17 @@ export function useCharacter() {
     setScores(emptyScores);
     setAlignment(undefined);
     setSkillRanks({});
+    setSaveBonuses({});
     setError(null);
     clearLocal();
   };
 
   const setSkillRank = (skillName: string, ranks: number) => {
     setSkillRanks((prev) => ({ ...prev, [skillName]: Math.max(0, Math.min(99, ranks)) }));
+  };
+
+  const setSaveBonus = (saveName: string, bonus: number) => {
+    setSaveBonuses((prev) => ({ ...prev, [saveName]: Math.max(0, Math.min(99, bonus)) }));
   };
 
   return {
@@ -107,6 +121,8 @@ export function useCharacter() {
     setAlignment,
     skillRanks,
     setSkillRank,
+    saveBonuses,
+    setSaveBonus,
     error,
     setError,
     onNum,
