@@ -161,18 +161,21 @@ Character sheet sections displayed in the main area (top to bottom):
 All game data (skills, alignments, etc.) follows a consistent pattern for maximum maintainability:
 
 ### Pattern
+
 1. **JSON Data File** (`src/data/*.json`) - Single source of truth
 2. **Type Definition** (`src/types/*.ts`) - Zod schema for validation
 3. **Helper Module** (`src/data/*.ts`) - Parses JSON and exports validated data
 4. **Schema Integration** - Character schema derives validation from data layer
 
 ### Example: Alignments
+
 - **Data**: `alignments.json` contains all 9 alignments with code, label, description
 - **Type**: `alignment.ts` defines `AlignmentSchema` and exports validated `alignments` array
 - **Helper**: `alignments.ts` exports `ALIGNMENT_CODES` for schema use
 - **Schema**: `CharacterSchemaV1` uses `z.enum(ALIGNMENT_CODES)` instead of hardcoded values
 
 This pattern ensures:
+
 - Single source of truth for all game data
 - Type safety via Zod validation
 - Easy to extend or modify without touching multiple files
