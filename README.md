@@ -3,9 +3,17 @@
 This project is a client-only React/Vite webapp hosted on GitHub Pages at  
 [https://instantsoup.github.io/](https://instantsoup.github.io/)
 
-The app models D&D 3.5e character sheets, beginning with ability scores → modifiers, and will iteratively grow toward full offline JSON-based sheet management.
+The app models D&D 3.5e character sheets with ability scores, alignments, skills, and saving throws, and will iteratively grow toward full offline JSON-based sheet management.
 
 No server or persistence beyond localStorage and JSON download/upload will ever be introduced.
+
+## Current Features
+
+- **Character Basics**: Name and ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculation
+- **Alignment Selector**: Interactive 3x3 grid for all 9 D&D alignments
+- **Skills Panel**: All 43 D&D 3.5e skills with rank tracking and total calculation
+- **Dice Roller**: Sidebar panel for rolling multiple dice
+- **Persistence**: localStorage auto-save and JSON import/export
 
 ---
 
@@ -54,24 +62,27 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │   ├── types.ts                  # shared Scores + emptyScores
 │
 │   ├── components/
-│   │   ├── LeftSidebar.tsx       # sidebar with collapsible panels
-│   │   ├── PanelSection.tsx      # reusable collapsible panel
-│   │   ├── DiceRollerPanel.tsx   # dice roller UI
-│   │   ├── UtilitiesPanel.tsx    # general character tools
 │   │   ├── AbilityGrid.tsx
+│   │   ├── AlignmentSelector.tsx # 3x3 alignment grid
+│   │   ├── DiceRollerPanel.tsx   # dice roller UI
 │   │   ├── DropZone.tsx
 │   │   ├── ImportExportBar.tsx
-│   │   ├── RollCharacter.tsx
+│   │   ├── LeftSidebar.tsx       # sidebar with collapsible panels
+│   │   ├── PanelSection.tsx      # reusable collapsible panel
+│   │   ├── RollCharacterPanel.tsx
+│   │   ├── SkillsPanel.tsx       # skills with rank tracking
 │   │   ├── SourceBadge.tsx / SourceBadges.tsx
-│   │   └── UtilitiesPanel.tsx
+│   │   └── UtilitiesPanel.tsx    # general character tools
 │
 │   ├── data/
+│   │   ├── alignments.json       # 9 D&D alignments
+│   │   ├── alignments.ts         # alignment data helpers
 │   │   ├── feats.json
-│   │   ├── skills.json
+│   │   ├── skills.json           # 43 D&D 3.5e skills
+│   │   ├── skills.ts             # skill data helpers
+│   │   ├── skills.test.ts
 │   │   ├── sourcebook-abbrevs.json
-│   │   ├── sourcebooks.ts
-│   │   ├── skills.ts
-│   │   └── skills.test.ts
+│   │   └── sourcebooks.ts
 │
 │   ├── hooks/
 │   │   └── useCharacter.ts       # manages character state
@@ -92,16 +103,14 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │
 │   ├── styles/
 │   │   ├── index.css             # imports all partials below
-│   │   ├── base.css              # variables, resets, body defaults
-│   │   ├── layout.css            # app grid and main area
-│   │   ├── sidebar.css           # sidebar + panels
-│   │   ├── buttons.css           # shared button styles
-│   │   ├── dice.css              # dice roller
-│   │   └── utilities.css         # small utility classes
+│   │   ├── utilities.css         # small utility classes
+│   │   ├── skills.css            # skills panel styles
+│   │   └── alignment.css         # alignment selector styles
 │
 │   └── types/
+│       ├── alignment.ts          # alignment type + schema
 │       ├── feat.ts
-│       └── skill.ts
+│       └── skill.ts              # skill type + schema
 │
 └── dist/                         # vite build output
 ```
@@ -133,6 +142,30 @@ The app uses a two-column grid layout defined in `layout.css`:
 - "Roll" computes totals using logic from `lib/dice.ts`
 - "Clear" empties the pool
 - Uses CSS classes `.btn`, `.btn--primary`, `.btn--danger`, and `.btn-row`
+
+### Main Content Area
+
+Character sheet sections displayed in the main area:
+
+1. **Name Field** - Character name input
+2. **Alignment Selector** - 3x3 grid for selecting D&D alignment (LG, NG, CG, LN, N, CN, LE, NE, CE)
+3. **Ability Grid** - Six ability scores with modifier calculations
+4. **Skills Panel** - All 43 skills with rank inputs and total modifiers
+   - Shows trained-only badges and armor check penalty indicators
+   - Automatically calculates total = ranks + ability modifier
+
+---
+
+## Data-Driven Architecture
+
+All game data (skills, alignments, etc.) follows a consistent pattern:
+
+1. **JSON Data Files** (`src/data/*.json`) - Single source of truth for game data
+2. **Type Definitions** (`src/types/*.ts`) - Zod schemas for validation
+3. **Helper Modules** (`src/data/*.ts`) - Parse and export validated data
+4. **Schema Integration** - Character schema derives from data layer
+
+Example: Alignments are defined in `alignments.json`, validated with `AlignmentSchema`, and the character schema uses derived codes via `z.enum(ALIGNMENT_CODES)`.
 
 ---
 
@@ -227,10 +260,12 @@ Adjust toward 28-point buy:
 
 - No backend — client-only SPA
 - All logic is local, schema-validated with Zod
+- Data-driven architecture: All game data in JSON files
 - Tests live next to source files
-- Styles are modular CSS classes
+- Styles are modular CSS classes (no inline styles)
 - Components are all named exports (except App)
 - Sidebar layout provides expandable **Dice Roller** and **Utilities** panels
+- Character features: Name, Alignment (9 options), Ability Scores, Skills (43 total)
 - Every feature is self-contained, type-safe, and incremental
 
 ---

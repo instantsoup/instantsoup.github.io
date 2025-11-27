@@ -55,24 +55,27 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   ├── types.ts                  # Shared Scores + emptyScores
 │
 │   ├── components/
+│   │   ├── AbilityGrid.tsx       # Ability score grid with modifiers
+│   │   ├── AlignmentSelector.tsx # 3x3 grid for D&D alignments
+│   │   ├── DiceRollerPanel.tsx   # Add/Roll/Clear dice pool
+│   │   ├── DropZone.tsx          # Drag-and-drop file import
+│   │   ├── ImportExportBar.tsx   # Persistence controls
 │   │   ├── LeftSidebar.tsx       # Sidebar with collapsible panels
 │   │   ├── PanelSection.tsx      # Reusable collapsible panel component
-│   │   ├── DiceRollerPanel.tsx   # Add/Roll/Clear dice pool
-│   │   ├── UtilitiesPanel.tsx    # Utility features for character management
-│   │   ├── AbilityGrid.tsx
-│   │   ├── DropZone.tsx
-│   │   ├── ImportExportBar.tsx
-│   │   ├── RollCharacter.tsx
+│   │   ├── RollCharacterPanel.tsx # Roll random character stats
+│   │   ├── SkillsPanel.tsx       # Skills with rank tracking
 │   │   ├── SourceBadge.tsx / SourceBadges.tsx
-│   │   └── UtilitiesPanel.tsx
+│   │   └── UtilitiesPanel.tsx    # Utility features for character management
 │
 │   ├── data/
+│   │   ├── alignments.json       # 9 D&D alignments (LG, NG, CG, etc.)
+│   │   ├── alignments.ts         # Alignment data helpers
 │   │   ├── feats.json
-│   │   ├── skills.json
+│   │   ├── skills.json           # 43 D&D 3.5e skills
+│   │   ├── skills.ts             # Skill data helpers
+│   │   ├── skills.test.ts
 │   │   ├── sourcebook-abbrevs.json
-│   │   ├── sourcebooks.ts
-│   │   ├── skills.ts
-│   │   └── skills.test.ts
+│   │   └── sourcebooks.ts
 │
 │   ├── hooks/
 │   │   └── useCharacter.ts       # Manages character state
@@ -93,16 +96,14 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │
 │   ├── styles/
 │   │   ├── index.css             # Imports all partials below
-│   │   ├── base.css              # Variables, resets, and body defaults
-│   │   ├── layout.css            # App grid and main area layout
-│   │   ├── sidebar.css           # Sidebar + collapsible panel styles
-│   │   ├── buttons.css           # Reusable button classes
-│   │   ├── dice.css              # Dice panel layout and results
-│   │   └── utilities.css         # Shared utility classes (margins, etc.)
+│   │   ├── utilities.css         # Shared utility classes (margins, spacing)
+│   │   ├── skills.css            # Skills panel table layout
+│   │   └── alignment.css         # Alignment selector 3x3 grid
 │
 │   └── types/
-│       ├── feat.ts
-│       └── skill.ts
+│       ├── alignment.ts          # Alignment type + Zod schema
+│       ├── feat.ts               # Feat type + Zod schema
+│       └── skill.ts              # Skill type + Zod schema
 │
 └── dist/                         # Vite build output
 ```
@@ -140,6 +141,42 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 
 - Contains other tools (character reset, import/export, etc.).
 - Hidden when collapsed.
+
+### Main Content Area
+
+Character sheet sections displayed in the main area (top to bottom):
+
+1. **Name Field** - Character name input
+2. **Alignment Selector** - 3x3 grid for all 9 D&D alignments (LG, NG, CG, LN, N, CN, LE, NE, CE)
+3. **Ability Grid** - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
+4. **Skills Panel** - All 43 D&D 3.5e skills with:
+   - Rank inputs (0-99)
+   - Automatic total calculation (ranks + ability modifier)
+   - Badges for trained-only skills and armor check penalty
+
+---
+
+## Data-Driven Architecture
+
+All game data (skills, alignments, etc.) follows a consistent pattern for maximum maintainability:
+
+### Pattern
+1. **JSON Data File** (`src/data/*.json`) - Single source of truth
+2. **Type Definition** (`src/types/*.ts`) - Zod schema for validation
+3. **Helper Module** (`src/data/*.ts`) - Parses JSON and exports validated data
+4. **Schema Integration** - Character schema derives validation from data layer
+
+### Example: Alignments
+- **Data**: `alignments.json` contains all 9 alignments with code, label, description
+- **Type**: `alignment.ts` defines `AlignmentSchema` and exports validated `alignments` array
+- **Helper**: `alignments.ts` exports `ALIGNMENT_CODES` for schema use
+- **Schema**: `CharacterSchemaV1` uses `z.enum(ALIGNMENT_CODES)` instead of hardcoded values
+
+This pattern ensures:
+- Single source of truth for all game data
+- Type safety via Zod validation
+- Easy to extend or modify without touching multiple files
+- Schema stays in sync with data automatically
 
 ---
 
@@ -234,5 +271,16 @@ When ChatGPT (GPT-5) is re-initialized or loses memory:
 5. Preserve build and schema validation compatibility.
 6. All UI changes must fit into the sidebar layout and style system.
 7. Every new feature should be a **self-contained, TypeScript-safe, schema-validated module**.
+8. **Follow the data-driven pattern**: All game data in JSON → Zod validation → Schema integration.
+
+## Current Character Sheet Features
+
+- **Name** - Character name field
+- **Alignment** - 9 D&D alignments in 3x3 grid (LG, NG, CG, LN, N, CN, LE, NE, CE)
+- **Ability Scores** - STR, DEX, CON, INT, WIS, CHA with modifier calculations
+- **Skills** - All 43 D&D 3.5e skills with rank tracking and totals
+- **Dice Roller** - Sidebar panel for rolling multiple dice
+
+All features persist via localStorage and JSON import/export.
 
 ---
