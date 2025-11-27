@@ -1,5 +1,6 @@
 import { AbilityGrid } from './components/AbilityGrid';
 import { AlignmentSelector } from './components/AlignmentSelector';
+import { CombatStatsPanel } from './components/CombatStats';
 import { DropZone } from './components/DropZone';
 import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
@@ -19,6 +20,8 @@ export function App() {
     setSkillRank,
     saveBonuses,
     setSaveBonus,
+    combatStats,
+    updateCombatStat,
     onNum,
     persistLocal,
     exportJson,
@@ -70,6 +73,13 @@ export function App() {
         />
 
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
+
+        <CombatStatsPanel
+          mods={mods}
+          combatStats={combatStats}
+          updateCombatStat={updateCombatStat}
+          onBlur={persistLocal}
+        />
 
         <SavesPanel
           mods={mods}

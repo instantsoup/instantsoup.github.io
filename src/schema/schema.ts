@@ -22,6 +22,19 @@ export const AlignmentCodeSchema = z.enum(ALIGNMENT_CODES);
 
 export type AlignmentCode = z.infer<typeof AlignmentCodeSchema>;
 
+export const CombatStatsSchema = z.object({
+  currentHP: z.number().int().min(0).optional(),
+  maxHP: z.number().int().min(0).optional(),
+  armorBonus: z.number().int().optional(),
+  shieldBonus: z.number().int().optional(),
+  miscACBonus: z.number().int().optional(),
+  spellResistance: z.number().int().min(0).optional(),
+  initiativeBonus: z.number().int().optional(),
+  baseAttackBonus: z.number().int().optional(),
+});
+
+export type CombatStats = z.infer<typeof CombatStatsSchema>;
+
 export const CharacterSchemaV1 = z.object({
   version: z.literal(1),
   name: z.string().min(0),
@@ -29,6 +42,7 @@ export const CharacterSchemaV1 = z.object({
   alignment: AlignmentCodeSchema.optional(),
   skillRanks: SkillRanksSchema.optional().default({}),
   saveBonuses: SaveBonusesSchema.optional().default({}),
+  combatStats: CombatStatsSchema.optional().default({}),
   notes: z.string().optional(),
 });
 

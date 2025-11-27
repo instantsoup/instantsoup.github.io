@@ -7,6 +7,7 @@ import {
   type AlignmentCode,
   CharacterSchemaV1,
   type CharacterV1,
+  type CombatStats,
   migrateToLatest,
   VERSION,
 } from '../schema/schema';
@@ -20,6 +21,7 @@ export function useCharacter() {
   const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
+  const [combatStats, setCombatStats] = useState<CombatStats>(initial.combatStats ?? {});
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,6 +33,7 @@ export function useCharacter() {
     alignment,
     skillRanks,
     saveBonuses,
+    combatStats,
   };
 
   const onNum = (k: keyof Scores) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,6 +74,7 @@ export function useCharacter() {
       setAlignment(migrated.alignment);
       setSkillRanks(migrated.skillRanks ?? {});
       setSaveBonuses(migrated.saveBonuses ?? {});
+      setCombatStats(migrated.combatStats ?? {});
       saveLocal(migrated);
       setError(null);
     } catch (e: unknown) {
@@ -99,6 +103,7 @@ export function useCharacter() {
     setAlignment(undefined);
     setSkillRanks({});
     setSaveBonuses({});
+    setCombatStats({});
     setError(null);
     clearLocal();
   };
@@ -109,6 +114,10 @@ export function useCharacter() {
 
   const setSaveBonus = (saveName: string, bonus: number) => {
     setSaveBonuses((prev) => ({ ...prev, [saveName]: Math.max(0, Math.min(99, bonus)) }));
+  };
+
+  const updateCombatStat = (field: keyof CombatStats, value: number | undefined) => {
+    setCombatStats((prev) => ({ ...prev, [field]: value }));
   };
 
   return {
@@ -123,6 +132,8 @@ export function useCharacter() {
     setSkillRank,
     saveBonuses,
     setSaveBonus,
+    combatStats,
+    updateCombatStat,
     error,
     setError,
     onNum,

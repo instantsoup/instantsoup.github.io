@@ -3,6 +3,7 @@ import './styles/utilities.css';
 import './styles/skills.css';
 import './styles/alignment.css';
 import './styles/saves.css';
+import './styles/combat-stats.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
