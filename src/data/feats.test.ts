@@ -15,7 +15,9 @@ describe('feats data', () => {
     feats.forEach((feat, idx) => {
       const key = `${feat.name}|${feat.source.abbr}|${feat.source.page || ''}`;
       if (seen.has(key)) {
-        duplicates.push(`${feat.name} (${feat.source.abbr} p.${feat.source.page}) at indices ${seen.get(key)} and ${idx}`);
+        duplicates.push(
+          `${feat.name} (${feat.source.abbr} p.${feat.source.page}) at indices ${seen.get(key)} and ${idx}`,
+        );
       } else {
         seen.set(key, idx);
       }
