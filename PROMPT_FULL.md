@@ -57,12 +57,16 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   ├── components/
 │   │   ├── AbilityGrid.tsx       # Ability score grid with modifiers
 │   │   ├── AlignmentSelector.tsx # 3x3 grid for D&D alignments
+│   │   ├── ClassSelector.tsx     # 11 core class selection with descriptions
+│   │   ├── CombatStats.tsx       # HP, AC, SR, initiative, BAB tracking
 │   │   ├── DiceRollerPanel.tsx   # Add/Roll/Clear dice pool
 │   │   ├── DropZone.tsx          # Drag-and-drop file import
 │   │   ├── ImportExportBar.tsx   # Persistence controls
 │   │   ├── LeftSidebar.tsx       # Sidebar with collapsible panels
 │   │   ├── PanelSection.tsx      # Reusable collapsible panel component
+│   │   ├── RaceSelector.tsx      # 7 core race selection with descriptions
 │   │   ├── RollCharacterPanel.tsx # Roll random character stats
+│   │   ├── SavesPanel.tsx        # Fortitude, Reflex, Will saves
 │   │   ├── SkillsPanel.tsx       # Skills with rank tracking
 │   │   ├── SourceBadge.tsx / SourceBadges.tsx
 │   │   └── UtilitiesPanel.tsx    # Utility features for character management
@@ -70,7 +74,13 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   ├── data/
 │   │   ├── alignments.json       # 9 D&D alignments (LG, NG, CG, etc.)
 │   │   ├── alignments.ts         # Alignment data helpers
+│   │   ├── classes.json          # 11 core D&D 3.5e classes
+│   │   ├── classes.ts            # Class data helpers
 │   │   ├── feats.json
+│   │   ├── races.json            # 7 core D&D 3.5e races
+│   │   ├── races.ts              # Race data helpers
+│   │   ├── saves.json            # 3 saving throws
+│   │   ├── saves.ts              # Saves data helpers
 │   │   ├── skills.json           # 43 D&D 3.5e skills
 │   │   ├── skills.ts             # Skill data helpers
 │   │   ├── skills.test.ts
@@ -97,12 +107,19 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   ├── styles/
 │   │   ├── index.css             # Imports all partials below
 │   │   ├── utilities.css         # Shared utility classes (margins, spacing)
-│   │   ├── skills.css            # Skills panel table layout
-│   │   └── alignment.css         # Alignment selector 3x3 grid
+│   │   ├── alignment.css         # Alignment selector 3x3 grid
+│   │   ├── class.css             # Class selector styles
+│   │   ├── race.css              # Race selector styles
+│   │   ├── saves.css             # Saves panel card layout
+│   │   ├── combat-stats.css      # Combat statistics panel styles
+│   │   └── skills.css            # Skills panel table layout
 │
 │   └── types/
 │       ├── alignment.ts          # Alignment type + Zod schema
+│       ├── class.ts              # Class type + Zod schema
 │       ├── feat.ts               # Feat type + Zod schema
+│       ├── race.ts               # Race type + Zod schema
+│       ├── save.ts               # Save type + Zod schema
 │       └── skill.ts              # Skill type + Zod schema
 │
 └── dist/                         # Vite build output
@@ -147,9 +164,21 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 Character sheet sections displayed in the main area (top to bottom):
 
 1. **Name Field** - Character name input
-2. **Alignment Selector** - 3x3 grid for all 9 D&D alignments (LG, NG, CG, LN, N, CN, LE, NE, CE)
-3. **Ability Grid** - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
-4. **Skills Panel** - All 43 D&D 3.5e skills with:
+2. **Race Selector** - Choose from 7 core D&D 3.5e races with descriptions (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
+3. **Class Selector** - Choose from 11 core D&D 3.5e classes with descriptions (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
+4. **Alignment Selector** - 3x3 grid for all 9 D&D alignments (LG, NG, CG, LN, N, CN, LE, NE, CE)
+5. **Ability Grid** - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
+6. **Saving Throws** - Three saves (Fortitude, Reflex, Will) with:
+   - Base bonus inputs (0-99)
+   - Automatic total calculation (base bonus + ability modifier)
+   - Save descriptions
+7. **Combat Statistics** - Combat-related stats with:
+   - Current HP / Max HP tracking
+   - AC calculation (10 + armor + shield + DEX mod + misc)
+   - Spell Resistance
+   - Initiative Bonus
+   - Base Attack Bonus
+8. **Skills Panel** - All 43 D&D 3.5e skills with:
    - Rank inputs (0-99)
    - Automatic total calculation (ranks + ability modifier)
    - Badges for trained-only skills and armor check penalty
@@ -158,7 +187,7 @@ Character sheet sections displayed in the main area (top to bottom):
 
 ## Data-Driven Architecture
 
-All game data (skills, alignments, etc.) follows a consistent pattern for maximum maintainability:
+All game data (alignments, races, saves, skills, etc.) follows a consistent pattern for maximum maintainability:
 
 ### Pattern
 
@@ -167,12 +196,30 @@ All game data (skills, alignments, etc.) follows a consistent pattern for maximu
 3. **Helper Module** (`src/data/*.ts`) - Parses JSON and exports validated data
 4. **Schema Integration** - Character schema derives validation from data layer
 
-### Example: Alignments
+### Examples
 
+**Alignments:**
 - **Data**: `alignments.json` contains all 9 alignments with code, label, description
 - **Type**: `alignment.ts` defines `AlignmentSchema` and exports validated `alignments` array
 - **Helper**: `alignments.ts` exports `ALIGNMENT_CODES` for schema use
 - **Schema**: `CharacterSchemaV1` uses `z.enum(ALIGNMENT_CODES)` instead of hardcoded values
+
+**Races:**
+- **Data**: `races.json` contains 7 core races with name and description
+- **Type**: `race.ts` defines `RaceSchema` for validation
+- **Helper**: `races.ts` exports `RACE_NAMES` for schema use
+- **Schema**: `CharacterSchemaV1` uses `z.enum(RACE_NAMES)` for race validation
+
+**Classes:**
+- **Data**: `classes.json` contains 11 core classes with name and description
+- **Type**: `class.ts` defines `ClassSchema` for validation
+- **Helper**: `classes.ts` exports `CLASS_NAMES` for schema use
+- **Schema**: `CharacterSchemaV1` uses `z.enum(CLASS_NAMES)` for class validation
+
+**Saves:**
+- **Data**: `saves.json` contains 3 saves with name, ability, and description
+- **Type**: `save.ts` defines `SaveSchema` for validation
+- **Helper**: `saves.ts` exports validated saves data
 
 This pattern ensures:
 
@@ -279,8 +326,12 @@ When ChatGPT (GPT-5) is re-initialized or loses memory:
 ## Current Character Sheet Features
 
 - **Name** - Character name field
+- **Race** - 7 core D&D 3.5e races (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
+- **Class** - 11 core D&D 3.5e classes (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
 - **Alignment** - 9 D&D alignments in 3x3 grid (LG, NG, CG, LN, N, CN, LE, NE, CE)
 - **Ability Scores** - STR, DEX, CON, INT, WIS, CHA with modifier calculations
+- **Saving Throws** - Fortitude, Reflex, Will with base bonuses and automatic totals
+- **Combat Statistics** - HP tracking, AC calculation, Spell Resistance, Initiative, Base Attack Bonus
 - **Skills** - All 43 D&D 3.5e skills with rank tracking and totals
 - **Dice Roller** - Sidebar panel for rolling multiple dice
 

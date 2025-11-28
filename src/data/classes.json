@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Barbarian",
+    "description": "A ferocious warrior who uses fury and instinct to bring down foes."
+  },
+  {
+    "name": "Bard",
+    "description": "A performer whose music works magic—a wanderer, a tale-teller, and a jack-of-all-trades."
+  },
+  {
+    "name": "Cleric",
+    "description": "A master of divine magic and capable with weapons and armor."
+  },
+  {
+    "name": "Druid",
+    "description": "One who gains divine spells from the power of nature, and can take the shape of animals."
+  },
+  {
+    "name": "Fighter",
+    "description": "A warrior with exceptional combat capability and unequaled skill with weapons."
+  },
+  {
+    "name": "Monk",
+    "description": "A martial artist whose unarmed strikes hit fast and hard—a master of exotic powers."
+  },
+  {
+    "name": "Paladin",
+    "description": "A champion of justice and destroyer of evil, protected and strengthened by divine powers."
+  },
+  {
+    "name": "Ranger",
+    "description": "A cunning, skilled warrior of the wilderness."
+  },
+  {
+    "name": "Rogue",
+    "description": "A tricky, skillful scout and spy who wins the day with stealth and cunning rather than brute force."
+  },
+  {
+    "name": "Sorcerer",
+    "description": "A spellcaster with inborn magical ability."
+  },
+  {
+    "name": "Wizard",
+    "description": "A potent spellcaster schooled in the arcane arts."
+  }
+]
