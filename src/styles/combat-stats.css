@@ -1,0 +1,159 @@
+/* Combat Stats Panel */
+.combat-stats {
+  width: 100%;
+}
+
+.combat-stats__title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+}
+
+.combat-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+/* Combat Stat Cards */
+.combat-stat-card {
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 8px;
+  background: var(--card-bg, #ffffff);
+  padding: 1rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.combat-stat-card__header {
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color, #e5e7eb);
+}
+
+.combat-stat-card__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary, #4b5563);
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.combat-stat-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.combat-stat-card__sublabel {
+  font-size: 0.75rem;
+  color: var(--text-muted, #6b7280);
+  text-align: center;
+}
+
+/* Combat Stat Inputs */
+.combat-stat-input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--input-border, #d1d5db);
+  border-radius: 4px;
+  font-size: 1rem;
+  text-align: center;
+  background: var(--input-bg, #ffffff);
+  transition: border-color 0.15s ease;
+}
+
+.combat-stat-input:focus {
+  outline: none;
+  border-color: var(--input-focus, #3b82f6);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.combat-stat-input--hp {
+  width: 4rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.combat-stat-input--small {
+  width: 3.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+
+.combat-stat-input--centered {
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 0.75rem;
+}
+
+/* HP Display */
+.combat-stat-hp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.combat-stat-hp__separator {
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--text-muted, #9ca3af);
+}
+
+/* Stat Display (for calculated totals) */
+.combat-stat-display {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text-primary, #1a1a1a);
+  padding: 0.5rem;
+  background: var(--stat-display-bg, #f3f4f6);
+  border-radius: 4px;
+}
+
+/* Stat Breakdown */
+.combat-stat-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.combat-stat-breakdown__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.combat-stat-breakdown__label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-secondary, #6b7280);
+  text-transform: uppercase;
+  min-width: 3rem;
+}
+
+.combat-stat-breakdown__value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #1a1a1a);
+  text-align: right;
+  min-width: 2rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .combat-stats__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .combat-stat-display {
+    font-size: 1.75rem;
+  }
+
+  .combat-stat-input--centered {
+    font-size: 1.25rem;
+  }
+}
