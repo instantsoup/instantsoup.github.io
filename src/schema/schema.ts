@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { ALIGNMENT_CODES } from '../data/alignments';
+import { RACE_NAMES } from '../data/races';
 
 export const VERSION = 1;
 
@@ -22,6 +23,11 @@ export const AlignmentCodeSchema = z.enum(ALIGNMENT_CODES);
 
 export type AlignmentCode = z.infer<typeof AlignmentCodeSchema>;
 
+// Derive race names from data layer
+export const RaceNameSchema = z.enum(RACE_NAMES);
+
+export type RaceName = z.infer<typeof RaceNameSchema>;
+
 export const CombatStatsSchema = z.object({
   currentHP: z.number().int().min(0).optional(),
   maxHP: z.number().int().min(0).optional(),
@@ -39,6 +45,7 @@ export const CharacterSchemaV1 = z.object({
   version: z.literal(1),
   name: z.string().min(0),
   scores: ScoresSchema,
+  race: RaceNameSchema.optional(),
   alignment: AlignmentCodeSchema.optional(),
   skillRanks: SkillRanksSchema.optional().default({}),
   saveBonuses: SaveBonusesSchema.optional().default({}),

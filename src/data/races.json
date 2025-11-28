@@ -1,0 +1,30 @@
+[
+  {
+    "name": "Human",
+    "description": "Humans are the most adaptable of all the common races."
+  },
+  {
+    "name": "Dwarf",
+    "description": "Dwarves are known for their skill in warfare, their ability to withstand physical and magical punishment, their knowledge of the earth's secrets, and their hatred of orcs and goblinoids."
+  },
+  {
+    "name": "Elf",
+    "description": "Elves are known for their poetry, song, and magical arts, but also for their skill with the bow."
+  },
+  {
+    "name": "Gnome",
+    "description": "Gnomes are in wide demand as alchemists, inventors, and technicians, though most prefer to remain among their own kind in simple comfort."
+  },
+  {
+    "name": "Half-Elf",
+    "description": "Half-elves have no lands of their own, though they are welcome in human cities and elven forests."
+  },
+  {
+    "name": "Half-Orc",
+    "description": "Half-orcs are often feared and mistrusted in civilized lands, but their strength and endurance makes them valuable allies."
+  },
+  {
+    "name": "Halfling",
+    "description": "Halflings are clever, capable, and resourceful survivors. They are notoriously curious and show a daring that many larger people can't match."
+  }
+]
