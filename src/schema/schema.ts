@@ -54,6 +54,7 @@ export const CharacterSchemaV1 = z.object({
   race: RaceNameSchema.optional(),
   class: ClassNameSchema.optional(),
   alignment: AlignmentCodeSchema.optional(),
+  feats: z.array(z.string()).optional().default([]),
   skillRanks: SkillRanksSchema.optional().default({}),
   saveBonuses: SaveBonusesSchema.optional().default({}),
   combatStats: CombatStatsSchema.optional().default({}),

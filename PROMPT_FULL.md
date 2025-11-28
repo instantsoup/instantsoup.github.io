@@ -199,24 +199,28 @@ All game data (alignments, races, saves, skills, etc.) follows a consistent patt
 ### Examples
 
 **Alignments:**
+
 - **Data**: `alignments.json` contains all 9 alignments with code, label, description
 - **Type**: `alignment.ts` defines `AlignmentSchema` and exports validated `alignments` array
 - **Helper**: `alignments.ts` exports `ALIGNMENT_CODES` for schema use
 - **Schema**: `CharacterSchemaV1` uses `z.enum(ALIGNMENT_CODES)` instead of hardcoded values
 
 **Races:**
+
 - **Data**: `races.json` contains 7 core races with name and description
 - **Type**: `race.ts` defines `RaceSchema` for validation
 - **Helper**: `races.ts` exports `RACE_NAMES` for schema use
 - **Schema**: `CharacterSchemaV1` uses `z.enum(RACE_NAMES)` for race validation
 
 **Classes:**
+
 - **Data**: `classes.json` contains 11 core classes with name and description
 - **Type**: `class.ts` defines `ClassSchema` for validation
 - **Helper**: `classes.ts` exports `CLASS_NAMES` for schema use
 - **Schema**: `CharacterSchemaV1` uses `z.enum(CLASS_NAMES)` for class validation
 
 **Saves:**
+
 - **Data**: `saves.json` contains 3 saves with name, ability, and description
 - **Type**: `save.ts` defines `SaveSchema` for validation
 - **Helper**: `saves.ts` exports validated saves data
