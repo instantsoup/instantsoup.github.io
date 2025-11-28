@@ -67,14 +67,18 @@ export function FeatsPanel({ selectedFeats, onAddFeat, onRemoveFeat, onBlur }: F
                         <button
                           type="button"
                           className={`feat-result__button ${isSelected ? 'feat-result__button--selected' : ''}`}
-                          onClick={() => (isSelected ? handleRemoveFeat(feat.name) : handleAddFeat(feat.name))}
+                          onClick={() =>
+                            isSelected ? handleRemoveFeat(feat.name) : handleAddFeat(feat.name)
+                          }
                           disabled={isSelected}
                         >
                           {isSelected ? '✓ Added' : '+ Add'}
                         </button>
                       </div>
                       {feat.prerequisites && (
-                        <div className="feat-result__prereq">Prerequisites: {feat.prerequisites}</div>
+                        <div className="feat-result__prereq">
+                          Prerequisites: {feat.prerequisites}
+                        </div>
                       )}
                       <div className="feat-result__description">{feat.description}</div>
                       <div className="feat-result__source">
@@ -103,7 +107,9 @@ export function FeatsPanel({ selectedFeats, onAddFeat, onRemoveFeat, onBlur }: F
                 <li key={featName} className="feat-selected">
                   <div className="feat-selected__content">
                     <span className="feat-selected__name">{featName}</span>
-                    {feat?.description && <span className="feat-selected__description">{feat.description}</span>}
+                    {feat?.description && (
+                      <span className="feat-selected__description">{feat.description}</span>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -121,7 +127,9 @@ export function FeatsPanel({ selectedFeats, onAddFeat, onRemoveFeat, onBlur }: F
       )}
 
       {selectedFeats.length === 0 && !searchTerm.trim() && (
-        <div className="feats-empty">No feats selected. Use the search above to find and add feats.</div>
+        <div className="feats-empty">
+          No feats selected. Use the search above to find and add feats.
+        </div>
       )}
     </div>
   );

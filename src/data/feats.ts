@@ -2,7 +2,7 @@
 import { type Feat } from '../types/feat';
 import rawFeats from './feats.json' assert { type: 'json' };
 
-// Parse and validate feats data (validation done at build time)
+// Export all feats (exact duplicates removed from JSON file)
 export const feats: Feat[] = rawFeats as Feat[];
 
 // Extract valid feat names for quick lookup

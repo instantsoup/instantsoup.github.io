@@ -86,7 +86,12 @@ export function App() {
           onBlur={persistLocal}
         />
 
-        <FeatsPanel selectedFeats={feats} onAddFeat={addFeat} onRemoveFeat={removeFeat} onBlur={persistLocal} />
+        <FeatsPanel
+          selectedFeats={feats}
+          onAddFeat={addFeat}
+          onRemoveFeat={removeFeat}
+          onBlur={persistLocal}
+        />
 
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
 
