@@ -196,20 +196,6 @@
     "description": "Additional wild shape options"
   },
   {
-    "name": "Exalted Wild Shape",
-    "source": {
-      "abbr": "BoED",
-      "page": 42
-    },
-    "types": [
-      "Wild",
-      "Exalted"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Wild shape class ability, wild shaping class level 8th",
-    "description": "Additional wild shape options"
-  },
-  {
     "name": "Favored of the Companions",
     "source": {
       "abbr": "BoED",
@@ -3877,20 +3863,6 @@
     "description": "You can use your normal wild shape ability to take the form of a magical beast"
   },
   {
-    "name": "Magical Beast Wild Shape",
-    "source": {
-      "abbr": "CDiv",
-      "page": 90
-    },
-    "types": [
-      "Wild",
-      "Epic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Wis 25, Knowledge (nature) 27 ranks, wild shape 6/day",
-    "description": "You can use your normal wild shape ability to take the form of a magical beast"
-  },
-  {
     "name": "Negative Energy Burst",
     "source": {
       "abbr": "CDiv",
@@ -3899,20 +3871,6 @@
     "types": [
       "Epic",
       "Divine"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Cha 25, ability to rebuke or command undead, able to cast inflict critical wounds, any evil alignment",
-    "description": "Use one rebuke or command undead attempt to unleash a wave of negative energy in a 60-footburst"
-  },
-  {
-    "name": "Negative Energy Burst",
-    "source": {
-      "abbr": "CDiv",
-      "page": 90
-    },
-    "types": [
-      "Divine",
-      "Epic"
     ],
     "bonusFeat": false,
     "prerequisites": "Cha 25, ability to rebuke or command undead, able to cast inflict critical wounds, any evil alignment",
@@ -3959,20 +3917,6 @@
     "description": "You may command up to ten times your level in HD of undead"
   },
   {
-    "name": "Undead Mastery",
-    "source": {
-      "abbr": "CDiv",
-      "page": 90
-    },
-    "types": [
-      "Divine",
-      "Epic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Cha 21, ability to rebuke or command undead",
-    "description": "You may command up to ten times your level in HD of undead"
-  },
-  {
     "name": "Unholy Strike",
     "source": {
       "abbr": "CDiv",
@@ -3994,20 +3938,6 @@
     "types": [
       "Epic",
       "Divine"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Cha 25, Undead Mastery, ability to rebuke or command undead",
-    "description": "You can use a rebuke or command undead attempt to animate corpses within range of your rebuke or command attempt"
-  },
-  {
-    "name": "Zone of Animation",
-    "source": {
-      "abbr": "CDiv",
-      "page": 90
-    },
-    "types": [
-      "Divine",
-      "Epic"
     ],
     "bonusFeat": false,
     "prerequisites": "Cha 25, Undead Mastery, ability to rebuke or command undead",
@@ -6224,398 +6154,6 @@
     "bonusFeat": false,
     "prerequisites": "none",
     "description": "Manifest powers that affect targets in coexistent planes and extradimensional spaces"
-  },
-  {
-    "name": "Dromite Ray",
-    "source": {
-      "abbr": "CPsi",
-      "page": 49
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Dromite",
-    "description": "Use energy ray psi-like ability 2 more times/day"
-  },
-  {
-    "name": "Dromite Barrier",
-    "source": {
-      "abbr": "CPsi",
-      "page": 49
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Dromite, Dromite Ray, 3 HD",
-    "description": "Use energy ray psi-like ability to create an energy wall"
-  },
-  {
-    "name": "Duergar Expansion",
-    "source": {
-      "abbr": "CPsi",
-      "page": 49
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Duergar, expansion",
-    "description": "Use expansion 3 + Cha mod times/day"
-  },
-  {
-    "name": "Duergar Invisibility",
-    "source": {
-      "abbr": "CPsi",
-      "page": 49
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Duergar, invisibility",
-    "description": "Use invisibility more times/day"
-  },
-  {
-    "name": "Elan Repletion, Enhanced",
-    "source": {
-      "abbr": "CPsi",
-      "page": 52
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Elan",
-    "description": "Do not require food or water"
-  },
-  {
-    "name": "Elan Resilience, Enhanced",
-    "source": {
-      "abbr": "CPsi",
-      "page": 52
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Elan",
-    "description": "Can reduce damage taken by 4 points/1 power point"
-  },
-  {
-    "name": "Elan Resistance, Enhanced",
-    "source": {
-      "abbr": "CPsi",
-      "page": 52
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Elan",
-    "description": "Spend 1 point for +6 bonus on saves for 1 round"
-  },
-  {
-    "name": "Elan Retainment",
-    "source": {
-      "abbr": "CPsi",
-      "page": 52
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Elan, 3 HD",
-    "description": "1/day spend 3 points to maintain psionic focus"
-  },
-  {
-    "name": "Githyanki Charm",
-    "source": {
-      "abbr": "CPsi",
-      "page": 54
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githyanki, psionic daze",
-    "description": "Able to use psionic charm instead of psionic daze"
-  },
-  {
-    "name": "Githyanki Control",
-    "source": {
-      "abbr": "CPsi",
-      "page": 54
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githyanki, far hand",
-    "description": "Able to use control object instead of far hand"
-  },
-  {
-    "name": "Githyanki Dismissal",
-    "source": {
-      "abbr": "CPsi",
-      "page": 54
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githyanki, dimension door",
-    "description": "Able to use psionic dismissal instead of dimension door"
-  },
-  {
-    "name": "Githyanki Ectoform",
-    "source": {
-      "abbr": "CPsi",
-      "page": 54
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githyanki, concealing arnorpha",
-    "description": "Able to use ectoplasmic form instead of concealing arnorpha"
-  },
-  {
-    "name": "Githzerai Burst",
-    "source": {
-      "abbr": "CPsi",
-      "page": 54
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githzerai, cat fall",
-    "description": "Able to use burst instead of cat fall"
-  },
-  {
-    "name": "Githzerai Feedback",
-    "source": {
-      "abbr": "CPsi",
-      "page": 54
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githzerai, inertial armor",
-    "description": "Able to use biofeedback instead of inertial armor"
-  },
-  {
-    "name": "Githzerai Knock",
-    "source": {
-      "abbr": "CPsi",
-      "page": 54
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githzerai, concussion blast",
-    "description": "Able to use psionic knock instead of concussion blast"
-  },
-  {
-    "name": "Githzerai Link",
-    "source": {
-      "abbr": "CPsi",
-      "page": 55
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Githzerai, psionic daze",
-    "description": "Able to use mindlink instead of psionic daze"
-  },
-  {
-    "name": "Half-Giant Stomp",
-    "source": {
-      "abbr": "CPsi",
-      "page": 55
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Half-giant, stomp",
-    "description": "Use stomp three times/day"
-  },
-  {
-    "name": "Half-Giant Thunderer",
-    "source": {
-      "abbr": "CPsi",
-      "page": 55
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Half-giant, stomp",
-    "description": "Stomp psi-like ability is doubly effective"
-  },
-  {
-    "name": "Maenad Fury",
-    "source": {
-      "abbr": "CPsi",
-      "page": 55
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Maenad",
-    "description": "Use outburst 1/2 HD times/day"
-  },
-  {
-    "name": "Maenad Scream",
-    "source": {
-      "abbr": "CPsi",
-      "page": 55
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Maenad",
-    "description": "Use energy ray (sonic) 3 + Cha mod times/day"
-  },
-  {
-    "name": "Maenad Scream, Deafening",
-    "source": {
-      "abbr": "CPsi",
-      "page": 55
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Maenad",
-    "description": "Your energy ray (sonic) deals +1 per damage die and deafens targets"
-  },
-  {
-    "name": "Synad Multitask, Enhanced",
-    "source": {
-      "abbr": "CPsi",
-      "page": 58
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Synad",
-    "description": "Use multitask racial trait 2/day"
-  },
-  {
-    "name": "Thri-Kreen Carapace",
-    "source": {
-      "abbr": "CPsi",
-      "page": 58
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Thri-Kreen",
-    "description": "Add +1 to natural armor bonus"
-  },
-  {
-    "name": "Thri-Kreen Claw",
-    "source": {
-      "abbr": "CPsi",
-      "page": 58
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Thri-Kreen, metaphysical claw",
-    "description": "Use metaphysical claw 3 times/day"
-  },
-  {
-    "name": "Thri-Kreen Displacement",
-    "source": {
-      "abbr": "CPsi",
-      "page": 58
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Thri-Kreen, psionic displacement",
-    "description": "Use psionic displacement 3 times/day"
-  },
-  {
-    "name": "Thri-Kreen Poison",
-    "source": {
-      "abbr": "CPsi",
-      "page": 58
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Thri-Kreen, poison",
-    "description": "Use poison 3 times/day"
-  },
-  {
-    "name": "Xeph Burst, Extra",
-    "source": {
-      "abbr": "CPsi",
-      "page": 59
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Xeph",
-    "description": "Use burst 3 times/day"
-  },
-  {
-    "name": "Xeph Celerity",
-    "source": {
-      "abbr": "CPsi",
-      "page": 59
-    },
-    "types": [
-      "Racial",
-      "Psionic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Xeph",
-    "description": "Use burst to gain an extra attack"
   },
   {
     "name": "Ascetic Stalker",
@@ -10337,20 +9875,6 @@
     "description": "Spend turn/rebuke attempt to create cone of sacred fire"
   },
   {
-    "name": "Dragonfire Channeling",
-    "source": {
-      "abbr": "DrM",
-      "page": 17
-    },
-    "types": [
-      "Draconic",
-      "Divine"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Cha 11, dragonblood subtype, ability to turn/rebuke undead or elementals",
-    "description": "Spend turn/rebuke attempt to create cone of sacred fire"
-  },
-  {
     "name": "Draconic Heritage",
     "source": {
       "abbr": "DrM",
@@ -10557,19 +10081,6 @@
     "bonusFeat": false,
     "prerequisites": "Str 13, Cha 11, dragonblood subtype, Power Attack",
     "description": "Deal extra damage from Power Attack as fire damage"
-  },
-  {
-    "name": "Dragonfire Channeling",
-    "source": {
-      "abbr": "DrM",
-      "page": 17
-    },
-    "types": [
-      "Draconic"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Cha 11, dragonblood subtype, ability to turn/rebuke undead or elementals",
-    "description": "Spend turn/rebuke attempt to create cone of sacred fire"
   },
   {
     "name": "Dragonfire Inspiration",
@@ -12516,19 +12027,6 @@
     "description": "Use Dark Speech to inspire dread, aid in creating items, damage objects, or command swarms"
   },
   {
-    "name": "Evil Brand",
-    "source": {
-      "abbr": "FC1",
-      "page": 85
-    },
-    "types": [
-      "Vile"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "none",
-    "description": "Gain +2 bonus on Diplomacy and Intimidate checks made against evil creatures"
-  },
-  {
     "name": "Blood War Conscript",
     "source": {
       "abbr": "FC1",
@@ -13918,19 +13416,6 @@
     "bonusFeat": false,
     "prerequisites": "Con 13, moderate corruption",
     "description": "Gain bonus hit points and a tainted smite attack while in a tainted fury"
-  },
-  {
-    "name": "Willing Deformity",
-    "source": {
-      "abbr": "HoH",
-      "page": 125
-    },
-    "types": [
-      "Vile"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Evil alignment",
-    "description": "+3 bonus on Intimidate checks"
   },
   {
     "name": "Deformity (Skin)",
@@ -16352,48 +15837,6 @@
     "bonusFeat": false,
     "prerequisites": "Int 3, undead type",
     "description": "Use Wisdom instead of Constitution to shape soulmelds"
-  },
-  {
-    "name": "Azure Talent",
-    "source": {
-      "abbr": "MoI",
-      "page": 34
-    },
-    "types": [
-      "Psionic",
-      "Incarnum"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Con 13, a power point reserve",
-    "description": "Gain 2 bonus power points per point of invested essentia"
-  },
-  {
-    "name": "Midnight Augmentation",
-    "source": {
-      "abbr": "MoI",
-      "page": 38
-    },
-    "types": [
-      "Psionic",
-      "Incarnum"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Con 13, ability to manifest 2nd-level psionic powers",
-    "description": "Use invested essentia to augment a psionic power"
-  },
-  {
-    "name": "Psycarnum Blade",
-    "source": {
-      "abbr": "MoI",
-      "page": 40
-    },
-    "types": [
-      "Psionic",
-      "Incarnum"
-    ],
-    "bonusFeat": false,
-    "prerequisites": "Con 13, ability to form a mind blade",
-    "description": "Add +1d6 per point of invested essentia to mind blade attack"
   },
   {
     "name": "Psycarnum Crystal",
