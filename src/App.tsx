@@ -1,5 +1,6 @@
 import { AbilityGrid } from './components/AbilityGrid';
 import { AlignmentSelector } from './components/AlignmentSelector';
+import { ClassSelector } from './components/ClassSelector';
 import { CombatStatsPanel } from './components/CombatStats';
 import { DropZone } from './components/DropZone';
 import { ImportExportBar } from './components/ImportExportBar';
@@ -17,6 +18,8 @@ export function App() {
     mods,
     race,
     setRace,
+    className,
+    setClassName,
     alignment,
     setAlignment,
     skillRanks,
@@ -70,6 +73,8 @@ export function App() {
         </label>
 
         <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
+
+        <ClassSelector className={className} setClassName={setClassName} onBlur={persistLocal} />
 
         <AlignmentSelector
           alignment={alignment}

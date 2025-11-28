@@ -7,6 +7,7 @@ import {
   type AlignmentCode,
   CharacterSchemaV1,
   type CharacterV1,
+  type ClassName,
   type CombatStats,
   migrateToLatest,
   type RaceName,
@@ -20,6 +21,7 @@ export function useCharacter() {
   const [name, setName] = useState<string>(initial.name);
   const [scores, setScores] = useState<Scores>(initial.scores);
   const [race, setRace] = useState<RaceName | undefined>(initial.race);
+  const [className, setClassName] = useState<ClassName | undefined>(initial.class);
   const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
@@ -33,6 +35,7 @@ export function useCharacter() {
     name,
     scores,
     race,
+    class: className,
     alignment,
     skillRanks,
     saveBonuses,
@@ -75,6 +78,7 @@ export function useCharacter() {
       setName(migrated.name);
       setScores(migrated.scores);
       setRace(migrated.race);
+      setClassName(migrated.class);
       setAlignment(migrated.alignment);
       setSkillRanks(migrated.skillRanks ?? {});
       setSaveBonuses(migrated.saveBonuses ?? {});
@@ -105,6 +109,7 @@ export function useCharacter() {
     setName('');
     setScores(emptyScores);
     setRace(undefined);
+    setClassName(undefined);
     setAlignment(undefined);
     setSkillRanks({});
     setSaveBonuses({});
@@ -133,6 +138,8 @@ export function useCharacter() {
     mods,
     race,
     setRace,
+    className,
+    setClassName,
     alignment,
     setAlignment,
     skillRanks,
