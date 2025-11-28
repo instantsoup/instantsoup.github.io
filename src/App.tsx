@@ -3,6 +3,7 @@ import { AlignmentSelector } from './components/AlignmentSelector';
 import { DropZone } from './components/DropZone';
 import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
+import { RaceSelector } from './components/RaceSelector';
 import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { useCharacter } from './hooks/useCharacter';
@@ -13,6 +14,8 @@ export function App() {
     setName,
     scores,
     mods,
+    race,
+    setRace,
     alignment,
     setAlignment,
     skillRanks,
@@ -62,6 +65,8 @@ export function App() {
             placeholder="Mialee"
           />
         </label>
+
+        <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
 
         <AlignmentSelector
           alignment={alignment}

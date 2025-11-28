@@ -8,6 +8,7 @@ import {
   CharacterSchemaV1,
   type CharacterV1,
   migrateToLatest,
+  type RaceName,
   VERSION,
 } from '../schema/schema';
 import { clearLocal, loadLocal, saveLocal } from '../store/local';
@@ -17,6 +18,7 @@ export function useCharacter() {
   const initial = loadLocal();
   const [name, setName] = useState<string>(initial.name);
   const [scores, setScores] = useState<Scores>(initial.scores);
+  const [race, setRace] = useState<RaceName | undefined>(initial.race);
   const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
@@ -28,6 +30,7 @@ export function useCharacter() {
     version: VERSION,
     name,
     scores,
+    race,
     alignment,
     skillRanks,
     saveBonuses,
@@ -68,6 +71,7 @@ export function useCharacter() {
       const migrated = migrateToLatest(json);
       setName(migrated.name);
       setScores(migrated.scores);
+      setRace(migrated.race);
       setAlignment(migrated.alignment);
       setSkillRanks(migrated.skillRanks ?? {});
       setSaveBonuses(migrated.saveBonuses ?? {});
@@ -96,6 +100,7 @@ export function useCharacter() {
     if (!window.confirm('Clear this character and local saved copy?')) return;
     setName('');
     setScores(emptyScores);
+    setRace(undefined);
     setAlignment(undefined);
     setSkillRanks({});
     setSaveBonuses({});
@@ -117,6 +122,8 @@ export function useCharacter() {
     scores,
     setScores,
     mods,
+    race,
+    setRace,
     alignment,
     setAlignment,
     skillRanks,

@@ -1,6 +1,7 @@
 import './styles/index.css';
 import './styles/utilities.css';
 import './styles/skills.css';
+import './styles/race.css';
 import './styles/alignment.css';
 import './styles/saves.css';
 
