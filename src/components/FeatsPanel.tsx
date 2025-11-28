@@ -58,10 +58,10 @@ export function FeatsPanel({ selectedFeats, onAddFeat, onRemoveFeat, onBlur }: F
                 Showing {filteredFeats.length} result{filteredFeats.length !== 1 ? 's' : ''}
               </div>
               <ul className="feats-results__list">
-                {filteredFeats.map((feat) => {
+                {filteredFeats.map((feat, idx) => {
                   const isSelected = selectedFeats.includes(feat.name);
                   return (
-                    <li key={feat.name} className="feat-result">
+                    <li key={`${feat.name}-${feat.source.abbr}-${feat.source.page}-${idx}`} className="feat-result">
                       <div className="feat-result__header">
                         <span className="feat-result__name">{feat.name}</span>
                         <button
