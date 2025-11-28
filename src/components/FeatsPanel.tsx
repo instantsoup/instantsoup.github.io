@@ -15,6 +15,7 @@ export function FeatsPanel({ selectedFeats, onAddFeat, onRemoveFeat, onBlur }: F
   const filteredFeats = searchTerm.trim()
     ? feats
         .filter((feat) => feat.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        .sort((a, b) => a.name.localeCompare(b.name))
         .slice(0, 20) // Show max 20 results
     : [];
 
@@ -61,7 +62,10 @@ export function FeatsPanel({ selectedFeats, onAddFeat, onRemoveFeat, onBlur }: F
                 {filteredFeats.map((feat, idx) => {
                   const isSelected = selectedFeats.includes(feat.name);
                   return (
-                    <li key={`${feat.name}-${feat.source.abbr}-${feat.source.page}-${idx}`} className="feat-result">
+                    <li
+                      key={`${feat.name}-${feat.source.abbr}-${feat.source.page}-${idx}`}
+                      className="feat-result"
+                    >
                       <div className="feat-result__header">
                         <span className="feat-result__name">{feat.name}</span>
                         <button
