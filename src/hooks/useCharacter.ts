@@ -23,6 +23,7 @@ export function useCharacter() {
   const [race, setRace] = useState<RaceName | undefined>(initial.race);
   const [className, setClassName] = useState<ClassName | undefined>(initial.class);
   const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
+  const [feats, setFeats] = useState<string[]>(initial.feats ?? []);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
   const [combatStats, setCombatStats] = useState<CombatStats>(initial.combatStats ?? {});
@@ -37,6 +38,7 @@ export function useCharacter() {
     race,
     class: className,
     alignment,
+    feats,
     skillRanks,
     saveBonuses,
     combatStats,
@@ -80,6 +82,7 @@ export function useCharacter() {
       setRace(migrated.race);
       setClassName(migrated.class);
       setAlignment(migrated.alignment);
+      setFeats(migrated.feats ?? []);
       setSkillRanks(migrated.skillRanks ?? {});
       setSaveBonuses(migrated.saveBonuses ?? {});
       setCombatStats(migrated.combatStats ?? {});
@@ -111,6 +114,7 @@ export function useCharacter() {
     setRace(undefined);
     setClassName(undefined);
     setAlignment(undefined);
+    setFeats([]);
     setSkillRanks({});
     setSaveBonuses({});
     setCombatStats({});
@@ -130,6 +134,16 @@ export function useCharacter() {
     setCombatStats((prev) => ({ ...prev, [field]: value }));
   };
 
+  const addFeat = (featName: string) => {
+    if (!feats.includes(featName)) {
+      setFeats((prev) => [...prev, featName]);
+    }
+  };
+
+  const removeFeat = (featName: string) => {
+    setFeats((prev) => prev.filter((name) => name !== featName));
+  };
+
   return {
     name,
     setName,
@@ -142,6 +156,9 @@ export function useCharacter() {
     setClassName,
     alignment,
     setAlignment,
+    feats,
+    addFeat,
+    removeFeat,
     skillRanks,
     setSkillRank,
     saveBonuses,

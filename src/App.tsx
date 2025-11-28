@@ -3,6 +3,7 @@ import { AlignmentSelector } from './components/AlignmentSelector';
 import { ClassSelector } from './components/ClassSelector';
 import { CombatStatsPanel } from './components/CombatStats';
 import { DropZone } from './components/DropZone';
+import { FeatsPanel } from './components/FeatsPanel';
 import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
 import { RaceSelector } from './components/RaceSelector';
@@ -22,6 +23,9 @@ export function App() {
     setClassName,
     alignment,
     setAlignment,
+    feats,
+    addFeat,
+    removeFeat,
     skillRanks,
     setSkillRank,
     saveBonuses,
@@ -81,6 +85,8 @@ export function App() {
           setAlignment={setAlignment}
           onBlur={persistLocal}
         />
+
+        <FeatsPanel selectedFeats={feats} onAddFeat={addFeat} onRemoveFeat={removeFeat} onBlur={persistLocal} />
 
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
 

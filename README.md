@@ -13,6 +13,7 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 - **Race Selector**: Choose from 7 core D&D 3.5e races (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
 - **Class Selector**: Choose from 11 core D&D 3.5e classes (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
 - **Alignment Selector**: Interactive 3x3 grid for all 9 D&D alignments
+- **Feats Panel**: Search and select from 1,879 D&D 3.5e feats with descriptions and prerequisites
 - **Saving Throws**: Fortitude, Reflex, and Will saves with base bonus tracking and automatic totals
 - **Combat Statistics**: HP tracking, Armor Class calculation (with armor/shield/misc bonuses), Spell Resistance, Initiative, and Base Attack Bonus
 - **Skills Panel**: All 43 D&D 3.5e skills with rank tracking and total calculation
@@ -191,6 +192,7 @@ All game data (alignments, races, saves, skills, etc.) follows a consistent patt
 4. **Schema Integration** - Character schema derives from data layer
 
 Examples:
+
 - Alignments are defined in `alignments.json`, validated with `AlignmentSchema`, and the character schema uses derived codes via `z.enum(ALIGNMENT_CODES)`.
 - Races are defined in `races.json`, validated with `RaceSchema`, and exported as `RACE_NAMES` for schema validation.
 - Classes are defined in `classes.json`, validated with `ClassSchema`, and exported as `CLASS_NAMES` for schema validation.
