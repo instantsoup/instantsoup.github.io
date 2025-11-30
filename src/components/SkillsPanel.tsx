@@ -17,7 +17,7 @@ export function SkillsPanel({ mods, skillRanks, setSkillRank, onBlur }: SkillsPa
 
   return (
     <div className="skills-panel">
-      <h2 className="skills-panel__title">Skills</h2>
+      <h2 className="panel-title">Skills</h2>
       <div className="skills-table">
         <div className="skills-table__header">
           <div className="skills-table__cell skills-table__cell--skill">Skill</div>

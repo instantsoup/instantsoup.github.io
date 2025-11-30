@@ -17,7 +17,7 @@ export function SavesPanel({ mods, saveBonuses, setSaveBonus, onBlur }: SavesPan
 
   return (
     <div className="saves-panel">
-      <h2 className="saves-panel__title">Saving Throws</h2>
+      <h2 className="panel-title">Saving Throws</h2>
       <div className="saves-grid">
         {saves.map((save) => {
           const bonus = saveBonuses[save.name] || 0;

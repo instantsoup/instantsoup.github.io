@@ -38,8 +38,8 @@ export function CombatStatsPanel({
   const totalInitiative = mods.dex + (combatStats.initiativeBonus ?? 0);
 
   return (
-    <section className="combat-stats mb-12">
-      <h2 className="combat-stats__title mb-8">Combat Statistics</h2>
+    <section className="combat-stats">
+      <h2 className="panel-title">Combat Statistics</h2>
 
       <div className="combat-stats__grid">
         {/* Hit Points */}

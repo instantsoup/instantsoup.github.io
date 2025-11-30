@@ -33,7 +33,7 @@ export function FeatsPanel({ selectedFeats, onAddFeat, onRemoveFeat, onBlur }: F
 
   return (
     <div className="feats-panel">
-      <h3 className="feats-panel__title">Feats</h3>
+      <h3 className="panel-title">Feats</h3>
 
       {/* Search input */}
       <div className="feats-search">

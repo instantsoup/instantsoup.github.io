@@ -14,19 +14,19 @@ export function AlignmentSelector({ alignment, setAlignment, onBlur }: Alignment
   };
 
   return (
-    <div className="alignment-selector">
-      <h3 className="alignment-selector__title">Alignment</h3>
-      <div className="alignment-grid">
+    <div className="selector">
+      <h3 className="panel-title">Alignment</h3>
+      <div className="selector-grid--3col">
         {alignments.map(({ code, label, description }) => (
           <button
             key={code}
             type="button"
-            className={`alignment-button ${alignment === code ? 'alignment-button--selected' : ''}`}
+            className={`selector-button selector-button--stacked ${alignment === code ? 'selector-button--selected' : ''}`}
             onClick={() => handleSelect(code as AlignmentCode)}
             title={description || label}
           >
-            <span className="alignment-button__code">{code}</span>
-            <span className="alignment-button__label">{label}</span>
+            <span className="selector-button__code">{code}</span>
+            <span className="selector-button__sublabel">{label}</span>
           </button>
         ))}
       </div>

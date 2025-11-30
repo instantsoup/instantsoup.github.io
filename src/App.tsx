@@ -65,6 +65,7 @@ export function App() {
 
         <DropZone onFile={importFromFile} />
 
+        {/* Character Identity - metadata set at level 1 */}
         <label className="field mb-12">
           <span className="field__label mb-4">Name</span>
           <input
@@ -78,13 +79,14 @@ export function App() {
 
         <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
 
-        <ClassSelector className={className} setClassName={setClassName} onBlur={persistLocal} />
-
         <AlignmentSelector
           alignment={alignment}
           setAlignment={setAlignment}
           onBlur={persistLocal}
         />
+
+        {/* Level-dependent character building */}
+        <ClassSelector className={className} setClassName={setClassName} onBlur={persistLocal} />
 
         <FeatsPanel
           selectedFeats={feats}
@@ -93,6 +95,7 @@ export function App() {
           onBlur={persistLocal}
         />
 
+        {/* Core statistics */}
         <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
 
         <CombatStatsPanel

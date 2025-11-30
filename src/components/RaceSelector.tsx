@@ -14,18 +14,18 @@ export function RaceSelector({ race, setRace, onBlur }: RaceSelectorProps) {
   };
 
   return (
-    <div className="race-selector">
-      <h3 className="race-selector__title">Race</h3>
-      <div className="race-grid">
+    <div className="selector">
+      <h3 className="panel-title">Race</h3>
+      <div className="selector-grid">
         {races.map(({ name, description }) => (
           <button
             key={name}
             type="button"
-            className={`race-button ${race === name ? 'race-button--selected' : ''}`}
+            className={`selector-button ${race === name ? 'selector-button--selected' : ''}`}
             onClick={() => handleSelect(name as RaceName)}
             title={description || name}
           >
-            <span className="race-button__label">{name}</span>
+            <span className="selector-button__label">{name}</span>
           </button>
         ))}
       </div>

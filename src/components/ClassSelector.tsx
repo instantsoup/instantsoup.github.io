@@ -14,18 +14,18 @@ export function ClassSelector({ className, setClassName, onBlur }: ClassSelector
   };
 
   return (
-    <div className="class-selector">
-      <h3 className="class-selector__title">Class</h3>
-      <div className="class-grid">
+    <div className="selector">
+      <h3 className="panel-title">Class</h3>
+      <div className="selector-grid">
         {classes.map(({ name, description }) => (
           <button
             key={name}
             type="button"
-            className={`class-button ${className === name ? 'class-button--selected' : ''}`}
+            className={`selector-button ${className === name ? 'selector-button--selected' : ''}`}
             onClick={() => handleSelect(name as ClassName)}
             title={description || name}
           >
-            <span className="class-button__label">{name}</span>
+            <span className="selector-button__label">{name}</span>
           </button>
         ))}
       </div>

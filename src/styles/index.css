@@ -1,4 +1,18 @@
 /* ================================
+   Component Imports (must be first)
+=================================== */
+
+@import './utilities.css';
+@import './selectors.css';
+@import './alignment.css';
+@import './race.css';
+@import './class.css';
+@import './feats.css';
+@import './saves.css';
+@import './combat-stats.css';
+@import './skills.css';
+
+/* ================================
    Variables & Base
 =================================== */
 
@@ -212,4 +226,15 @@ body {
 }
 .dice__result {
   font-size: 14px;
+}
+
+/* ================================
+   Shared Panel Title
+=================================== */
+
+.panel-title {
+  margin: 0 0 var(--space-3);
+  font-size: 20px;
+  font-weight: 600;
+  color: #0f172a;
 }
