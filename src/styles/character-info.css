@@ -1,0 +1,70 @@
+/* ================================
+   Character Info Panel (Accordion)
+=================================== */
+
+.character-info-panel {
+  margin-top: var(--space-6);
+  border: 2px solid var(--clr-border-strong);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.character-info-panel__header {
+  width: 100%;
+  display: block;
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  border: 0;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 18px;
+  background: #f8fafc;
+  color: #0f172a;
+  transition: background 0.2s;
+}
+
+.character-info-panel__header:hover {
+  background: #f1f5f9;
+}
+
+.character-info-panel__header--open {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-bottom: 2px solid var(--clr-border-strong);
+}
+
+.character-info-panel__content {
+  padding: var(--space-4);
+  background: #ffffff;
+}
+
+/* ================================
+   Name Input (styled like selectors)
+=================================== */
+
+.selector-input {
+  width: 100%;
+  max-width: 500px;
+  padding: var(--space-3) var(--space-4);
+  border: 2px solid var(--clr-border);
+  border-radius: 8px;
+  background: #ffffff;
+  font: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  transition:
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.selector-input:focus {
+  outline: none;
+  border-color: var(--clr-primary-border);
+  background: var(--clr-primary-bg);
+  box-shadow: 0 0 0 2px var(--clr-primary-bg);
+}
+
+.selector-input::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}

@@ -3,7 +3,9 @@
 =================================== */
 
 @import './utilities.css';
+@import './utilities-panel.css';
 @import './selectors.css';
+@import './character-info.css';
 @import './alignment.css';
 @import './race.css';
 @import './class.css';

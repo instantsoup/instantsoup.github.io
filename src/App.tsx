@@ -1,12 +1,10 @@
 import { AbilityGrid } from './components/AbilityGrid';
-import { AlignmentSelector } from './components/AlignmentSelector';
+import { CharacterInfoPanel } from './components/CharacterInfoPanel';
 import { ClassSelector } from './components/ClassSelector';
 import { CombatStatsPanel } from './components/CombatStats';
 import { DropZone } from './components/DropZone';
 import { FeatsPanel } from './components/FeatsPanel';
-import { ImportExportBar } from './components/ImportExportBar';
 import { LeftSidebar } from './components/LeftSidebar';
-import { RaceSelector } from './components/RaceSelector';
 import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { useCharacter } from './hooks/useCharacter';
@@ -45,41 +43,30 @@ export function App() {
 
   return (
     <div className="app-grid">
-      <LeftSidebar />
+      <LeftSidebar
+        persistLocal={persistLocal}
+        exportJson={exportJson}
+        onPickFile={() => {
+          onPickFile?.();
+        }}
+        onFileChange={onFileChange}
+        fileInputRef={fileInputRef}
+        resetAll={resetAll}
+      />
 
       <main className="app-main">
         <header className="app-header">
-          <h1 className="app-title">D&D 3.5e Character</h1>
-
-          <ImportExportBar
-            persistLocal={persistLocal}
-            exportJson={exportJson}
-            onPickFile={() => {
-              onPickFile?.();
-            }}
-            onFileChange={onFileChange}
-            fileInputRef={fileInputRef}
-            resetAll={resetAll}
-          />
+          <h1 className="app-title">D&D 3.5e Character Builder</h1>
         </header>
 
         <DropZone onFile={importFromFile} />
 
         {/* Character Identity - metadata set at level 1 */}
-        <label className="field mb-12">
-          <span className="field__label mb-4">Name</span>
-          <input
-            className="input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            onBlur={persistLocal}
-            placeholder="Mialee"
-          />
-        </label>
-
-        <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
-
-        <AlignmentSelector
+        <CharacterInfoPanel
+          name={name}
+          setName={setName}
+          race={race}
+          setRace={setRace}
           alignment={alignment}
           setAlignment={setAlignment}
           onBlur={persistLocal}
