@@ -4,7 +4,6 @@ import { RollCharacterPanel } from './RollCharacterPanel';
 import { UtilitiesPanel } from './UtilitiesPanel';
 
 interface LeftSidebarProps {
-  persistLocal: () => void;
   exportJson: () => void;
   onPickFile: () => void;
   onFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -13,7 +12,6 @@ interface LeftSidebarProps {
 }
 
 export function LeftSidebar({
-  persistLocal,
   exportJson,
   onPickFile,
   onFileChange,
@@ -24,7 +22,6 @@ export function LeftSidebar({
     <aside className="sidebar">
       <PanelSection title="Utilities" defaultOpen={false}>
         <UtilitiesPanel
-          persistLocal={persistLocal}
           exportJson={exportJson}
           onPickFile={onPickFile}
           onFileChange={onFileChange}

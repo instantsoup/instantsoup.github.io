@@ -1,5 +1,4 @@
 interface UtilitiesPanelProps {
-  persistLocal: () => void;
   exportJson: () => void;
   onPickFile: () => void;
   onFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -8,7 +7,6 @@ interface UtilitiesPanelProps {
 }
 
 export function UtilitiesPanel({
-  persistLocal,
   exportJson,
   onPickFile,
   onFileChange,
@@ -17,10 +15,6 @@ export function UtilitiesPanel({
 }: UtilitiesPanelProps) {
   return (
     <div className="utilities-panel">
-      <button type="button" className="btn btn--primary" onClick={persistLocal}>
-        Save to Browser
-      </button>
-
       <button type="button" className="btn btn--primary" onClick={exportJson}>
         Export JSON
       </button>

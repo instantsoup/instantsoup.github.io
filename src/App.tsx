@@ -2,7 +2,6 @@ import { AbilityGrid } from './components/AbilityGrid';
 import { CharacterInfoPanel } from './components/CharacterInfoPanel';
 import { ClassSelector } from './components/ClassSelector';
 import { CombatStatsPanel } from './components/CombatStats';
-import { DropZone } from './components/DropZone';
 import { FeatsPanel } from './components/FeatsPanel';
 import { LeftSidebar } from './components/LeftSidebar';
 import { SavesPanel } from './components/SavesPanel';
@@ -33,7 +32,6 @@ export function App() {
     onNum,
     persistLocal,
     exportJson,
-    importFromFile,
     onPickFile,
     onFileChange,
     fileInputRef,
@@ -44,7 +42,6 @@ export function App() {
   return (
     <div className="app-grid">
       <LeftSidebar
-        persistLocal={persistLocal}
         exportJson={exportJson}
         onPickFile={() => {
           onPickFile?.();
@@ -58,8 +55,6 @@ export function App() {
         <header className="app-header">
           <h1 className="app-title">D&D 3.5e Character Builder</h1>
         </header>
-
-        <DropZone onFile={importFromFile} />
 
         {/* Character Identity - metadata set at level 1 */}
         <CharacterInfoPanel
