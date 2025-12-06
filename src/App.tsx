@@ -1,7 +1,6 @@
 import { AbilityGrid } from './components/AbilityGrid';
 import { CharacterInfoPanel } from './components/CharacterInfoPanel';
 import { CombatStatsPanel } from './components/CombatStats';
-import { FeatsPanel } from './components/FeatsPanel';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
 import { SavesPanel } from './components/SavesPanel';
@@ -20,11 +19,10 @@ export function App() {
     addLevel,
     removeLevel,
     updateLevelClass,
+    addFeatToLevel,
+    removeFeatFromLevel,
     alignment,
     setAlignment,
-    feats,
-    addFeat,
-    removeFeat,
     skillRanks,
     setSkillRank,
     saveBonuses,
@@ -75,13 +73,8 @@ export function App() {
           addLevel={addLevel}
           removeLevel={removeLevel}
           updateLevelClass={updateLevelClass}
-          onBlur={persistLocal}
-        />
-
-        <FeatsPanel
-          selectedFeats={feats}
-          onAddFeat={addFeat}
-          onRemoveFeat={removeFeat}
+          addFeatToLevel={addFeatToLevel}
+          removeFeatFromLevel={removeFeatFromLevel}
           onBlur={persistLocal}
         />
 
