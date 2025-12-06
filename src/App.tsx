@@ -84,6 +84,7 @@ export function App() {
         <CombatStatsPanel
           mods={mods}
           combatStats={combatStats}
+          levels={levels}
           updateCombatStat={updateCombatStat}
           onBlur={persistLocal}
         />
@@ -91,6 +92,7 @@ export function App() {
         <SavesPanel
           mods={mods}
           saveBonuses={saveBonuses}
+          levels={levels}
           setSaveBonus={setSaveBonus}
           onBlur={persistLocal}
         />

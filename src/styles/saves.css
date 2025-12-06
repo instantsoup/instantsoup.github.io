@@ -133,6 +133,36 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* Calculated Save Display */
+.save-item__calculated {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  background: #d1fae5;
+  border: 2px solid #059669;
+  border-radius: 8px;
+  min-width: 80px;
+  cursor: help;
+  flex: 1;
+}
+
+.save-item__calculated-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #065f46;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.save-item__calculated-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #047857;
+  font-variant-numeric: tabular-nums;
+}
+
 /* ================================
    Save Description
 =================================== */
