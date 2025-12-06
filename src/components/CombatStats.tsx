@@ -1,9 +1,12 @@
+import { calculateMaxHP, calculateTotalBAB } from '../lib/progressions';
 import type { CombatStats } from '../schema/schema';
 import type { Scores } from '../types';
+import type { Level } from '../types/level';
 
 interface CombatStatsProps {
   mods: Scores;
   combatStats: CombatStats;
+  levels: Level[];
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
   onBlur: () => void;
 }
@@ -11,6 +14,7 @@ interface CombatStatsProps {
 export function CombatStatsPanel({
   mods,
   combatStats,
+  levels,
   updateCombatStat,
   onBlur,
 }: CombatStatsProps) {
@@ -25,6 +29,14 @@ export function CombatStatsPanel({
       }
     }
   };
+
+  // Calculate max HP from class progressions
+  const maxHPCalculation = calculateMaxHP(levels, mods.con);
+  const calculatedMaxHP = maxHPCalculation.total;
+
+  // Calculate BAB from class progressions
+  const babCalculation = calculateTotalBAB(levels);
+  const calculatedBAB = babCalculation.total;
 
   // Calculate total AC: 10 + DEX mod + armor bonus + shield bonus + misc
   const totalAC =
@@ -70,6 +82,14 @@ export function CombatStatsPanel({
               />
             </div>
             <div className="combat-stat-card__sublabel">Current / Max</div>
+            {levels.length > 0 && (
+              <div
+                className="combat-stat-calculated"
+                title={maxHPCalculation.components.map((c) => `${c.label}: ${c.value}`).join('\n')}
+              >
+                Calculated Max: {calculatedMaxHP}
+              </div>
+            )}
           </div>
         </div>
 
@@ -164,14 +184,23 @@ export function CombatStatsPanel({
             <span className="combat-stat-card__label">Base Attack Bonus</span>
           </div>
           <div className="combat-stat-card__content">
-            <input
-              type="number"
-              className="combat-stat-input combat-stat-input--centered"
-              value={combatStats.baseAttackBonus ?? ''}
-              onChange={handleNumInput('baseAttackBonus')}
-              onBlur={onBlur}
-              placeholder="0"
-            />
+            {levels.length > 0 ? (
+              <div
+                className="combat-stat-display combat-stat-display--with-tooltip"
+                title={babCalculation.components.map((c) => `${c.label}: +${c.value}`).join('\n')}
+              >
+                +{calculatedBAB}
+              </div>
+            ) : (
+              <input
+                type="number"
+                className="combat-stat-input combat-stat-input--centered"
+                value={combatStats.baseAttackBonus ?? ''}
+                onChange={handleNumInput('baseAttackBonus')}
+                onBlur={onBlur}
+                placeholder="0"
+              />
+            )}
           </div>
         </div>
 

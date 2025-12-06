@@ -1,0 +1,90 @@
+[
+  {
+    "name": "Barbarian",
+    "hitDie": 12,
+    "babProgression": "high",
+    "fortitudeProgression": "good",
+    "reflexProgression": "poor",
+    "willProgression": "poor"
+  },
+  {
+    "name": "Bard",
+    "hitDie": 6,
+    "babProgression": "medium",
+    "fortitudeProgression": "poor",
+    "reflexProgression": "good",
+    "willProgression": "good"
+  },
+  {
+    "name": "Cleric",
+    "hitDie": 8,
+    "babProgression": "medium",
+    "fortitudeProgression": "good",
+    "reflexProgression": "poor",
+    "willProgression": "good"
+  },
+  {
+    "name": "Druid",
+    "hitDie": 8,
+    "babProgression": "medium",
+    "fortitudeProgression": "good",
+    "reflexProgression": "poor",
+    "willProgression": "good"
+  },
+  {
+    "name": "Fighter",
+    "hitDie": 10,
+    "babProgression": "high",
+    "fortitudeProgression": "good",
+    "reflexProgression": "poor",
+    "willProgression": "poor"
+  },
+  {
+    "name": "Monk",
+    "hitDie": 8,
+    "babProgression": "medium",
+    "fortitudeProgression": "good",
+    "reflexProgression": "good",
+    "willProgression": "good"
+  },
+  {
+    "name": "Paladin",
+    "hitDie": 10,
+    "babProgression": "high",
+    "fortitudeProgression": "good",
+    "reflexProgression": "poor",
+    "willProgression": "poor"
+  },
+  {
+    "name": "Ranger",
+    "hitDie": 8,
+    "babProgression": "high",
+    "fortitudeProgression": "good",
+    "reflexProgression": "good",
+    "willProgression": "poor"
+  },
+  {
+    "name": "Rogue",
+    "hitDie": 6,
+    "babProgression": "medium",
+    "fortitudeProgression": "poor",
+    "reflexProgression": "good",
+    "willProgression": "poor"
+  },
+  {
+    "name": "Sorcerer",
+    "hitDie": 4,
+    "babProgression": "low",
+    "fortitudeProgression": "poor",
+    "reflexProgression": "poor",
+    "willProgression": "good"
+  },
+  {
+    "name": "Wizard",
+    "hitDie": 4,
+    "babProgression": "low",
+    "fortitudeProgression": "poor",
+    "reflexProgression": "poor",
+    "willProgression": "good"
+  }
+]
