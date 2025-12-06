@@ -1,9 +1,9 @@
 import { AbilityGrid } from './components/AbilityGrid';
 import { CharacterInfoPanel } from './components/CharacterInfoPanel';
-import { ClassSelector } from './components/ClassSelector';
 import { CombatStatsPanel } from './components/CombatStats';
 import { FeatsPanel } from './components/FeatsPanel';
 import { LeftSidebar } from './components/LeftSidebar';
+import { LevelsPanel } from './components/LevelsPanel';
 import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { useCharacter } from './hooks/useCharacter';
@@ -16,8 +16,10 @@ export function App() {
     mods,
     race,
     setRace,
-    className,
-    setClassName,
+    levels,
+    addLevel,
+    removeLevel,
+    updateLevelClass,
     alignment,
     setAlignment,
     feats,
@@ -68,7 +70,13 @@ export function App() {
         />
 
         {/* Level-dependent character building */}
-        <ClassSelector className={className} setClassName={setClassName} onBlur={persistLocal} />
+        <LevelsPanel
+          levels={levels}
+          addLevel={addLevel}
+          removeLevel={removeLevel}
+          updateLevelClass={updateLevelClass}
+          onBlur={persistLocal}
+        />
 
         <FeatsPanel
           selectedFeats={feats}
