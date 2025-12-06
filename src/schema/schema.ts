@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { ALIGNMENT_CODES } from '../data/alignments';
 import { CLASS_NAMES } from '../data/classes';
 import { RACE_NAMES } from '../data/races';
+import { LevelsArraySchema } from '../types/level';
 
 export const VERSION = 1;
 
@@ -52,7 +53,8 @@ export const CharacterSchemaV1 = z.object({
   name: z.string().min(0),
   scores: ScoresSchema,
   race: RaceNameSchema.optional(),
-  class: ClassNameSchema.optional(),
+  class: ClassNameSchema.optional(), // Deprecated - use levels[0].class instead
+  levels: LevelsArraySchema.optional().default([]),
   alignment: AlignmentCodeSchema.optional(),
   feats: z.array(z.string()).optional().default([]),
   skillRanks: SkillRanksSchema.optional().default({}),

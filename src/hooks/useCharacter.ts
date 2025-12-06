@@ -15,6 +15,7 @@ import {
 } from '../schema/schema';
 import { clearLocal, loadLocal, saveLocal } from '../store/local';
 import { emptyScores, type Scores } from '../types';
+import type { Level } from '../types/level';
 
 export function useCharacter() {
   const initial = loadLocal();
@@ -22,6 +23,7 @@ export function useCharacter() {
   const [scores, setScores] = useState<Scores>(initial.scores);
   const [race, setRace] = useState<RaceName | undefined>(initial.race);
   const [className, setClassName] = useState<ClassName | undefined>(initial.class);
+  const [levels, setLevels] = useState<Level[]>(initial.levels ?? []);
   const [alignment, setAlignment] = useState<AlignmentCode | undefined>(initial.alignment);
   const [feats, setFeats] = useState<string[]>(initial.feats ?? []);
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
@@ -37,6 +39,7 @@ export function useCharacter() {
     scores,
     race,
     class: className,
+    levels,
     alignment,
     feats,
     skillRanks,
@@ -81,6 +84,7 @@ export function useCharacter() {
       setScores(migrated.scores);
       setRace(migrated.race);
       setClassName(migrated.class);
+      setLevels(migrated.levels ?? []);
       setAlignment(migrated.alignment);
       setFeats(migrated.feats ?? []);
       setSkillRanks(migrated.skillRanks ?? {});
@@ -113,6 +117,7 @@ export function useCharacter() {
     setScores(emptyScores);
     setRace(undefined);
     setClassName(undefined);
+    setLevels([]);
     setAlignment(undefined);
     setFeats([]);
     setSkillRanks({});
@@ -144,6 +149,23 @@ export function useCharacter() {
     setFeats((prev) => prev.filter((name) => name !== featName));
   };
 
+  const addLevel = () => {
+    const nextLevel = levels.length + 1;
+    if (nextLevel > 20) return; // Max level 20
+    setLevels((prev) => [...prev, { level: nextLevel, class: 'Fighter' }]);
+  };
+
+  const removeLevel = () => {
+    if (levels.length === 0) return;
+    setLevels((prev) => prev.slice(0, -1));
+  };
+
+  const updateLevelClass = (levelNumber: number, className: ClassName) => {
+    setLevels((prev) =>
+      prev.map((lvl) => (lvl.level === levelNumber ? { ...lvl, class: className } : lvl)),
+    );
+  };
+
   return {
     name,
     setName,
@@ -154,6 +176,10 @@ export function useCharacter() {
     setRace,
     className,
     setClassName,
+    levels,
+    addLevel,
+    removeLevel,
+    updateLevelClass,
     alignment,
     setAlignment,
     feats,

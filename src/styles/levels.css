@@ -1,0 +1,98 @@
+/* Levels Panel Styles */
+
+.levels-panel {
+  margin-bottom: 2rem;
+}
+
+.levels-panel h2 {
+  margin-bottom: 1rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.levels-empty {
+  color: #666;
+  font-style: italic;
+  margin-bottom: 1rem;
+}
+
+/* Levels Table */
+
+.levels-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.levels-table thead {
+  background: #f5f5f5;
+}
+
+.levels-table th {
+  text-align: left;
+  padding: 0.75rem;
+  font-weight: 600;
+  border-bottom: 2px solid #ddd;
+}
+
+.levels-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.levels-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.levels-table tbody tr:hover {
+  background: #fafafa;
+}
+
+.levels-table td {
+  padding: 0.75rem;
+}
+
+.levels-table__level {
+  font-weight: 500;
+  width: 120px;
+}
+
+.levels-table__class {
+  width: auto;
+}
+
+.levels-table__select {
+  width: 100%;
+  max-width: 200px;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.levels-table__select:hover {
+  border-color: #999;
+}
+
+.levels-table__select:focus {
+  outline: none;
+  border-color: #4a90e2;
+  box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Actions */
+
+.levels-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.levels-actions .btn {
+  flex: 0 1 auto;
+}
