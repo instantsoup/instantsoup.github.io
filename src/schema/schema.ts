@@ -56,7 +56,7 @@ export const CharacterSchemaV1 = z.object({
   class: ClassNameSchema.optional(), // Deprecated - use levels[0].class instead
   levels: LevelsArraySchema.optional().default([]),
   alignment: AlignmentCodeSchema.optional(),
-  feats: z.array(z.string()).optional().default([]),
+  feats: z.array(z.string()).optional().default([]), // Deprecated - use levels[].feats instead
   skillRanks: SkillRanksSchema.optional().default({}),
   saveBonuses: SaveBonusesSchema.optional().default({}),
   combatStats: CombatStatsSchema.optional().default({}),

@@ -152,7 +152,7 @@ export function useCharacter() {
   const addLevel = () => {
     const nextLevel = levels.length + 1;
     if (nextLevel > 20) return; // Max level 20
-    setLevels((prev) => [...prev, { level: nextLevel, class: 'Fighter' }]);
+    setLevels((prev) => [...prev, { level: nextLevel, class: 'Fighter', feats: [] }]);
   };
 
   const removeLevel = () => {
@@ -163,6 +163,30 @@ export function useCharacter() {
   const updateLevelClass = (levelNumber: number, className: ClassName) => {
     setLevels((prev) =>
       prev.map((lvl) => (lvl.level === levelNumber ? { ...lvl, class: className } : lvl)),
+    );
+  };
+
+  const addFeatToLevel = (levelNumber: number, featName: string) => {
+    setLevels((prev) =>
+      prev.map((lvl) => {
+        if (lvl.level === levelNumber) {
+          const currentFeats = lvl.feats ?? [];
+          if (!currentFeats.includes(featName)) {
+            return { ...lvl, feats: [...currentFeats, featName] };
+          }
+        }
+        return lvl;
+      }),
+    );
+  };
+
+  const removeFeatFromLevel = (levelNumber: number, featName: string) => {
+    setLevels((prev) =>
+      prev.map((lvl) =>
+        lvl.level === levelNumber
+          ? { ...lvl, feats: (lvl.feats ?? []).filter((name) => name !== featName) }
+          : lvl,
+      ),
     );
   };
 
@@ -180,6 +204,8 @@ export function useCharacter() {
     addLevel,
     removeLevel,
     updateLevelClass,
+    addFeatToLevel,
+    removeFeatFromLevel,
     alignment,
     setAlignment,
     feats,

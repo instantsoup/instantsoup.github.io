@@ -4,12 +4,13 @@ import { z } from 'zod';
 import { CLASS_NAMES } from '../data/classes';
 
 /**
- * Schema for a single character level with class selection
+ * Schema for a single character level with class selection and feats
  */
 export const LevelSchema = z
   .object({
     level: z.number().int().min(1).max(20),
     class: z.enum(CLASS_NAMES),
+    feats: z.array(z.string()).optional().default([]),
   })
   .strict();
 
