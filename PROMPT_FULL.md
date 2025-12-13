@@ -168,41 +168,46 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 
 ### Main Content Area
 
+**Unified UI**: All sections use consistent `PanelSection` collapsible panels. No wrapper components or section headers - clean, homogenous interface.
+
 Character sheet sections displayed in the main area (top to bottom):
 
-1. **Character Info Panel** - Collapsible panel containing:
-   - **Name Field** - Character name input
-   - **Race Selector** - Choose from 7 core D&D 3.5e races with descriptions
-   - **Alignment Selector** - 3x3 grid for all 9 D&D alignments
+1. **Name** (open by default) - Character name input field
 
-2. **Levels Panel** - Character progression system (1-20 levels):
+2. **Race** (open by default) - Choose from 7 core D&D 3.5e races with descriptions
+
+3. **Alignment** (open by default) - 3x3 grid for all 9 D&D alignments
+
+4. **Abilities** (open by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
+
+5. **Combat** (closed by default) - Combat statistics:
+   - Current HP / Max HP tracking (Max HP auto-calculated from hit dice + CON per level)
+   - AC calculation (10 + armor + shield + DEX mod + misc)
+   - Spell Resistance
+   - Initiative Bonus
+   - Base Attack Bonus (auto-calculated from class progressions)
+   - Hover tooltips show calculation breakdowns
+   - Green text indicates calculated values
+
+6. **Saves** (closed by default) - Three saving throws (Fortitude, Reflex, Will):
+   - Automatic calculation from class progressions + ability modifier
+   - Hover tooltips show calculation breakdown (e.g., "Fighter 3: +3, Wizard 2: +0, +2 WIS = +5")
+   - Green text indicates calculated values
+   - Manual base bonus inputs still available for characters without levels
+
+7. **Skills** (closed by default) - All 43 D&D 3.5e skills:
+   - Rank inputs (0-99)
+   - Automatic total calculation (ranks + ability modifier)
+   - Badges for trained-only skills and armor check penalty
+
+8. **Levels** (open by default) - Character progression system positioned at bottom:
+   - 1-20 levels with per-level class selection
    - Each level card shows level number, class selector dropdown, and feat count badge
    - Collapsible per-level feat management (expand/collapse per level)
    - Feat search within each level (max 10 results, alphabetically sorted)
    - Add/remove levels with full persistence
    - Natural multiclassing support (different class per level)
    - Feats tracked historically by level
-
-3. **Character Stats Panel** - Collapsible accordion with three sections (one open at a time):
-   - **Abilities** (open by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
-   - **Combat Stats** - Combat-related stats with:
-     - Current HP / Max HP tracking (Max HP auto-calculated from hit dice + CON per level)
-     - AC calculation (10 + armor + shield + DEX mod + misc)
-     - Spell Resistance
-     - Initiative Bonus
-     - Base Attack Bonus (auto-calculated from class progressions)
-     - Hover tooltips show calculation breakdowns
-     - Green text indicates calculated values
-   - **Saving Throws** - Three saves (Fortitude, Reflex, Will) with:
-     - Automatic calculation from class progressions + ability modifier
-     - Hover tooltips show calculation breakdown (e.g., "Fighter 3: +3, Wizard 2: +0, +2 WIS = +5")
-     - Green text indicates calculated values
-     - Manual base bonus inputs still available for characters without levels
-
-4. **Skills Panel** - Collapsible panel (closed by default) with all 43 D&D 3.5e skills:
-   - Rank inputs (0-99)
-   - Automatic total calculation (ranks + ability modifier)
-   - Badges for trained-only skills and armor check penalty
 
 ---
 
