@@ -113,6 +113,18 @@
   border: 1px solid #f87171;
 }
 
+.skill-badge--class {
+  background: #d1fae5;
+  color: #065f46;
+  border: 1px solid #10b981;
+}
+
+.skill-badge--cross-class {
+  background: #e0e7ff;
+  color: #3730a3;
+  border: 1px solid #818cf8;
+}
+
 /* ================================
    Skill Input
 =================================== */

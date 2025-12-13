@@ -1,46 +1,231 @@
 [
   {
     "name": "Barbarian",
-    "description": "A ferocious warrior who uses fury and instinct to bring down foes."
+    "description": "A ferocious warrior who uses fury and instinct to bring down foes.",
+    "classSkills": [
+      "Climb",
+      "Craft",
+      "Handle Animal",
+      "Intimidate",
+      "Jump",
+      "Listen",
+      "Ride",
+      "Survival",
+      "Swim"
+    ]
   },
   {
     "name": "Bard",
-    "description": "A performer whose music works magic—a wanderer, a tale-teller, and a jack-of-all-trades."
+    "description": "A performer whose music works magic—a wanderer, a tale-teller, and a jack-of-all-trades.",
+    "classSkills": [
+      "Appraise",
+      "Balance",
+      "Bluff",
+      "Climb",
+      "Concentration",
+      "Craft",
+      "Decipher Script",
+      "Diplomacy",
+      "Disguise",
+      "Escape Artist",
+      "Gather Information",
+      "Hide",
+      "Jump",
+      "Knowledge (arcana)",
+      "Knowledge (arch+eng)",
+      "Knowledge (cords)",
+      "Knowledge (dungeon)",
+      "Knowledge (geography)",
+      "Knowledge (history)",
+      "Knowledge (local)",
+      "Knowledge (nature)",
+      "Knowledge (nob+roy)",
+      "Knowledge (religion)",
+      "Knowledge (the planes)",
+      "Listen",
+      "Move Silently",
+      "Perform",
+      "Profession",
+      "Sense Motive",
+      "Sleight of Hand",
+      "Speak Language",
+      "Spellcraft",
+      "Swim",
+      "Tumble",
+      "Use Magic Device"
+    ]
   },
   {
     "name": "Cleric",
-    "description": "A master of divine magic and capable with weapons and armor."
+    "description": "A master of divine magic and capable with weapons and armor.",
+    "classSkills": [
+      "Concentration",
+      "Craft",
+      "Diplomacy",
+      "Heal",
+      "Knowledge (arcana)",
+      "Knowledge (history)",
+      "Knowledge (religion)",
+      "Knowledge (the planes)",
+      "Profession",
+      "Spellcraft"
+    ]
   },
   {
     "name": "Druid",
-    "description": "One who gains divine spells from the power of nature, and can take the shape of animals."
+    "description": "One who gains divine spells from the power of nature, and can take the shape of animals.",
+    "classSkills": [
+      "Concentration",
+      "Craft",
+      "Diplomacy",
+      "Handle Animal",
+      "Heal",
+      "Knowledge (nature)",
+      "Listen",
+      "Profession",
+      "Ride",
+      "Spellcraft",
+      "Spot",
+      "Survival",
+      "Swim"
+    ]
   },
   {
     "name": "Fighter",
-    "description": "A warrior with exceptional combat capability and unequaled skill with weapons."
+    "description": "A warrior with exceptional combat capability and unequaled skill with weapons.",
+    "classSkills": ["Climb", "Craft", "Handle Animal", "Intimidate", "Jump", "Ride", "Swim"]
   },
   {
     "name": "Monk",
-    "description": "A martial artist whose unarmed strikes hit fast and hard—a master of exotic powers."
+    "description": "A martial artist whose unarmed strikes hit fast and hard—a master of exotic powers.",
+    "classSkills": [
+      "Balance",
+      "Climb",
+      "Concentration",
+      "Craft",
+      "Diplomacy",
+      "Escape Artist",
+      "Hide",
+      "Jump",
+      "Knowledge (arcana)",
+      "Knowledge (religion)",
+      "Listen",
+      "Move Silently",
+      "Perform",
+      "Profession",
+      "Sense Motive",
+      "Spot",
+      "Swim",
+      "Tumble"
+    ]
   },
   {
     "name": "Paladin",
-    "description": "A champion of justice and destroyer of evil, protected and strengthened by divine powers."
+    "description": "A champion of justice and destroyer of evil, protected and strengthened by divine powers.",
+    "classSkills": [
+      "Concentration",
+      "Craft",
+      "Diplomacy",
+      "Handle Animal",
+      "Heal",
+      "Knowledge (nob+roy)",
+      "Knowledge (religion)",
+      "Profession",
+      "Ride",
+      "Sense Motive"
+    ]
   },
   {
     "name": "Ranger",
-    "description": "A cunning, skilled warrior of the wilderness."
+    "description": "A cunning, skilled warrior of the wilderness.",
+    "classSkills": [
+      "Climb",
+      "Concentration",
+      "Craft",
+      "Handle Animal",
+      "Heal",
+      "Hide",
+      "Jump",
+      "Knowledge (dungeon)",
+      "Knowledge (geography)",
+      "Knowledge (nature)",
+      "Listen",
+      "Move Silently",
+      "Profession",
+      "Ride",
+      "Search",
+      "Spot",
+      "Survival",
+      "Swim",
+      "Use Rope"
+    ]
   },
   {
     "name": "Rogue",
-    "description": "A tricky, skillful scout and spy who wins the day with stealth and cunning rather than brute force."
+    "description": "A tricky, skillful scout and spy who wins the day with stealth and cunning rather than brute force.",
+    "classSkills": [
+      "Appraise",
+      "Balance",
+      "Bluff",
+      "Climb",
+      "Craft",
+      "Decipher Script",
+      "Diplomacy",
+      "Disable Device",
+      "Disguise",
+      "Escape Artist",
+      "Forgery",
+      "Gather Information",
+      "Hide",
+      "Intimidate",
+      "Jump",
+      "Knowledge (local)",
+      "Listen",
+      "Move Silently",
+      "Open Lock",
+      "Perform",
+      "Profession",
+      "Search",
+      "Sense Motive",
+      "Sleight of Hand",
+      "Spot",
+      "Swim",
+      "Tumble",
+      "Use Magic Device",
+      "Use Rope"
+    ]
   },
   {
     "name": "Sorcerer",
-    "description": "A spellcaster with inborn magical ability."
+    "description": "A spellcaster with inborn magical ability.",
+    "classSkills": [
+      "Bluff",
+      "Concentration",
+      "Craft",
+      "Knowledge (arcana)",
+      "Profession",
+      "Spellcraft"
+    ]
   },
   {
     "name": "Wizard",
-    "description": "A potent spellcaster schooled in the arcane arts."
+    "description": "A potent spellcaster schooled in the arcane arts.",
+    "classSkills": [
+      "Concentration",
+      "Craft",
+      "Decipher Script",
+      "Knowledge (arcana)",
+      "Knowledge (arch+eng)",
+      "Knowledge (dungeon)",
+      "Knowledge (geography)",
+      "Knowledge (history)",
+      "Knowledge (local)",
+      "Knowledge (nature)",
+      "Knowledge (nob+roy)",
+      "Knowledge (religion)",
+      "Knowledge (the planes)",
+      "Profession",
+      "Spellcraft"
+    ]
   }
 ]

@@ -118,6 +118,7 @@ export function App() {
             mods={mods}
             skillRanks={skillRanks}
             setSkillRank={setSkillRank}
+            levels={levels}
             onBlur={persistLocal}
           />
         </PanelSection>

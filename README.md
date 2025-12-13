@@ -29,6 +29,9 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
   - Full multiclass support
 - **Combat Statistics**: HP tracking, Armor Class calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative
 - **Skills Panel**: All 43 D&D 3.5e skills with rank tracking and total calculation
+  - Shows class/cross-class skill indicators based on character levels
+  - Green "C" badge for class skills (1 point per rank)
+  - Blue "CC" badge for cross-class skills (2 points per rank)
 - **Dice Roller**: Sidebar panel for rolling multiple dice
 - **Persistence**: localStorage auto-save and JSON import/export
 

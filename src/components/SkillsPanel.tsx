@@ -1,18 +1,31 @@
+import { classes } from '../data/classes';
 import skillsData from '../data/skills.json';
 import type { Scores } from '../types';
+import type { Level } from '../types/level';
 
 interface SkillsPanelProps {
   mods: Scores;
   skillRanks: Record<string, number>;
   setSkillRank: (skillName: string, ranks: number) => void;
+  levels: Level[];
   onBlur: () => void;
 }
 
-export function SkillsPanel({ mods, skillRanks, setSkillRank, onBlur }: SkillsPanelProps) {
+export function SkillsPanel({ mods, skillRanks, setSkillRank, levels, onBlur }: SkillsPanelProps) {
   const calculateTotal = (skillName: string, abilityKey: string): number => {
     const ranks = skillRanks[skillName] || 0;
     const abilityMod = mods[abilityKey as keyof Scores] || 0;
     return abilityMod + ranks;
+  };
+
+  // Check if a skill is a class skill for any of the character's classes
+  const isClassSkill = (skillName: string): boolean => {
+    if (levels.length === 0) return false;
+
+    return levels.some((level) => {
+      const classData = classes.find((c) => c.name === level.class);
+      return classData?.classSkills?.includes(skillName) ?? false;
+    });
   };
 
   return (
@@ -28,11 +41,24 @@ export function SkillsPanel({ mods, skillRanks, setSkillRank, onBlur }: SkillsPa
           const ranks = skillRanks[skill.name] || 0;
           const total = calculateTotal(skill.name, skill.ability);
           const totalDisplay = total >= 0 ? `+${total}` : `${total}`;
+          const isClass = isClassSkill(skill.name);
 
           return (
             <div key={skill.name} className="skills-table__row">
               <div className="skills-table__cell skills-table__cell--skill">
                 <span className="skill-name">{skill.name}</span>
+                {levels.length > 0 && (
+                  <span
+                    className={`skill-badge ${isClass ? 'skill-badge--class' : 'skill-badge--cross-class'}`}
+                    title={
+                      isClass
+                        ? 'Class Skill (1 point per rank)'
+                        : 'Cross-Class Skill (2 points per rank)'
+                    }
+                  >
+                    {isClass ? 'C' : 'CC'}
+                  </span>
+                )}
                 {skill.trainedOnly && (
                   <span className="skill-badge skill-badge--trained" title="Trained Only">
                     T

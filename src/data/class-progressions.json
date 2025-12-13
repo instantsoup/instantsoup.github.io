@@ -5,7 +5,8 @@
     "babProgression": "high",
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
-    "willProgression": "poor"
+    "willProgression": "poor",
+    "skillPointsPerLevel": 4
   },
   {
     "name": "Bard",
@@ -13,7 +14,8 @@
     "babProgression": "medium",
     "fortitudeProgression": "poor",
     "reflexProgression": "good",
-    "willProgression": "good"
+    "willProgression": "good",
+    "skillPointsPerLevel": 6
   },
   {
     "name": "Cleric",
@@ -21,7 +23,8 @@
     "babProgression": "medium",
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
-    "willProgression": "good"
+    "willProgression": "good",
+    "skillPointsPerLevel": 2
   },
   {
     "name": "Druid",
@@ -29,7 +32,8 @@
     "babProgression": "medium",
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
-    "willProgression": "good"
+    "willProgression": "good",
+    "skillPointsPerLevel": 4
   },
   {
     "name": "Fighter",
@@ -37,7 +41,8 @@
     "babProgression": "high",
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
-    "willProgression": "poor"
+    "willProgression": "poor",
+    "skillPointsPerLevel": 2
   },
   {
     "name": "Monk",
@@ -45,7 +50,8 @@
     "babProgression": "medium",
     "fortitudeProgression": "good",
     "reflexProgression": "good",
-    "willProgression": "good"
+    "willProgression": "good",
+    "skillPointsPerLevel": 4
   },
   {
     "name": "Paladin",
@@ -53,7 +59,8 @@
     "babProgression": "high",
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
-    "willProgression": "poor"
+    "willProgression": "poor",
+    "skillPointsPerLevel": 2
   },
   {
     "name": "Ranger",
@@ -61,7 +68,8 @@
     "babProgression": "high",
     "fortitudeProgression": "good",
     "reflexProgression": "good",
-    "willProgression": "poor"
+    "willProgression": "poor",
+    "skillPointsPerLevel": 6
   },
   {
     "name": "Rogue",
@@ -69,7 +77,8 @@
     "babProgression": "medium",
     "fortitudeProgression": "poor",
     "reflexProgression": "good",
-    "willProgression": "poor"
+    "willProgression": "poor",
+    "skillPointsPerLevel": 8
   },
   {
     "name": "Sorcerer",
@@ -77,7 +86,8 @@
     "babProgression": "low",
     "fortitudeProgression": "poor",
     "reflexProgression": "poor",
-    "willProgression": "good"
+    "willProgression": "good",
+    "skillPointsPerLevel": 2
   },
   {
     "name": "Wizard",
@@ -85,6 +95,7 @@
     "babProgression": "low",
     "fortitudeProgression": "poor",
     "reflexProgression": "poor",
-    "willProgression": "good"
+    "willProgression": "good",
+    "skillPointsPerLevel": 2
   }
 ]
