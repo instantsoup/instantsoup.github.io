@@ -199,6 +199,9 @@ Character sheet sections displayed in the main area (top to bottom):
    - Rank inputs (0-99)
    - Automatic total calculation (ranks + ability modifier)
    - Badges for trained-only skills and armor check penalty
+   - Class/cross-class skill indicators based on character levels
+   - Green "C" badge for class skills (1 point per rank)
+   - Blue "CC" badge for cross-class skills (2 points per rank)
 
 8. **Levels** (open by default) - Character progression system positioned at bottom:
    - 1-20 levels with per-level class selection

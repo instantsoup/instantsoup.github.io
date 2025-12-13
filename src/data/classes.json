@@ -93,15 +93,7 @@
   {
     "name": "Fighter",
     "description": "A warrior with exceptional combat capability and unequaled skill with weapons.",
-    "classSkills": [
-      "Climb",
-      "Craft",
-      "Handle Animal",
-      "Intimidate",
-      "Jump",
-      "Ride",
-      "Swim"
-    ]
+    "classSkills": ["Climb", "Craft", "Handle Animal", "Intimidate", "Jump", "Ride", "Swim"]
   },
   {
     "name": "Monk",
