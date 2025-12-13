@@ -1,8 +1,11 @@
-import { CharacterInfoPanel } from './components/CharacterInfoPanel';
-import { CharacterStatsPanel } from './components/CharacterStatsPanel';
+import { AbilityGrid } from './components/AbilityGrid';
+import { AlignmentSelector } from './components/AlignmentSelector';
+import { CombatStatsPanel } from './components/CombatStats';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
 import { PanelSection } from './components/PanelSection';
+import { RaceSelector } from './components/RaceSelector';
+import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { useCharacter } from './hooks/useCharacter';
 
@@ -55,47 +58,79 @@ export function App() {
           <h1 className="app-title">D&D 3.5e Character Builder</h1>
         </header>
 
-        {/* Character Identity - metadata set at level 1 */}
-        <CharacterInfoPanel
-          name={name}
-          setName={setName}
-          race={race}
-          setRace={setRace}
-          alignment={alignment}
-          setAlignment={setAlignment}
-          onBlur={persistLocal}
-        />
+        {/* Name */}
+        <PanelSection title="Name" defaultOpen={true}>
+          <div className="selector">
+            <input
+              className="selector-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onBlur={persistLocal}
+              placeholder="Enter character name..."
+            />
+          </div>
+        </PanelSection>
 
-        {/* Level-dependent character building */}
-        <LevelsPanel
-          levels={levels}
-          addLevel={addLevel}
-          removeLevel={removeLevel}
-          updateLevelClass={updateLevelClass}
-          addFeatToLevel={addFeatToLevel}
-          removeFeatFromLevel={removeFeatFromLevel}
-          onBlur={persistLocal}
-        />
+        {/* Race */}
+        <PanelSection title="Race" defaultOpen={true}>
+          <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
+        </PanelSection>
 
-        {/* Character Stats - Abilities, Combat, Saves */}
-        <CharacterStatsPanel
-          scores={scores}
-          mods={mods}
-          onNum={onNum}
-          combatStats={combatStats}
-          levels={levels}
-          updateCombatStat={updateCombatStat}
-          saveBonuses={saveBonuses}
-          setSaveBonus={setSaveBonus}
-          onBlur={persistLocal}
-        />
+        {/* Alignment */}
+        <PanelSection title="Alignment" defaultOpen={true}>
+          <AlignmentSelector
+            alignment={alignment}
+            setAlignment={setAlignment}
+            onBlur={persistLocal}
+          />
+        </PanelSection>
 
-        {/* Skills - Collapsible */}
+        {/* Abilities */}
+        <PanelSection title="Abilities" defaultOpen={true}>
+          <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
+        </PanelSection>
+
+        {/* Combat Stats */}
+        <PanelSection title="Combat" defaultOpen={false}>
+          <CombatStatsPanel
+            mods={mods}
+            combatStats={combatStats}
+            levels={levels}
+            updateCombatStat={updateCombatStat}
+            onBlur={persistLocal}
+          />
+        </PanelSection>
+
+        {/* Saving Throws */}
+        <PanelSection title="Saves" defaultOpen={false}>
+          <SavesPanel
+            mods={mods}
+            saveBonuses={saveBonuses}
+            levels={levels}
+            setSaveBonus={setSaveBonus}
+            onBlur={persistLocal}
+          />
+        </PanelSection>
+
+        {/* Skills */}
         <PanelSection title="Skills" defaultOpen={false}>
           <SkillsPanel
             mods={mods}
             skillRanks={skillRanks}
             setSkillRank={setSkillRank}
+            onBlur={persistLocal}
+          />
+        </PanelSection>
+
+        {/* Levels - at bottom */}
+        <PanelSection title="Levels" defaultOpen={true}>
+          <LevelsPanel
+            levels={levels}
+            addLevel={addLevel}
+            removeLevel={removeLevel}
+            updateLevelClass={updateLevelClass}
+            addFeatToLevel={addFeatToLevel}
+            removeFeatFromLevel={removeFeatFromLevel}
             onBlur={persistLocal}
           />
         </PanelSection>
