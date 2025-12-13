@@ -8,6 +8,7 @@ export const ClassSchema = z
   .object({
     name: z.string().min(1),
     description: z.string().optional(),
+    classSkills: z.array(z.string()),
   })
   .strict();
 

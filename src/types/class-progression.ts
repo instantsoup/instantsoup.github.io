@@ -29,6 +29,7 @@ export const ClassProgressionSchema = z
     fortitudeProgression: SaveProgressionSchema,
     reflexProgression: SaveProgressionSchema,
     willProgression: SaveProgressionSchema,
+    skillPointsPerLevel: z.number().int().min(1).max(10),
   })
   .strict();
 
