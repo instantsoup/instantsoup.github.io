@@ -1,9 +1,8 @@
-import { AbilityGrid } from './components/AbilityGrid';
 import { CharacterInfoPanel } from './components/CharacterInfoPanel';
-import { CombatStatsPanel } from './components/CombatStats';
+import { CharacterStatsPanel } from './components/CharacterStatsPanel';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
-import { SavesPanel } from './components/SavesPanel';
+import { PanelSection } from './components/PanelSection';
 import { SkillsPanel } from './components/SkillsPanel';
 import { useCharacter } from './hooks/useCharacter';
 
@@ -78,31 +77,28 @@ export function App() {
           onBlur={persistLocal}
         />
 
-        {/* Core statistics */}
-        <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
-
-        <CombatStatsPanel
+        {/* Character Stats - Abilities, Combat, Saves */}
+        <CharacterStatsPanel
+          scores={scores}
           mods={mods}
+          onNum={onNum}
           combatStats={combatStats}
           levels={levels}
           updateCombatStat={updateCombatStat}
-          onBlur={persistLocal}
-        />
-
-        <SavesPanel
-          mods={mods}
           saveBonuses={saveBonuses}
-          levels={levels}
           setSaveBonus={setSaveBonus}
           onBlur={persistLocal}
         />
 
-        <SkillsPanel
-          mods={mods}
-          skillRanks={skillRanks}
-          setSkillRank={setSkillRank}
-          onBlur={persistLocal}
-        />
+        {/* Skills - Collapsible */}
+        <PanelSection title="Skills" defaultOpen={false}>
+          <SkillsPanel
+            mods={mods}
+            skillRanks={skillRanks}
+            setSkillRank={setSkillRank}
+            onBlur={persistLocal}
+          />
+        </PanelSection>
 
         {error && <p className="text-error mt-12">{error}</p>}
       </main>
