@@ -51,8 +51,6 @@ export function CombatStatsPanel({
 
   return (
     <section className="combat-stats">
-      <h2 className="panel-title">Combat Statistics</h2>
-
       <div className="combat-stats__grid">
         {/* Hit Points */}
         <div className="combat-stat-card">
