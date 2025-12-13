@@ -186,23 +186,29 @@ The app uses a two-column grid layout defined in `layout.css`:
 
 Character sheet sections displayed in the main area (top to bottom):
 
-1. **Name Field** - Character name input
-2. **Race Selector** - Choose from 7 core races with descriptions (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
-3. **Levels Panel** - Character progression system (1-20 levels)
+1. **Character Info Panel** - Collapsible panel containing:
+   - Name field
+   - Race selector (7 core races)
+   - Alignment selector (3x3 grid)
+
+2. **Levels Panel** - Character progression system (1-20 levels)
    - Each level card shows level number, class selector, and feat count
    - Collapsible per-level feat management
    - Add/remove levels with full persistence
    - Natural multiclassing support
-4. **Alignment Selector** - 3x3 grid for selecting D&D alignment (LG, NG, CG, LN, N, CN, LE, NE, CE)
-5. **Ability Grid** - Six ability scores with modifier calculations
-6. **Saving Throws** - Three saves (Fortitude, Reflex, Will) with automatic calculation from class progressions
-   - Hover tooltips show calculation breakdown
-   - Green text indicates calculated values
-7. **Combat Statistics** - HP (auto-calculated), AC calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative, BAB (auto-calculated)
-   - Max HP calculated from hit dice + CON modifier per level
-   - BAB calculated from class progressions
-   - Hover tooltips show calculation breakdown
-8. **Skills Panel** - All 43 skills with rank inputs and total modifiers
+
+3. **Character Stats Panel** - Collapsible accordion with three sections:
+   - **Abilities** (open by default) - Six ability scores with modifier calculations
+   - **Combat Stats** - HP (auto-calculated), AC calculation, Spell Resistance, Initiative, BAB (auto-calculated)
+     - Max HP calculated from hit dice + CON modifier per level
+     - BAB calculated from class progressions
+     - Hover tooltips show calculation breakdown
+   - **Saving Throws** - Three saves (Fortitude, Reflex, Will) with automatic calculation from class progressions
+     - Hover tooltips show calculation breakdown
+     - Green text indicates calculated values
+
+4. **Skills Panel** - Collapsible panel (closed by default) with all 43 skills
+   - Rank inputs and total modifiers
    - Shows trained-only badges and armor check penalty indicators
    - Automatically calculates total = ranks + ability modifier
 

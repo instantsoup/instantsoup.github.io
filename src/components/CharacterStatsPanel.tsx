@@ -1,9 +1,10 @@
 import { useState } from 'react';
+
+import type { Scores } from '../types';
+import type { Level } from '../types/level';
 import { AbilityGrid } from './AbilityGrid';
 import { CombatStatsPanel } from './CombatStats';
 import { SavesPanel } from './SavesPanel';
-import type { Scores } from '../types';
-import type { Level } from '../types/level';
 
 type Props = {
   scores: Scores;

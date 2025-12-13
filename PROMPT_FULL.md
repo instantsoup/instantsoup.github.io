@@ -55,20 +55,22 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   ├── types.ts                  # Shared Scores + emptyScores
 │
 │   ├── components/
-│   │   ├── AbilityGrid.tsx       # Ability score grid with modifiers
-│   │   ├── AlignmentSelector.tsx # 3x3 grid for D&D alignments
-│   │   ├── CombatStats.tsx       # HP, AC, SR, initiative, BAB (with auto-calc)
-│   │   ├── DiceRollerPanel.tsx   # Add/Roll/Clear dice pool
-│   │   ├── ImportExportBar.tsx   # Persistence controls
-│   │   ├── LeftSidebar.tsx       # Sidebar with collapsible panels
-│   │   ├── LevelsPanel.tsx       # Level-based progression with per-level feats
-│   │   ├── PanelSection.tsx      # Reusable collapsible panel component
-│   │   ├── RaceSelector.tsx      # 7 core race selection with descriptions
+│   │   ├── AbilityGrid.tsx        # Ability score grid with modifiers
+│   │   ├── AlignmentSelector.tsx  # 3x3 grid for D&D alignments
+│   │   ├── CharacterInfoPanel.tsx # Collapsible panel: name, race, alignment
+│   │   ├── CharacterStatsPanel.tsx # Accordion: abilities, combat, saves
+│   │   ├── CombatStats.tsx        # HP, AC, SR, initiative, BAB (with auto-calc)
+│   │   ├── DiceRollerPanel.tsx    # Add/Roll/Clear dice pool
+│   │   ├── ImportExportBar.tsx    # Persistence controls
+│   │   ├── LeftSidebar.tsx        # Sidebar with collapsible panels
+│   │   ├── LevelsPanel.tsx        # Level-based progression with per-level feats
+│   │   ├── PanelSection.tsx       # Reusable collapsible panel component
+│   │   ├── RaceSelector.tsx       # 7 core race selection with descriptions
 │   │   ├── RollCharacterPanel.tsx # Roll random character stats
-│   │   ├── SavesPanel.tsx        # Fortitude, Reflex, Will saves (with auto-calc)
-│   │   ├── SkillsPanel.tsx       # Skills with rank tracking
+│   │   ├── SavesPanel.tsx         # Fortitude, Reflex, Will saves (with auto-calc)
+│   │   ├── SkillsPanel.tsx        # Skills with rank tracking
 │   │   ├── SourceBadge.tsx / SourceBadges.tsx
-│   │   └── UtilitiesPanel.tsx    # Utility features for character management
+│   │   └── UtilitiesPanel.tsx     # Utility features for character management
 │
 │   ├── data/
 │   │   ├── alignments.json        # 9 D&D alignments (LG, NG, CG, etc.)
@@ -168,31 +170,36 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 
 Character sheet sections displayed in the main area (top to bottom):
 
-1. **Name Field** - Character name input
-2. **Race Selector** - Choose from 7 core D&D 3.5e races with descriptions (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
-3. **Levels Panel** - Character progression system (1-20 levels):
+1. **Character Info Panel** - Collapsible panel containing:
+   - **Name Field** - Character name input
+   - **Race Selector** - Choose from 7 core D&D 3.5e races with descriptions
+   - **Alignment Selector** - 3x3 grid for all 9 D&D alignments
+
+2. **Levels Panel** - Character progression system (1-20 levels):
    - Each level card shows level number, class selector dropdown, and feat count badge
    - Collapsible per-level feat management (expand/collapse per level)
    - Feat search within each level (max 10 results, alphabetically sorted)
    - Add/remove levels with full persistence
    - Natural multiclassing support (different class per level)
    - Feats tracked historically by level
-4. **Alignment Selector** - 3x3 grid for all 9 D&D alignments (LG, NG, CG, LN, N, CN, LE, NE, CE)
-5. **Ability Grid** - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
-6. **Saving Throws** - Three saves (Fortitude, Reflex, Will) with:
-   - Automatic calculation from class progressions + ability modifier
-   - Hover tooltips show calculation breakdown (e.g., "Fighter 3: +3, Wizard 2: +0, +2 WIS = +5")
-   - Green text indicates calculated values
-   - Manual base bonus inputs still available for characters without levels
-7. **Combat Statistics** - Combat-related stats with:
-   - Current HP / Max HP tracking (Max HP auto-calculated from hit dice + CON per level)
-   - AC calculation (10 + armor + shield + DEX mod + misc)
-   - Spell Resistance
-   - Initiative Bonus
-   - Base Attack Bonus (auto-calculated from class progressions)
-   - Hover tooltips show calculation breakdowns
-   - Green text indicates calculated values
-8. **Skills Panel** - All 43 D&D 3.5e skills with:
+
+3. **Character Stats Panel** - Collapsible accordion with three sections (one open at a time):
+   - **Abilities** (open by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
+   - **Combat Stats** - Combat-related stats with:
+     - Current HP / Max HP tracking (Max HP auto-calculated from hit dice + CON per level)
+     - AC calculation (10 + armor + shield + DEX mod + misc)
+     - Spell Resistance
+     - Initiative Bonus
+     - Base Attack Bonus (auto-calculated from class progressions)
+     - Hover tooltips show calculation breakdowns
+     - Green text indicates calculated values
+   - **Saving Throws** - Three saves (Fortitude, Reflex, Will) with:
+     - Automatic calculation from class progressions + ability modifier
+     - Hover tooltips show calculation breakdown (e.g., "Fighter 3: +3, Wizard 2: +0, +2 WIS = +5")
+     - Green text indicates calculated values
+     - Manual base bonus inputs still available for characters without levels
+
+4. **Skills Panel** - Collapsible panel (closed by default) with all 43 D&D 3.5e skills:
    - Rank inputs (0-99)
    - Automatic total calculation (ranks + ability modifier)
    - Badges for trained-only skills and armor check penalty
