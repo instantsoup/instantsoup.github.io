@@ -15,7 +15,6 @@ export function RaceSelector({ race, setRace, onBlur }: RaceSelectorProps) {
 
   return (
     <div className="selector">
-      <h3 className="panel-title">Race</h3>
       <div className="selector-grid">
         {races.map(({ name, description }) => (
           <button

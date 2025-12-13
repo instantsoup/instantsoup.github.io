@@ -68,8 +68,6 @@ export function LevelsPanel({
 
   return (
     <section className="levels-panel">
-      <h2>Character Levels</h2>
-
       {levels.length === 0 && (
         <p className="levels-empty">No levels added yet. Add your first level to begin.</p>
       )}

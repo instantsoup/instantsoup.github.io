@@ -15,7 +15,6 @@ export function AlignmentSelector({ alignment, setAlignment, onBlur }: Alignment
 
   return (
     <div className="selector">
-      <h3 className="panel-title">Alignment</h3>
       <div className="selector-grid--3col">
         {alignments.map(({ code, label, description }) => (
           <button

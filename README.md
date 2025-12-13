@@ -184,7 +184,7 @@ The app uses a two-column grid layout defined in `layout.css`:
 
 ### Main Content Area
 
-All sections use consistent collapsible panels. Character sheet sections displayed in the main area (top to bottom):
+All sections use consistent collapsible panels with no redundant internal headers. Character sheet sections displayed in the main area (top to bottom):
 
 1. **Name** (open by default) - Character name input field
 

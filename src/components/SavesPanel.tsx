@@ -20,7 +20,6 @@ export function SavesPanel({ mods, saveBonuses, levels, setSaveBonus, onBlur }: 
 
   return (
     <div className="saves-panel">
-      <h2 className="panel-title">Saving Throws</h2>
       <div className="saves-grid">
         {saves.map((save) => {
           const bonus = saveBonuses[save.name] || 0;

@@ -168,7 +168,7 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 
 ### Main Content Area
 
-**Unified UI**: All sections use consistent `PanelSection` collapsible panels. No wrapper components or section headers - clean, homogenous interface.
+**Unified UI**: All sections use consistent `PanelSection` collapsible panels. No wrapper components, no section headers, no redundant internal headers - clean, homogenous interface.
 
 Character sheet sections displayed in the main area (top to bottom):
 
