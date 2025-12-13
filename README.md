@@ -1,9 +1,9 @@
-# D&D 3.5e Character Sheet (Single Page App)
+# D&D 3.5e Character Builder (Single Page App)
 
-This project is a client-only React/Vite webapp hosted on GitHub Pages at  
+This project is a client-only React/Vite webapp hosted on GitHub Pages at
 [https://instantsoup.github.io/](https://instantsoup.github.io/)
 
-The app models D&D 3.5e character sheets with full character creation and management features, and will iteratively grow toward complete offline JSON-based sheet management.
+The app models D&D 3.5e character sheets with full level-based character progression, automatic calculations from class progressions, and comprehensive feat/skill management. All data persists through localStorage and JSON import/export.
 
 No server or persistence beyond localStorage and JSON download/upload will ever be introduced.
 
@@ -11,11 +11,23 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 
 - **Character Basics**: Name and ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculation
 - **Race Selector**: Choose from 7 core D&D 3.5e races (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
-- **Class Selector**: Choose from 11 core D&D 3.5e classes (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
+- **Levels System**: Character progression from levels 1-20 with per-level class selection
+  - Each level has independent class selection (natural multiclassing support)
+  - Collapsible card-based UI for clean level management
+  - Add/remove levels with full persistence
+- **Per-Level Feats**: Search and select from 1,826 D&D 3.5e feats
+  - Feats assigned to specific character levels (historical tracking)
+  - Collapsible feat management per level
+  - Shows feat prerequisites and descriptions
+  - Alphabetically sorted search results (max 10 per level)
 - **Alignment Selector**: Interactive 3x3 grid for all 9 D&D alignments
-- **Feats Panel**: Search and select from 1,879 D&D 3.5e feats with descriptions and prerequisites
-- **Saving Throws**: Fortitude, Reflex, and Will saves with base bonus tracking and automatic totals
-- **Combat Statistics**: HP tracking, Armor Class calculation (with armor/shield/misc bonuses), Spell Resistance, Initiative, and Base Attack Bonus
+- **Automatic Calculations**: HP, BAB, and saves calculated from class progressions
+  - Max HP calculated from hit dice + CON modifier per level
+  - BAB calculated from class progression tables
+  - Saving throws calculated from class progressions + ability modifiers
+  - Hover tooltips show calculation breakdowns
+  - Full multiclass support
+- **Combat Statistics**: HP tracking, Armor Class calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative
 - **Skills Panel**: All 43 D&D 3.5e skills with rank tracking and total calculation
 - **Dice Roller**: Sidebar panel for rolling multiple dice
 - **Persistence**: localStorage auto-save and JSON import/export
@@ -68,33 +80,35 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │
 │   ├── components/
 │   │   ├── AbilityGrid.tsx
-│   │   ├── AlignmentSelector.tsx # 3x3 alignment grid
-│   │   ├── ClassSelector.tsx     # 11 core class selection
-│   │   ├── CombatStats.tsx       # HP, AC, SR, initiative, BAB
-│   │   ├── DiceRollerPanel.tsx   # dice roller UI
-│   │   ├── DropZone.tsx
+│   │   ├── AlignmentSelector.tsx  # 3x3 alignment grid
+│   │   ├── CombatStats.tsx        # HP, AC, SR, initiative, BAB (with auto-calc)
+│   │   ├── DiceRollerPanel.tsx    # dice roller UI
 │   │   ├── ImportExportBar.tsx
-│   │   ├── LeftSidebar.tsx       # sidebar with collapsible panels
-│   │   ├── PanelSection.tsx      # reusable collapsible panel
-│   │   ├── RaceSelector.tsx      # 7 core race selection
+│   │   ├── LeftSidebar.tsx        # sidebar with collapsible panels
+│   │   ├── LevelsPanel.tsx        # level-based progression with per-level feats
+│   │   ├── PanelSection.tsx       # reusable collapsible panel
+│   │   ├── RaceSelector.tsx       # 7 core race selection
 │   │   ├── RollCharacterPanel.tsx
-│   │   ├── SavesPanel.tsx        # Fortitude, Reflex, Will saves
-│   │   ├── SkillsPanel.tsx       # skills with rank tracking
+│   │   ├── SavesPanel.tsx         # Fortitude, Reflex, Will saves (with auto-calc)
+│   │   ├── SkillsPanel.tsx        # skills with rank tracking
 │   │   ├── SourceBadge.tsx / SourceBadges.tsx
-│   │   └── UtilitiesPanel.tsx    # general character tools
+│   │   └── UtilitiesPanel.tsx     # general character tools
 │
 │   ├── data/
-│   │   ├── alignments.json       # 9 D&D alignments
-│   │   ├── alignments.ts         # alignment data helpers
-│   │   ├── classes.json          # 11 core D&D 3.5e classes
-│   │   ├── classes.ts            # class data helpers
-│   │   ├── feats.json
-│   │   ├── races.json            # 7 core D&D 3.5e races
-│   │   ├── races.ts              # race data helpers
-│   │   ├── saves.json            # 3 saving throws
-│   │   ├── saves.ts              # saves data helpers
-│   │   ├── skills.json           # 43 D&D 3.5e skills
-│   │   ├── skills.ts             # skill data helpers
+│   │   ├── alignments.json        # 9 D&D alignments
+│   │   ├── alignments.ts          # alignment data helpers
+│   │   ├── class-progressions.json # class progression tables (HD, BAB, saves)
+│   │   ├── classes.json           # 11 core D&D 3.5e classes
+│   │   ├── classes.ts             # class data helpers
+│   │   ├── feats.json             # 1,826 D&D 3.5e feats
+│   │   ├── feats.ts               # feat data helpers
+│   │   ├── feats.test.ts          # feat validation tests
+│   │   ├── races.json             # 7 core D&D 3.5e races
+│   │   ├── races.ts               # race data helpers
+│   │   ├── saves.json             # 3 saving throws
+│   │   ├── saves.ts               # saves data helpers
+│   │   ├── skills.json            # 43 D&D 3.5e skills
+│   │   ├── skills.ts              # skill data helpers
 │   │   ├── skills.test.ts
 │   │   ├── sourcebook-abbrevs.json
 │   │   └── sourcebooks.ts
@@ -105,6 +119,8 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │   ├── lib/
 │   │   ├── download.ts           # JSON download helper
 │   │   ├── mods.ts               # ability modifier logic
+│   │   ├── progressions.ts       # class progression calculations (HP, BAB, saves)
+│   │   ├── progressions.test.ts  # progression calculation tests
 │   │   ├── statline.ts           # roll + 28-point normalization
 │   │   ├── statline.test.ts
 │   │   ├── dice.ts               # dice utilities
@@ -120,16 +136,17 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │   │   ├── index.css             # imports all partials below
 │   │   ├── utilities.css         # small utility classes
 │   │   ├── alignment.css         # alignment selector styles
-│   │   ├── class.css             # class selector styles
 │   │   ├── race.css              # race selector styles
 │   │   ├── saves.css             # saves panel styles
 │   │   ├── combat-stats.css      # combat statistics panel styles
-│   │   └── skills.css            # skills panel styles
+│   │   ├── skills.css            # skills panel styles
+│   │   └── levels.css            # levels panel with per-level feats
 │
 │   └── types/
 │       ├── alignment.ts          # alignment type + schema
 │       ├── class.ts              # class type + schema
 │       ├── feat.ts               # feat type + schema
+│       ├── level.ts              # level type + schema (with feats)
 │       ├── race.ts               # race type + schema
 │       ├── save.ts               # save type + schema
 │       └── skill.ts              # skill type + schema
@@ -171,11 +188,20 @@ Character sheet sections displayed in the main area (top to bottom):
 
 1. **Name Field** - Character name input
 2. **Race Selector** - Choose from 7 core races with descriptions (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
-3. **Class Selector** - Choose from 11 core classes with descriptions (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
+3. **Levels Panel** - Character progression system (1-20 levels)
+   - Each level card shows level number, class selector, and feat count
+   - Collapsible per-level feat management
+   - Add/remove levels with full persistence
+   - Natural multiclassing support
 4. **Alignment Selector** - 3x3 grid for selecting D&D alignment (LG, NG, CG, LN, N, CN, LE, NE, CE)
 5. **Ability Grid** - Six ability scores with modifier calculations
-6. **Saving Throws** - Three saves (Fortitude, Reflex, Will) with base bonus inputs and automatic totals
-7. **Combat Statistics** - HP tracking, AC calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative, Base Attack Bonus
+6. **Saving Throws** - Three saves (Fortitude, Reflex, Will) with automatic calculation from class progressions
+   - Hover tooltips show calculation breakdown
+   - Green text indicates calculated values
+7. **Combat Statistics** - HP (auto-calculated), AC calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative, BAB (auto-calculated)
+   - Max HP calculated from hit dice + CON modifier per level
+   - BAB calculated from class progressions
+   - Hover tooltips show calculation breakdown
 8. **Skills Panel** - All 43 skills with rank inputs and total modifiers
    - Shows trained-only badges and armor check penalty indicators
    - Automatically calculates total = ranks + ability modifier
@@ -292,19 +318,21 @@ Adjust toward 28-point buy:
 - No backend — client-only SPA
 - All logic is local, schema-validated with Zod
 - Data-driven architecture: All game data in JSON files
-- Tests live next to source files
+- Tests live next to source files (43 tests passing)
 - Styles are modular CSS classes (no inline styles)
 - Components are all named exports (except App)
 - Sidebar layout provides expandable **Dice Roller** and **Utilities** panels
 - Character features:
   - Name field
   - Race selection (7 core races)
-  - Class selection (11 core classes)
+  - Levels system (1-20 levels with per-level class selection)
+  - Per-level feats (1,826 feats available)
   - Alignment (9 options)
   - Ability Scores (6 abilities with modifiers)
-  - Saving Throws (3 saves)
-  - Combat Statistics (HP, AC, SR, Initiative, BAB)
+  - Saving Throws (3 saves with automatic calculation)
+  - Combat Statistics (HP, AC, SR, Initiative, BAB with automatic calculation)
   - Skills (43 total)
+- Automatic calculations from class progressions with multiclass support
 - Every feature is self-contained, type-safe, and incremental
 
 ---

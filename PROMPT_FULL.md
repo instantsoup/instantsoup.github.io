@@ -1,6 +1,6 @@
-# D&D 3.5e Character Sheet (Single Page App) — Prompt Context
+# D&D 3.5e Character Builder (Single Page App) — Prompt Context
 
-This document defines the authoritative project architecture and code conventions for ChatGPT (GPT-5) when acting as **technical copilot** for the D&D 3.5e Character Sheet webapp.
+This document defines the authoritative project architecture and code conventions for ChatGPT (GPT-5) / Claude when acting as **technical copilot** for the D&D 3.5e Character Builder webapp.
 
 The project is a **client-only React/Vite SPA** written in **TypeScript**, using **Zod** for schema validation and **Vitest** for tests.  
 It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages from the `main` branch.
@@ -57,32 +57,34 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   ├── components/
 │   │   ├── AbilityGrid.tsx       # Ability score grid with modifiers
 │   │   ├── AlignmentSelector.tsx # 3x3 grid for D&D alignments
-│   │   ├── ClassSelector.tsx     # 11 core class selection with descriptions
-│   │   ├── CombatStats.tsx       # HP, AC, SR, initiative, BAB tracking
+│   │   ├── CombatStats.tsx       # HP, AC, SR, initiative, BAB (with auto-calc)
 │   │   ├── DiceRollerPanel.tsx   # Add/Roll/Clear dice pool
-│   │   ├── DropZone.tsx          # Drag-and-drop file import
 │   │   ├── ImportExportBar.tsx   # Persistence controls
 │   │   ├── LeftSidebar.tsx       # Sidebar with collapsible panels
+│   │   ├── LevelsPanel.tsx       # Level-based progression with per-level feats
 │   │   ├── PanelSection.tsx      # Reusable collapsible panel component
 │   │   ├── RaceSelector.tsx      # 7 core race selection with descriptions
 │   │   ├── RollCharacterPanel.tsx # Roll random character stats
-│   │   ├── SavesPanel.tsx        # Fortitude, Reflex, Will saves
+│   │   ├── SavesPanel.tsx        # Fortitude, Reflex, Will saves (with auto-calc)
 │   │   ├── SkillsPanel.tsx       # Skills with rank tracking
 │   │   ├── SourceBadge.tsx / SourceBadges.tsx
 │   │   └── UtilitiesPanel.tsx    # Utility features for character management
 │
 │   ├── data/
-│   │   ├── alignments.json       # 9 D&D alignments (LG, NG, CG, etc.)
-│   │   ├── alignments.ts         # Alignment data helpers
-│   │   ├── classes.json          # 11 core D&D 3.5e classes
-│   │   ├── classes.ts            # Class data helpers
-│   │   ├── feats.json
-│   │   ├── races.json            # 7 core D&D 3.5e races
-│   │   ├── races.ts              # Race data helpers
-│   │   ├── saves.json            # 3 saving throws
-│   │   ├── saves.ts              # Saves data helpers
-│   │   ├── skills.json           # 43 D&D 3.5e skills
-│   │   ├── skills.ts             # Skill data helpers
+│   │   ├── alignments.json        # 9 D&D alignments (LG, NG, CG, etc.)
+│   │   ├── alignments.ts          # Alignment data helpers
+│   │   ├── class-progressions.json # Class progression tables (HD, BAB, saves)
+│   │   ├── classes.json           # 11 core D&D 3.5e classes
+│   │   ├── classes.ts             # Class data helpers
+│   │   ├── feats.json             # 1,826 D&D 3.5e feats
+│   │   ├── feats.ts               # Feat data helpers
+│   │   ├── feats.test.ts          # Feat validation tests
+│   │   ├── races.json             # 7 core D&D 3.5e races
+│   │   ├── races.ts               # Race data helpers
+│   │   ├── saves.json             # 3 saving throws
+│   │   ├── saves.ts               # Saves data helpers
+│   │   ├── skills.json            # 43 D&D 3.5e skills
+│   │   ├── skills.ts              # Skill data helpers
 │   │   ├── skills.test.ts
 │   │   ├── sourcebook-abbrevs.json
 │   │   └── sourcebooks.ts
@@ -93,6 +95,8 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   ├── lib/
 │   │   ├── download.ts           # JSON download helper
 │   │   ├── mods.ts               # Ability modifier calculations
+│   │   ├── progressions.ts       # Class progression calculations (HP, BAB, saves)
+│   │   ├── progressions.test.ts  # Progression calculation tests
 │   │   ├── statline.ts           # 3d6 rolls + 28-point-buy normalization
 │   │   ├── statline.test.ts
 │   │   ├── dice.ts               # Dice roll logic
@@ -108,16 +112,17 @@ It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages
 │   │   ├── index.css             # Imports all partials below
 │   │   ├── utilities.css         # Shared utility classes (margins, spacing)
 │   │   ├── alignment.css         # Alignment selector 3x3 grid
-│   │   ├── class.css             # Class selector styles
 │   │   ├── race.css              # Race selector styles
 │   │   ├── saves.css             # Saves panel card layout
 │   │   ├── combat-stats.css      # Combat statistics panel styles
-│   │   └── skills.css            # Skills panel table layout
+│   │   ├── skills.css            # Skills panel table layout
+│   │   └── levels.css            # Levels panel with per-level feats
 │
 │   └── types/
 │       ├── alignment.ts          # Alignment type + Zod schema
 │       ├── class.ts              # Class type + Zod schema
 │       ├── feat.ts               # Feat type + Zod schema
+│       ├── level.ts              # Level type + Zod schema (with feats)
 │       ├── race.ts               # Race type + Zod schema
 │       ├── save.ts               # Save type + Zod schema
 │       └── skill.ts              # Skill type + Zod schema
@@ -165,19 +170,28 @@ Character sheet sections displayed in the main area (top to bottom):
 
 1. **Name Field** - Character name input
 2. **Race Selector** - Choose from 7 core D&D 3.5e races with descriptions (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
-3. **Class Selector** - Choose from 11 core D&D 3.5e classes with descriptions (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
+3. **Levels Panel** - Character progression system (1-20 levels):
+   - Each level card shows level number, class selector dropdown, and feat count badge
+   - Collapsible per-level feat management (expand/collapse per level)
+   - Feat search within each level (max 10 results, alphabetically sorted)
+   - Add/remove levels with full persistence
+   - Natural multiclassing support (different class per level)
+   - Feats tracked historically by level
 4. **Alignment Selector** - 3x3 grid for all 9 D&D alignments (LG, NG, CG, LN, N, CN, LE, NE, CE)
 5. **Ability Grid** - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
 6. **Saving Throws** - Three saves (Fortitude, Reflex, Will) with:
-   - Base bonus inputs (0-99)
-   - Automatic total calculation (base bonus + ability modifier)
-   - Save descriptions
+   - Automatic calculation from class progressions + ability modifier
+   - Hover tooltips show calculation breakdown (e.g., "Fighter 3: +3, Wizard 2: +0, +2 WIS = +5")
+   - Green text indicates calculated values
+   - Manual base bonus inputs still available for characters without levels
 7. **Combat Statistics** - Combat-related stats with:
-   - Current HP / Max HP tracking
+   - Current HP / Max HP tracking (Max HP auto-calculated from hit dice + CON per level)
    - AC calculation (10 + armor + shield + DEX mod + misc)
    - Spell Resistance
    - Initiative Bonus
-   - Base Attack Bonus
+   - Base Attack Bonus (auto-calculated from class progressions)
+   - Hover tooltips show calculation breakdowns
+   - Green text indicates calculated values
 8. **Skills Panel** - All 43 D&D 3.5e skills with:
    - Rank inputs (0-99)
    - Automatic total calculation (ranks + ability modifier)
@@ -316,29 +330,49 @@ Example CSS references:
 
 ## Quick Context Recap
 
-When ChatGPT (GPT-5) is re-initialized or loses memory:
+When ChatGPT (GPT-5) / Claude is re-initialized or loses memory:
 
-1. Re-read this file.
+1. Re-read this file and `/home/wesb/git/CONTEXT.md`.
 2. Remember: this is a **client-only Vite + React SPA**, no backend.
 3. Follow all **CSS class-based** and **named export** conventions.
-4. Maintain modular structure and co-located tests.
+4. Maintain modular structure and co-located tests (43 tests currently passing).
 5. Preserve build and schema validation compatibility.
 6. All UI changes must fit into the sidebar layout and style system.
 7. Every new feature should be a **self-contained, TypeScript-safe, schema-validated module**.
 8. **Follow the data-driven pattern**: All game data in JSON → Zod validation → Schema integration.
 
-## Current Character Sheet Features
+## Current Character Builder Features
 
 - **Name** - Character name field
 - **Race** - 7 core D&D 3.5e races (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
-- **Class** - 11 core D&D 3.5e classes (Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
+- **Levels System** - Character progression (1-20 levels) with:
+  - Per-level class selection (11 core classes: Barbarian, Bard, Cleric, Druid, Fighter, Monk, Paladin, Ranger, Rogue, Sorcerer, Wizard)
+  - Natural multiclassing support
+  - Collapsible card-based UI
+  - Per-level feat management (1,826 feats available)
+  - Feats tracked historically by level
+  - Search within each level (max 10 results, alphabetically sorted)
 - **Alignment** - 9 D&D alignments in 3x3 grid (LG, NG, CG, LN, N, CN, LE, NE, CE)
 - **Ability Scores** - STR, DEX, CON, INT, WIS, CHA with modifier calculations
-- **Saving Throws** - Fortitude, Reflex, Will with base bonuses and automatic totals
-- **Combat Statistics** - HP tracking, AC calculation, Spell Resistance, Initiative, Base Attack Bonus
+- **Automatic Calculations** from class progressions:
+  - **Max HP** - Calculated from hit dice + CON modifier per level
+  - **Base Attack Bonus** - Calculated from class progression tables
+  - **Saving Throws** - Fortitude, Reflex, Will calculated from class progressions + ability modifiers
+  - Hover tooltips show calculation breakdowns
+  - Full multiclass support
+  - Green text indicates calculated values
+- **Combat Statistics** - HP tracking, AC calculation, Spell Resistance, Initiative
 - **Skills** - All 43 D&D 3.5e skills with rank tracking and totals
 - **Dice Roller** - Sidebar panel for rolling multiple dice
 
 All features persist via localStorage and JSON import/export.
+
+## Major Architectural Changes (PRs 10-12)
+
+**Level-Based System**: Replaced standalone class selector with level-based progression system supporting multiclassing.
+
+**Per-Level Feats**: Feats now associated with specific character levels for historical tracking.
+
+**Automatic Calculations**: HP, BAB, and saves calculated automatically from class progression tables with full multiclass support.
 
 ---
