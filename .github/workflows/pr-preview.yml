@@ -55,14 +55,16 @@ jobs:
               comment.body.includes('Preview deployed')
             );
 
-            const commentBody = `## Preview deployed to /latest!
-
-**Preview URL:** ${previewUrl}
-
-This deployment updates the \`/latest\` preview with the current state of this PR.
-
-*Last updated: ${new Date().toUTCString()}*
-*PR #${prNumber}*`;
+            const commentBody = [
+              '## Preview deployed to /latest!',
+              '',
+              `Preview URL: ${previewUrl}`,
+              '',
+              'This deployment updates the \`/latest\` preview with the current state of this PR.',
+              '',
+              `*Last updated: ${new Date().toUTCString()}*`,
+              `*PR #${prNumber}*`
+            ].join('\n');
 
             if (botComment) {
               await github.rest.issues.updateComment({
