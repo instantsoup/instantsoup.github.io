@@ -42,7 +42,7 @@ jobs:
         with:
           script: |
             const prNumber = context.payload.pull_request.number;
-            const previewUrl = 'https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/latest/';
+            const previewUrl = 'https://${{ github.repository_owner }}.github.io/latest/';
 
             const { data: comments } = await github.rest.issues.listComments({
               owner: context.repo.owner,
