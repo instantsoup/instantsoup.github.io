@@ -3,7 +3,7 @@
 This document defines the authoritative project architecture and code conventions for ChatGPT (GPT-5) / Claude when acting as **technical copilot** for the D&D 3.5e Character Builder webapp.
 
 The project is a **client-only React/Vite SPA** written in **TypeScript**, using **Zod** for schema validation and **Vitest** for tests.  
-It is hosted at **https://instantsoup.github.io/** and deployed via GitHub Pages from the `main` branch.
+It is hosted at **https://instantsoup.github.io/dnd35/** and deployed via GitHub Pages from the `main` branch to the gh-pages branch `/dnd35` directory. The root URL redirects to `/dnd35/`, and PR previews deploy to `/latest/`.
 
 ---
 

@@ -1,7 +1,7 @@
 # D&D 3.5e Character Builder (Single Page App)
 
 This project is a client-only React/Vite webapp hosted on GitHub Pages at
-[https://instantsoup.github.io/](https://instantsoup.github.io/)
+[https://instantsoup.github.io/dnd35/](https://instantsoup.github.io/dnd35/)
 
 The app models D&D 3.5e character sheets with full level-based character progression, automatic calculations from class progressions, and comprehensive feat/skill management. All data persists through localStorage and JSON import/export.
 
@@ -337,7 +337,9 @@ Adjust toward 28-point buy:
 
 ## Build and Deployment
 
-- Hosted at [https://instantsoup.github.io/](https://instantsoup.github.io/)
+- Hosted at [https://instantsoup.github.io/dnd35/](https://instantsoup.github.io/dnd35/)
+- Root URL redirects to `/dnd35/`
+- PR previews deploy to `/latest/` for testing before merge
 - Branch: `main`
 - Build command:
   ```bash
