@@ -1,5 +1,10 @@
 import { classes } from '../data/classes';
 import skillsData from '../data/skills.json';
+import {
+  calculateTotalSkillPoints,
+  calculateSkillPointsSpent,
+  calculateMaxRanks,
+} from '../lib/progressions';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 
@@ -12,6 +17,11 @@ interface SkillsPanelProps {
 }
 
 export function SkillsPanel({ mods, skillRanks, setSkillRank, levels, onBlur }: SkillsPanelProps) {
+  // Calculate skill points
+  const intModifier = mods.int || 0;
+  const totalAvailable = levels.length > 0 ? calculateTotalSkillPoints(levels, intModifier) : 0;
+  const totalSpent = levels.length > 0 ? calculateSkillPointsSpent(skillRanks, levels) : 0;
+  const remaining = totalAvailable - totalSpent;
   const calculateTotal = (skillName: string, abilityKey: string): number => {
     const ranks = skillRanks[skillName] || 0;
     const abilityMod = mods[abilityKey as keyof Scores] || 0;
@@ -30,6 +40,26 @@ export function SkillsPanel({ mods, skillRanks, setSkillRank, levels, onBlur }: 
 
   return (
     <div className="skills-panel">
+      {levels.length > 0 && (
+        <div className="skill-points-summary">
+          <div className="skill-points-summary__item">
+            <span className="skill-points-summary__label">Available:</span>
+            <span className="skill-points-summary__value">{totalAvailable}</span>
+          </div>
+          <div className="skill-points-summary__item">
+            <span className="skill-points-summary__label">Spent:</span>
+            <span className="skill-points-summary__value">{totalSpent}</span>
+          </div>
+          <div className="skill-points-summary__item">
+            <span className="skill-points-summary__label">Remaining:</span>
+            <span
+              className={`skill-points-summary__value ${remaining < 0 ? 'skill-points-summary__value--negative' : ''}`}
+            >
+              {remaining}
+            </span>
+          </div>
+        </div>
+      )}
       <div className="skills-table">
         <div className="skills-table__header">
           <div className="skills-table__cell skills-table__cell--skill">Skill</div>
@@ -42,6 +72,8 @@ export function SkillsPanel({ mods, skillRanks, setSkillRank, levels, onBlur }: 
           const total = calculateTotal(skill.name, skill.ability);
           const totalDisplay = total >= 0 ? `+${total}` : `${total}`;
           const isClass = isClassSkill(skill.name);
+          const characterLevel = levels.length;
+          const maxRanks = characterLevel > 0 ? calculateMaxRanks(characterLevel, isClass) : 99;
 
           return (
             <div key={skill.name} className="skills-table__row">
@@ -77,14 +109,20 @@ export function SkillsPanel({ mods, skillRanks, setSkillRank, levels, onBlur }: 
                 <input
                   type="number"
                   min="0"
-                  max="99"
+                  max={maxRanks}
                   className="skill-input"
                   value={ranks}
                   onChange={(e) => {
                     const val = parseInt(e.target.value || '0', 10);
-                    setSkillRank(skill.name, val);
+                    const clampedVal = Math.max(0, Math.min(maxRanks, val));
+                    setSkillRank(skill.name, clampedVal);
                   }}
                   onBlur={onBlur}
+                  title={
+                    characterLevel > 0
+                      ? `Max ranks: ${maxRanks} (${isClass ? 'class skill' : 'cross-class'})`
+                      : undefined
+                  }
                 />
               </div>
               <div className="skills-table__cell skills-table__cell--total">{totalDisplay}</div>
