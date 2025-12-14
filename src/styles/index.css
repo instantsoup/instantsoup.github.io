@@ -153,6 +153,9 @@ body {
   margin: 0;
   font-size: 28px;
   line-height: 1.2;
+  color: #ff0000; /* BRIGHT RED - PR PREVIEW TEST */
+  font-weight: 900;
+  text-shadow: 2px 2px 4px rgba(255, 0, 0, 0.3);
 }
 
 .field {
