@@ -20,7 +20,7 @@ export function LeftSidebar({
 }: LeftSidebarProps) {
   return (
     <aside className="sidebar">
-      <PanelSection title="Utilities" defaultOpen={false}>
+      <PanelSection title="Import/Export" defaultOpen={false}>
         <UtilitiesPanel
           exportJson={exportJson}
           onPickFile={onPickFile}
@@ -30,7 +30,7 @@ export function LeftSidebar({
         />
       </PanelSection>
 
-      <PanelSection title="Dice Roller" defaultOpen>
+      <PanelSection title="Dice Roller" defaultOpen={false}>
         <DiceRollerPanel />
       </PanelSection>
 
