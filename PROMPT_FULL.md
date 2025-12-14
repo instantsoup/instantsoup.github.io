@@ -172,13 +172,13 @@ The app uses a **two-column grid layout** defined in `layout.css`:
 
 Character sheet sections displayed in the main area (top to bottom):
 
-1. **Name** (open by default) - Character name input field
+1. **Name** (closed by default) - Character name input field
 
-2. **Race** (open by default) - Choose from 7 core D&D 3.5e races with descriptions
+2. **Race** (closed by default) - Choose from 7 core D&D 3.5e races with descriptions
 
-3. **Alignment** (open by default) - 3x3 grid for all 9 D&D alignments
+3. **Alignment** (closed by default) - 3x3 grid for all 9 D&D alignments
 
-4. **Abilities** (open by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
+4. **Abilities** (closed by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
 
 5. **Combat** (closed by default) - Combat statistics:
    - Current HP / Max HP tracking (Max HP auto-calculated from hit dice + CON per level)
@@ -195,15 +195,19 @@ Character sheet sections displayed in the main area (top to bottom):
    - Green text indicates calculated values
    - Manual base bonus inputs still available for characters without levels
 
-7. **Skills** (closed by default) - All 43 D&D 3.5e skills:
-   - Rank inputs (0-99)
+7. **Skills** (closed by default) - All 43 D&D 3.5e skills with complete skill points system:
+   - Skill points summary showing Available/Spent/Remaining (only when character has levels)
+   - First level gets 4× skill points (class base + INT modifier, minimum 1)
+   - Automatic max rank validation enforced on inputs
+   - Rank inputs with tooltips showing max allowed ranks
    - Automatic total calculation (ranks + ability modifier)
-   - Badges for trained-only skills and armor check penalty
    - Class/cross-class skill indicators based on character levels
    - Green "C" badge for class skills (1 point per rank)
    - Blue "CC" badge for cross-class skills (2 points per rank)
+   - Badges for trained-only skills and armor check penalty
+   - Visual feedback: red text when skill points are overspent
 
-8. **Levels** (open by default) - Character progression system positioned at bottom:
+8. **Levels** (closed by default) - Character progression system positioned at bottom:
    - 1-20 levels with per-level class selection
    - Each level card shows level number, class selector dropdown, and feat count badge
    - Collapsible per-level feat management (expand/collapse per level)
