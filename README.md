@@ -28,10 +28,14 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
   - Hover tooltips show calculation breakdowns
   - Full multiclass support
 - **Combat Statistics**: HP tracking, Armor Class calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative
-- **Skills Panel**: All 43 D&D 3.5e skills with rank tracking and total calculation
-  - Shows class/cross-class skill indicators based on character levels
+- **Skills Panel**: All 43 D&D 3.5e skills with complete D&D 3.5e skill points system
+  - Skill points tracking: Available/Spent/Remaining display
+  - First level gets 4× skill points (class base + INT modifier, minimum 1)
+  - Class/cross-class skill indicators with cost badges
   - Green "C" badge for class skills (1 point per rank)
   - Blue "CC" badge for cross-class skills (2 points per rank)
+  - Automatic max rank validation (level + 3 for class, (level + 3) ÷ 2 for cross-class)
+  - Visual feedback for overspending (red highlighting)
 - **Dice Roller**: Sidebar panel for rolling multiple dice
 - **Persistence**: localStorage auto-save and JSON import/export
 

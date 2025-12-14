@@ -59,7 +59,7 @@ export function App() {
         </header>
 
         {/* Name */}
-        <PanelSection title="Name" defaultOpen={true}>
+        <PanelSection title="Name" defaultOpen={false}>
           <div className="selector">
             <input
               className="selector-input"
@@ -72,12 +72,12 @@ export function App() {
         </PanelSection>
 
         {/* Race */}
-        <PanelSection title="Race" defaultOpen={true}>
+        <PanelSection title="Race" defaultOpen={false}>
           <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
         </PanelSection>
 
         {/* Alignment */}
-        <PanelSection title="Alignment" defaultOpen={true}>
+        <PanelSection title="Alignment" defaultOpen={false}>
           <AlignmentSelector
             alignment={alignment}
             setAlignment={setAlignment}
@@ -86,7 +86,7 @@ export function App() {
         </PanelSection>
 
         {/* Abilities */}
-        <PanelSection title="Abilities" defaultOpen={true}>
+        <PanelSection title="Abilities" defaultOpen={false}>
           <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
         </PanelSection>
 
@@ -124,7 +124,7 @@ export function App() {
         </PanelSection>
 
         {/* Levels - at bottom */}
-        <PanelSection title="Levels" defaultOpen={true}>
+        <PanelSection title="Levels" defaultOpen={false}>
           <LevelsPanel
             levels={levels}
             addLevel={addLevel}

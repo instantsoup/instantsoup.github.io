@@ -8,6 +8,10 @@ import {
   calculateSaveForClass,
   calculateTotalBAB,
   calculateTotalSave,
+  calculateSkillPointsForLevel,
+  calculateTotalSkillPoints,
+  calculateSkillPointsSpent,
+  calculateMaxRanks,
 } from './progressions';
 
 describe('calculateBABForClass', () => {
@@ -187,5 +191,96 @@ describe('calculateMaxHP', () => {
     expect(result.components[1].value).toBe(4);
     expect(result.components[2].label).toBe('CON modifier (3 × +2)');
     expect(result.components[2].value).toBe(6);
+  });
+});
+
+describe('calculateSkillPointsForLevel', () => {
+  it('calculates skill points for first level with 4x multiplier', () => {
+    expect(calculateSkillPointsForLevel(1, 'Fighter', 0)).toBe(8); // (2 + 0) × 4 = 8
+    expect(calculateSkillPointsForLevel(1, 'Rogue', 2)).toBe(40); // (8 + 2) × 4 = 40
+    expect(calculateSkillPointsForLevel(1, 'Wizard', 3)).toBe(20); // (2 + 3) × 4 = 20
+  });
+
+  it('calculates skill points for subsequent levels without multiplier', () => {
+    expect(calculateSkillPointsForLevel(2, 'Fighter', 0)).toBe(2); // 2 + 0 = 2
+    expect(calculateSkillPointsForLevel(5, 'Rogue', 2)).toBe(10); // 8 + 2 = 10
+    expect(calculateSkillPointsForLevel(10, 'Wizard', 3)).toBe(5); // 2 + 3 = 5
+  });
+
+  it('enforces minimum of 1 skill point per level', () => {
+    expect(calculateSkillPointsForLevel(1, 'Fighter', -3)).toBe(4); // max(1, 2 - 3) × 4 = 1 × 4 = 4
+    expect(calculateSkillPointsForLevel(2, 'Wizard', -5)).toBe(1); // max(1, 2 - 5) = 1
+  });
+});
+
+describe('calculateTotalSkillPoints', () => {
+  it('calculates total for single-class character', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Rogue', feats: [] },
+      { level: 2, class: 'Rogue', feats: [] },
+      { level: 3, class: 'Rogue', feats: [] },
+    ];
+    // Level 1: (8 + 2) × 4 = 40
+    // Level 2: 8 + 2 = 10
+    // Level 3: 8 + 2 = 10
+    // Total: 60
+    expect(calculateTotalSkillPoints(levels, 2)).toBe(60);
+  });
+
+  it('calculates total for multiclass character', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [] }, // (2 + 1) × 4 = 12
+      { level: 2, class: 'Rogue', feats: [] }, // 8 + 1 = 9
+      { level: 3, class: 'Rogue', feats: [] }, // 8 + 1 = 9
+    ];
+    // Total: 30
+    expect(calculateTotalSkillPoints(levels, 1)).toBe(30);
+  });
+});
+
+describe('calculateSkillPointsSpent', () => {
+  it('calculates spent points with class and cross-class skills', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [] }, // Class skills: Climb, Intimidate, etc.
+    ];
+    const skillRanks = {
+      Climb: 4, // Class skill: 4 points
+      'Move Silently': 2, // Cross-class: 2 × 2 = 4 points
+      Jump: 3, // Class skill: 3 points
+    };
+    // Total: 4 + 4 + 3 = 11
+    expect(calculateSkillPointsSpent(skillRanks, levels)).toBe(11);
+  });
+
+  it('handles multiclass with overlapping class skills', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [] }, // Has Climb as class skill
+      { level: 2, class: 'Barbarian', feats: [] }, // Also has Climb as class skill
+    ];
+    const skillRanks = {
+      Climb: 5, // Class skill for both: 5 points
+      Diplomacy: 2, // Cross-class for both: 2 × 2 = 4 points
+    };
+    // Total: 5 + 4 = 9
+    expect(calculateSkillPointsSpent(skillRanks, levels)).toBe(9);
+  });
+});
+
+describe('calculateMaxRanks', () => {
+  it('calculates max ranks for class skills', () => {
+    expect(calculateMaxRanks(1, true)).toBe(4); // 1 + 3
+    expect(calculateMaxRanks(5, true)).toBe(8); // 5 + 3
+    expect(calculateMaxRanks(20, true)).toBe(23); // 20 + 3
+  });
+
+  it('calculates max ranks for cross-class skills', () => {
+    expect(calculateMaxRanks(1, false)).toBe(2); // (1 + 3) / 2 = 2
+    expect(calculateMaxRanks(5, false)).toBe(4); // (5 + 3) / 2 = 4
+    expect(calculateMaxRanks(20, false)).toBe(11); // (20 + 3) / 2 = 11.5 → 11
+  });
+
+  it('returns 0 for character level 0', () => {
+    expect(calculateMaxRanks(0, true)).toBe(0);
+    expect(calculateMaxRanks(0, false)).toBe(0);
   });
 });
