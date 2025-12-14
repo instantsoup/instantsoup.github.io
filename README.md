@@ -178,9 +178,11 @@ The app uses a two-column grid layout defined in `layout.css`:
 
 - Built by `LeftSidebar.tsx`
 - Contains collapsible panels using `PanelSection.tsx`
+- All panels start closed by default for fast loading
 - Default panels:
-  - **Dice Roller** (open by default) — manages a dice pool, roll, and clear
-  - **Utilities** (closed by default) — wraps the `UtilitiesPanel`
+  - **Import/Export** — JSON import/export and reset functionality
+  - **Dice Roller** — manages a dice pool, roll, and clear
+  - **Roll Character** — random character generation tools
 
 ### Dice Roller
 
@@ -191,15 +193,15 @@ The app uses a two-column grid layout defined in `layout.css`:
 
 ### Main Content Area
 
-All sections use consistent collapsible panels with no redundant internal headers. Character sheet sections displayed in the main area (top to bottom):
+All sections use consistent collapsible panels with no redundant internal headers. Most panels start closed by default for fast loading. Character sheet sections displayed in the main area (top to bottom):
 
-1. **Name** (open by default) - Character name input field
+1. **Name** (closed by default) - Character name input field
 
-2. **Race** (open by default) - Choose from 7 core races with descriptions
+2. **Race** (closed by default) - Choose from 7 core races with descriptions
 
-3. **Alignment** (open by default) - 3x3 grid for all 9 D&D alignments
+3. **Alignment** (closed by default) - 3x3 grid for all 9 D&D alignments
 
-4. **Abilities** (open by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
+4. **Abilities** (closed by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
 
 5. **Combat** (closed by default) - Combat statistics:
    - Max HP auto-calculated from hit dice + CON modifier per level
@@ -222,7 +224,7 @@ All sections use consistent collapsible panels with no redundant internal header
    - Automatic total calculation (ranks + ability modifier)
    - Trained-only badges and armor check penalty indicators
 
-8. **Levels** (open by default) - Character progression system at bottom:
+8. **Levels** (closed by default) - Character progression system at bottom:
    - 1-20 levels with per-level class selection
    - Each level card shows level number, class selector, and feat count
    - Collapsible per-level feat management
@@ -278,15 +280,25 @@ Examples:
 
 ## Testing
 
-- Uses **Vitest** for all tests
+- Uses **Vitest** for all tests with **v8 coverage** reporting
 - Tests live **next to the files they verify**
   - `lib/statline.test.ts` → `lib/statline.ts`
   - `lib/dice.test.ts` → `lib/dice.ts`
+  - `lib/progressions.test.ts` → `lib/progressions.ts`
   - `data/skills.test.ts` → `data/skills.json` and `data/skills.ts`
-- Run all tests via:
+  - `data/feats.test.ts` → `data/feats.json` and `data/feats.ts`
+- **53 tests** currently passing
+- Run tests:
   ```bash
-  npm run test
+  npm run test              # Run all tests
+  npm run test:watch        # Watch mode
+  npm run test:coverage     # Generate coverage report
   ```
+- **Current Coverage**: ~85% statements, ~80% branches
+- Coverage reports generated in `coverage/` directory
+  - Text output in console
+  - HTML report: `open coverage/index.html`
+  - JSON report for CI integration
 
 ---
 
@@ -333,6 +345,22 @@ Adjust toward 28-point buy:
   ```
 - Output directory: `dist/`
 - Ensure `404.html` exists for client-side routing fallback
+- **PR Preview**: Pull requests automatically deploy to `/latest/` for testing before merge
+
+## Dependency Management
+
+- **All dependencies pinned to exact versions** (no `^` or `~` prefixes)
+- Prevents automatic updates that could introduce breaking changes or security issues
+- Updates must be done manually and intentionally
+- Check for updates:
+  ```bash
+  npm outdated
+  ```
+- Update process follows security-conscious protocol (see `/home/wesb/git/CLAUDE.md`)
+  - Review release notes and maintainer changes
+  - Update one package at a time
+  - Test after each update
+  - Watch for supply chain attack indicators
 
 ---
 
@@ -341,10 +369,11 @@ Adjust toward 28-point buy:
 - No backend — client-only SPA
 - All logic is local, schema-validated with Zod
 - Data-driven architecture: All game data in JSON files
-- Tests live next to source files (43 tests passing)
+- Tests live next to source files (53 tests passing, ~85% coverage)
 - Styles are modular CSS classes (no inline styles)
 - Components are all named exports (except App)
-- Sidebar layout provides expandable **Dice Roller** and **Utilities** panels
+- All dependencies pinned to exact versions for security
+- Sidebar layout provides collapsible **Import/Export**, **Dice Roller**, and **Roll Character** panels
 - Character features:
   - Name field
   - Race selection (7 core races)
