@@ -119,7 +119,8 @@ export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
                   <div className="skills-ability-group__header">{abilityLabels[abilityKey]}</div>
                   <div className="skills-ability-group__skills">
                     {abilitySkills.map((skill) => {
-                      const ranks = cumulativeRanks[skill.name] || 0;
+                      const rawRanks = cumulativeRanks[skill.name] || 0;
+                      const ranks = Math.floor(rawRanks); // Only full ranks count toward skill modifier
                       const abilityMod = mods[abilityKey as keyof Scores] || 0;
                       const total = ranks + abilityMod;
                       const totalDisplay = total >= 0 ? `+${total}` : `${total}`;
@@ -134,18 +135,27 @@ export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
                             <div className="skill-card__name-row">
                               <span className="skill-card__name">{skill.name}</span>
                               <div className="skill-card__badges">
-                                {isClassSkill && <span className="skill-badge skill-badge--class">Class</span>}
-                                {skill.trainedOnly && (
-                                  <span className="skill-badge skill-badge--trained">Trained Only</span>
+                                {isClassSkill && (
+                                  <span className="skill-badge skill-badge--class">Class</span>
                                 )}
-                                {skill.armorCheckPenalty && <span className="skill-badge skill-badge--armor">ACP</span>}
+                                {skill.trainedOnly && (
+                                  <span className="skill-badge skill-badge--trained">
+                                    Trained Only
+                                  </span>
+                                )}
+                                {skill.armorCheckPenalty && (
+                                  <span className="skill-badge skill-badge--armor">ACP</span>
+                                )}
                               </div>
                             </div>
                             <div className="skill-card__total">{totalDisplay}</div>
                           </div>
                           <div className="skill-card__breakdown">
-                            {ranks} rank{ranks !== 1 ? 's' : ''} + {abilityMod >= 0 ? '+' : ''}
+                            {rawRanks} rank{rawRanks !== 1 ? 's' : ''} + {abilityMod >= 0 ? '+' : ''}
                             {abilityMod} {skill.ability.toUpperCase()} = {totalDisplay}
+                            {rawRanks !== ranks && (
+                              <span className="skill-card__fractional"> (half ranks don't count)</span>
+                            )}
                           </div>
                         </div>
                       );
@@ -158,8 +168,8 @@ export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
 
           {Object.values(skillsByAbility).every((skills) => skills.length === 0) && (
             <div className="skills-panel__empty">
-              No skills match the current filter. Try a different filter or add skill ranks in the Levels section
-              above.
+              No skills match the current filter. Try a different filter or add skill ranks in the
+              Levels section above.
             </div>
           )}
         </>

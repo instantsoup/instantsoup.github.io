@@ -3,13 +3,11 @@ import { useState } from 'react';
 import { classes } from '../data/classes';
 import { feats } from '../data/feats';
 import {
-  calculateCumulativeSkillRanks,
   calculateSkillPointsAvailableAtLevel,
   calculateSkillPointsSpentAtLevel,
 } from '../lib/progressions';
 import type { ClassName } from '../schema/schema';
 import type { Level } from '../types/level';
-
 import { SkillSpendingPanel } from './SkillSpendingPanel';
 
 type LevelsPanelProps = {
@@ -122,7 +120,9 @@ export function LevelsPanel({
                         {levelFeats.length} feat{levelFeats.length !== 1 ? 's' : ''}
                       </span>
                     )}
-                    <span className={`level-card__skill-points ${remaining < 0 ? 'level-card__skill-points--negative' : ''}`}>
+                    <span
+                      className={`level-card__skill-points ${remaining < 0 ? 'level-card__skill-points--negative' : ''}`}
+                    >
                       {available} / {remaining}
                     </span>
                   </div>

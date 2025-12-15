@@ -293,8 +293,20 @@ describe('calculateMaxRanks', () => {
 describe('calculateCumulativeSkillRanks', () => {
   it('aggregates skill ranks from multiple levels', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 2, Jump: 1 }, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: { Climb: 1, Swim: 2 }, unspentSkillPoints: 0 },
+      {
+        level: 1,
+        class: 'Fighter',
+        feats: [],
+        skillRanks: { Climb: 2, Jump: 1 },
+        unspentSkillPoints: 0,
+      },
+      {
+        level: 2,
+        class: 'Fighter',
+        feats: [],
+        skillRanks: { Climb: 1, Swim: 2 },
+        unspentSkillPoints: 0,
+      },
       { level: 3, class: 'Fighter', feats: [], skillRanks: { Jump: 1 }, unspentSkillPoints: 0 },
     ];
     const cumulative = calculateCumulativeSkillRanks(levels);
@@ -315,9 +327,7 @@ describe('calculateCumulativeSkillRanks', () => {
 
 describe('calculateSkillPointsAvailableAtLevel', () => {
   it('calculates available points for level 1 (no carryover)', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], unspentSkillPoints: 0 },
-    ];
+    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [], unspentSkillPoints: 0 }];
     // Fighter: 2 base + 2 INT = 4, first level 4x = 16
     expect(calculateSkillPointsAvailableAtLevel(0, levels, 2)).toBe(16);
   });
@@ -332,9 +342,7 @@ describe('calculateSkillPointsAvailableAtLevel', () => {
   });
 
   it('returns 0 for invalid level index', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [] },
-    ];
+    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
     expect(calculateSkillPointsAvailableAtLevel(-1, levels, 2)).toBe(0);
     expect(calculateSkillPointsAvailableAtLevel(5, levels, 2)).toBe(0);
   });
@@ -401,9 +409,7 @@ describe('recalculateSkillPointsFromLevel', () => {
   });
 
   it('returns original array for invalid level index', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [] },
-    ];
+    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
     const updated = recalculateSkillPointsFromLevel(-1, levels, 2);
     expect(updated).toEqual(levels);
   });

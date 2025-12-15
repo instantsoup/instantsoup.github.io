@@ -4,14 +4,13 @@ import { ALIGNMENT_CODES } from '../data/alignments';
 import { classes } from '../data/classes';
 import { CLASS_NAMES } from '../data/classes';
 import { RACE_NAMES } from '../data/races';
-import { LevelsArraySchema } from '../types/level';
-import type { Level } from '../types/level';
+import { computeMods } from '../lib/mods';
 import {
   calculateMaxRanks,
-  calculateSkillPointsForLevel,
   recalculateSkillPointsFromLevel,
 } from '../lib/progressions';
-import { computeMods } from '../lib/mods';
+import type { Level } from '../types/level';
+import { LevelsArraySchema } from '../types/level';
 
 export const VERSION = 2;
 
@@ -24,7 +23,7 @@ export const ScoresSchema = z.object({
   cha: z.number().int(),
 });
 
-export const SkillRanksSchema = z.record(z.string(), z.number().int().min(0).max(99));
+export const SkillRanksSchema = z.record(z.string(), z.number().min(0).max(99)); // Allow decimals for 0.5 ranks
 
 export const SaveBonusesSchema = z.record(z.string(), z.number().int().min(0).max(99));
 
@@ -103,7 +102,12 @@ export function migrateV1toV2(v1: CharacterV1): CharacterV2 {
   }
 
   // No levels or no global skills - simple upgrade
-  if (!v1.levels || v1.levels.length === 0 || !v1.skillRanks || Object.keys(v1.skillRanks).length === 0) {
+  if (
+    !v1.levels ||
+    v1.levels.length === 0 ||
+    !v1.skillRanks ||
+    Object.keys(v1.skillRanks).length === 0
+  ) {
     return {
       ...v1,
       version: 2,

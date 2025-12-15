@@ -11,7 +11,7 @@ export const LevelSchema = z
     level: z.number().int().min(1).max(20),
     class: z.enum(CLASS_NAMES),
     feats: z.array(z.string()).optional().default([]),
-    skillRanks: z.record(z.string(), z.number().int().min(0).max(99)).optional().default({}),
+    skillRanks: z.record(z.string(), z.number().min(0).max(99)).optional().default({}), // Allow decimals for 0.5 ranks
     unspentSkillPoints: z.number().int().min(0).optional().default(0),
   })
   .strict();

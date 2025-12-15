@@ -343,7 +343,9 @@ export function validateSkillRanksAtLevel(level: Level, allLevels: Level[]): Ski
     const totalRanks = cumulative[skillName] || 0;
 
     if (totalRanks > maxRanks) {
-      errors.push(`${skillName}: ${totalRanks} ranks exceeds max of ${maxRanks} at level ${characterLevel}`);
+      errors.push(
+        `${skillName}: ${totalRanks} ranks exceeds max of ${maxRanks} at level ${characterLevel}`,
+      );
     }
   }
 

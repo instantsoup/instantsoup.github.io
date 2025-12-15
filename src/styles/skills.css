@@ -162,6 +162,12 @@
   font-variant-numeric: tabular-nums;
 }
 
+.skill-card__fractional {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #9ca3af;
+}
+
 /* ================================
    Skill Badges
 =================================== */

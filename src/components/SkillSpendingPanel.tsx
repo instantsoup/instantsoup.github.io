@@ -55,9 +55,18 @@ export function SkillSpendingPanel({
     return set;
   }, [relevantLevels]);
 
-  const handleAdjustRank = (skillName: string, delta: number) => {
+  const handleAdjustRank = (skillName: string, isClassSkill: boolean) => {
     const currentRanks = levelSkillRanks[skillName] ?? 0;
-    const newRanks = Math.max(0, currentRanks + delta);
+    const increment = isClassSkill ? 1 : 0.5; // Class: 1 rank, Cross-class: 0.5 ranks
+    const newRanks = Math.max(0, currentRanks + increment);
+    updateLevelSkillRanks(level.level, skillName, newRanks);
+    onBlur?.();
+  };
+
+  const handleRemoveRank = (skillName: string, isClassSkill: boolean) => {
+    const currentRanks = levelSkillRanks[skillName] ?? 0;
+    const decrement = isClassSkill ? 1 : 0.5; // Class: 1 rank, Cross-class: 0.5 ranks
+    const newRanks = Math.max(0, currentRanks - decrement);
     updateLevelSkillRanks(level.level, skillName, newRanks);
     onBlur?.();
   };
@@ -85,10 +94,10 @@ export function SkillSpendingPanel({
     const ranksAtThisLevel = levelSkillRanks[skill.name] ?? 0;
     const cumulativeTotal = cumulativeRanks[skill.name] ?? 0;
     const maxRanks = calculateMaxRanks(characterLevel, isClassSkill);
-    const costPerRank = isClassSkill ? 1 : 2;
+    const costPerIncrement = 1; // Always 1 point per click (class: 1 rank, cross-class: 0.5 ranks)
 
     // Can only add if we have enough points and haven't hit max
-    const canAdd = remaining >= costPerRank && cumulativeTotal < maxRanks;
+    const canAdd = remaining >= costPerIncrement && cumulativeTotal < maxRanks;
     const canRemove = ranksAtThisLevel > 0;
 
     return (
@@ -100,25 +109,29 @@ export function SkillSpendingPanel({
           <span className="skill-spending-item__name">
             {skill.name}
             <span className="skill-spending-item__ability">({skill.ability.toUpperCase()})</span>
-            {skill.trainedOnly && <span className="skill-spending-item__badge--trained">Trained Only</span>}
+            {skill.trainedOnly && (
+              <span className="skill-spending-item__badge--trained">Trained Only</span>
+            )}
           </span>
           <div className="skill-spending-item__controls">
             <button
               type="button"
               className="skill-spending-item__button"
-              onClick={() => handleAdjustRank(skill.name, -1)}
+              onClick={() => handleRemoveRank(skill.name, isClassSkill)}
               disabled={!canRemove}
-              aria-label={`Remove 1 rank from ${skill.name}`}
+              aria-label={`Remove ${isClassSkill ? '1' : '0.5'} rank from ${skill.name}`}
             >
               −
             </button>
-            <span className="skill-spending-item__ranks">{ranksAtThisLevel > 0 ? ranksAtThisLevel : '0'}</span>
+            <span className="skill-spending-item__ranks">
+              {ranksAtThisLevel > 0 ? ranksAtThisLevel : '0'}
+            </span>
             <button
               type="button"
               className="skill-spending-item__button"
-              onClick={() => handleAdjustRank(skill.name, 1)}
+              onClick={() => handleAdjustRank(skill.name, isClassSkill)}
               disabled={!canAdd}
-              aria-label={`Add 1 rank to ${skill.name}`}
+              aria-label={`Add ${isClassSkill ? '1' : '0.5'} rank to ${skill.name}`}
             >
               +
             </button>
@@ -131,14 +144,18 @@ export function SkillSpendingPanel({
   return (
     <div className="skill-spending-panel">
       {remaining < 0 && (
-        <div className="skill-spending-warning">⚠️ You have overspent skill points! Remove some ranks to continue.</div>
+        <div className="skill-spending-warning">
+          ⚠️ You have overspent skill points! Remove some ranks to continue.
+        </div>
       )}
 
       <div className="skill-spending-list">
         {/* Class Skills */}
         <div className="skill-spending-group">
           <div className="skill-spending-group__header">Class Skills</div>
-          <div className="skill-spending-group__skills">{classSkills.map((skill) => renderSkill(skill, true))}</div>
+          <div className="skill-spending-group__skills">
+            {classSkills.map((skill) => renderSkill(skill, true))}
+          </div>
         </div>
 
         {/* Cross-Class Skills */}

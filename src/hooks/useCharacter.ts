@@ -173,7 +173,9 @@ export function useCharacter() {
 
   const updateLevelClass = (levelNumber: number, className: ClassName) => {
     setLevels((prev) => {
-      const updated = prev.map((lvl) => (lvl.level === levelNumber ? { ...lvl, class: className } : lvl));
+      const updated = prev.map((lvl) =>
+        lvl.level === levelNumber ? { ...lvl, class: className } : lvl,
+      );
       // Recalculate from this level forward (class change affects class skills)
       return recalculateSkillPointsFromLevel(levelNumber - 1, updated, mods.int);
     });
