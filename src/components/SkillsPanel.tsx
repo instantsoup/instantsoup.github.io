@@ -151,10 +151,14 @@ export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
                             <div className="skill-card__total">{totalDisplay}</div>
                           </div>
                           <div className="skill-card__breakdown">
-                            {rawRanks} rank{rawRanks !== 1 ? 's' : ''} + {abilityMod >= 0 ? '+' : ''}
+                            {rawRanks} rank{rawRanks !== 1 ? 's' : ''} +{' '}
+                            {abilityMod >= 0 ? '+' : ''}
                             {abilityMod} {skill.ability.toUpperCase()} = {totalDisplay}
                             {rawRanks !== ranks && (
-                              <span className="skill-card__fractional"> (half ranks don't count)</span>
+                              <span className="skill-card__fractional">
+                                {' '}
+                                (half ranks don't count)
+                              </span>
                             )}
                           </div>
                         </div>

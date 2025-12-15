@@ -5,10 +5,7 @@ import { classes } from '../data/classes';
 import { CLASS_NAMES } from '../data/classes';
 import { RACE_NAMES } from '../data/races';
 import { computeMods } from '../lib/mods';
-import {
-  calculateMaxRanks,
-  recalculateSkillPointsFromLevel,
-} from '../lib/progressions';
+import { calculateMaxRanks, recalculateSkillPointsFromLevel } from '../lib/progressions';
 import type { Level } from '../types/level';
 import { LevelsArraySchema } from '../types/level';
 

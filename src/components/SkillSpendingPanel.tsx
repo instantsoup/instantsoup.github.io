@@ -29,6 +29,7 @@ export function SkillSpendingPanel({
 }: SkillSpendingPanelProps) {
   const characterLevel = level.level;
   const levelSkillRanks = level.skillRanks ?? {};
+  const [classSkillsExpanded, setClassSkillsExpanded] = useState(true);
   const [crossClassExpanded, setCrossClassExpanded] = useState(false);
 
   // Calculate available and spent points
@@ -152,10 +153,18 @@ export function SkillSpendingPanel({
       <div className="skill-spending-list">
         {/* Class Skills */}
         <div className="skill-spending-group">
-          <div className="skill-spending-group__header">Class Skills</div>
-          <div className="skill-spending-group__skills">
-            {classSkills.map((skill) => renderSkill(skill, true))}
-          </div>
+          <button
+            type="button"
+            className="skill-spending-group__header skill-spending-group__header--collapsible"
+            onClick={() => setClassSkillsExpanded(!classSkillsExpanded)}
+          >
+            Class Skills {classSkillsExpanded ? '▼' : '▶'}
+          </button>
+          {classSkillsExpanded && (
+            <div className="skill-spending-group__skills">
+              {classSkills.map((skill) => renderSkill(skill, true))}
+            </div>
+          )}
         </div>
 
         {/* Cross-Class Skills */}
