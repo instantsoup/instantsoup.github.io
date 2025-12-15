@@ -3,13 +3,13 @@ import { ZodError } from 'zod';
 
 import { downloadJson } from '../lib/download';
 import { computeMods } from '../lib/mods';
+import { recalculateSkillPointsFromLevel } from '../lib/progressions';
 import {
   type AlignmentCode,
-  CharacterSchemaV1,
-  type CharacterV1,
+  type Character,
+  CharacterSchema,
   type ClassName,
   type CombatStats,
-  migrateToLatest,
   type RaceName,
   VERSION,
 } from '../schema/schema';
@@ -33,7 +33,7 @@ export function useCharacter() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const mods = useMemo(() => computeMods(scores), [scores]);
-  const current: CharacterV1 = {
+  const current: Character = {
     version: VERSION,
     name,
     scores,
@@ -59,7 +59,7 @@ export function useCharacter() {
 
   const exportJson = () => {
     try {
-      const parsed = CharacterSchemaV1.parse(current);
+      const parsed = CharacterSchema.parse(current);
       const safeName = (parsed.name || 'character').replace(/[^\w-]+/g, '_').slice(0, 40);
       downloadJson(`${safeName || 'character'}_v${parsed.version}.json`, parsed);
       setError(null);
@@ -79,18 +79,18 @@ export function useCharacter() {
     try {
       const text = await file.text();
       const json = JSON.parse(text);
-      const migrated = migrateToLatest(json);
-      setName(migrated.name);
-      setScores(migrated.scores);
-      setRace(migrated.race);
-      setClassName(migrated.class);
-      setLevels(migrated.levels ?? []);
-      setAlignment(migrated.alignment);
-      setFeats(migrated.feats ?? []);
-      setSkillRanks(migrated.skillRanks ?? {});
-      setSaveBonuses(migrated.saveBonuses ?? {});
-      setCombatStats(migrated.combatStats ?? {});
-      saveLocal(migrated);
+      const parsed = CharacterSchema.parse(json);
+      setName(parsed.name);
+      setScores(parsed.scores);
+      setRace(parsed.race);
+      setClassName(parsed.class);
+      setLevels(parsed.levels ?? []);
+      setAlignment(parsed.alignment);
+      setFeats(parsed.feats ?? []);
+      setSkillRanks(parsed.skillRanks ?? {});
+      setSaveBonuses(parsed.saveBonuses ?? {});
+      setCombatStats(parsed.combatStats ?? {});
+      saveLocal(parsed);
       setError(null);
     } catch (e: unknown) {
       if (e instanceof ZodError) {
@@ -152,18 +152,32 @@ export function useCharacter() {
   const addLevel = () => {
     const nextLevel = levels.length + 1;
     if (nextLevel > 20) return; // Max level 20
-    setLevels((prev) => [...prev, { level: nextLevel, class: 'Fighter', feats: [] }]);
+    setLevels((prev) => [
+      ...prev,
+      { level: nextLevel, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+    ]);
   };
 
   const removeLevel = () => {
     if (levels.length === 0) return;
-    setLevels((prev) => prev.slice(0, -1));
+    setLevels((prev) => {
+      const updated = prev.slice(0, -1);
+      // Recalculate skill points from the removed level's previous level
+      if (updated.length > 0) {
+        return recalculateSkillPointsFromLevel(updated.length - 1, updated, mods.int);
+      }
+      return updated;
+    });
   };
 
   const updateLevelClass = (levelNumber: number, className: ClassName) => {
-    setLevels((prev) =>
-      prev.map((lvl) => (lvl.level === levelNumber ? { ...lvl, class: className } : lvl)),
-    );
+    setLevels((prev) => {
+      const updated = prev.map((lvl) =>
+        lvl.level === levelNumber ? { ...lvl, class: className } : lvl,
+      );
+      // Recalculate from this level forward (class change affects class skills)
+      return recalculateSkillPointsFromLevel(levelNumber - 1, updated, mods.int);
+    });
   };
 
   const addFeatToLevel = (levelNumber: number, featName: string) => {
@@ -190,6 +204,24 @@ export function useCharacter() {
     );
   };
 
+  const updateLevelSkillRanks = (levelNumber: number, skillName: string, ranks: number) => {
+    setLevels((prev) => {
+      const updated = prev.map((lvl) =>
+        lvl.level === levelNumber
+          ? {
+              ...lvl,
+              skillRanks: {
+                ...(lvl.skillRanks ?? {}),
+                [skillName]: Math.max(0, Math.min(99, ranks)),
+              },
+            }
+          : lvl,
+      );
+      // Recalculate skill points from this level forward
+      return recalculateSkillPointsFromLevel(levelNumber - 1, updated, mods.int);
+    });
+  };
+
   return {
     name,
     setName,
@@ -206,6 +238,7 @@ export function useCharacter() {
     updateLevelClass,
     addFeatToLevel,
     removeFeatFromLevel,
+    updateLevelSkillRanks,
     alignment,
     setAlignment,
     feats,

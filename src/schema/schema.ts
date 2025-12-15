@@ -16,7 +16,7 @@ export const ScoresSchema = z.object({
   cha: z.number().int(),
 });
 
-export const SkillRanksSchema = z.record(z.string(), z.number().int().min(0).max(99));
+export const SkillRanksSchema = z.record(z.string(), z.number().min(0).max(99)); // Allow decimals for 0.5 ranks
 
 export const SaveBonusesSchema = z.record(z.string(), z.number().int().min(0).max(99));
 
@@ -48,7 +48,7 @@ export const CombatStatsSchema = z.object({
 
 export type CombatStats = z.infer<typeof CombatStatsSchema>;
 
-export const CharacterSchemaV1 = z.object({
+export const CharacterSchema = z.object({
   version: z.literal(1),
   name: z.string().min(0),
   scores: ScoresSchema,
@@ -57,16 +57,10 @@ export const CharacterSchemaV1 = z.object({
   levels: LevelsArraySchema.optional().default([]),
   alignment: AlignmentCodeSchema.optional(),
   feats: z.array(z.string()).optional().default([]), // Deprecated - use levels[].feats instead
-  skillRanks: SkillRanksSchema.optional().default({}),
+  skillRanks: SkillRanksSchema.optional().default({}), // Deprecated - use levels[].skillRanks instead
   saveBonuses: SaveBonusesSchema.optional().default({}),
   combatStats: CombatStatsSchema.optional().default({}),
   notes: z.string().optional(),
 });
 
-export type CharacterV1 = z.infer<typeof CharacterSchemaV1>;
-
-export function migrateToLatest(input: unknown): CharacterV1 {
-  const parsed = CharacterSchemaV1.safeParse(input);
-  if (parsed.success) return parsed.data;
-  throw new Error('Invalid character file: schema mismatch or unsupported version.');
-}
+export type Character = z.infer<typeof CharacterSchema>;

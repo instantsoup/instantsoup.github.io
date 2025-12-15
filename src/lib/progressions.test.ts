@@ -4,14 +4,19 @@ import { describe, expect, it } from 'vitest';
 import type { Level } from '../types/level';
 import {
   calculateBABForClass,
+  calculateCumulativeSkillRanks,
   calculateMaxHP,
+  calculateMaxRanks,
   calculateSaveForClass,
+  calculateSkillPointsAvailableAtLevel,
+  calculateSkillPointsForLevel,
+  calculateSkillPointsSpent,
+  calculateSkillPointsSpentAtLevel,
   calculateTotalBAB,
   calculateTotalSave,
-  calculateSkillPointsForLevel,
   calculateTotalSkillPoints,
-  calculateSkillPointsSpent,
-  calculateMaxRanks,
+  recalculateSkillPointsFromLevel,
+  validateSkillRanksAtLevel,
 } from './progressions';
 
 describe('calculateBABForClass', () => {
@@ -282,5 +287,130 @@ describe('calculateMaxRanks', () => {
   it('returns 0 for character level 0', () => {
     expect(calculateMaxRanks(0, true)).toBe(0);
     expect(calculateMaxRanks(0, false)).toBe(0);
+  });
+});
+
+describe('calculateCumulativeSkillRanks', () => {
+  it('aggregates skill ranks from multiple levels', () => {
+    const levels: Level[] = [
+      {
+        level: 1,
+        class: 'Fighter',
+        feats: [],
+        skillRanks: { Climb: 2, Jump: 1 },
+        unspentSkillPoints: 0,
+      },
+      {
+        level: 2,
+        class: 'Fighter',
+        feats: [],
+        skillRanks: { Climb: 1, Swim: 2 },
+        unspentSkillPoints: 0,
+      },
+      { level: 3, class: 'Fighter', feats: [], skillRanks: { Jump: 1 }, unspentSkillPoints: 0 },
+    ];
+    const cumulative = calculateCumulativeSkillRanks(levels);
+    expect(cumulative['Climb']).toBe(3); // 2 + 1
+    expect(cumulative['Jump']).toBe(2); // 1 + 1
+    expect(cumulative['Swim']).toBe(2);
+  });
+
+  it('returns empty object for levels with no skills', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [] },
+      { level: 2, class: 'Fighter', feats: [] },
+    ];
+    const cumulative = calculateCumulativeSkillRanks(levels);
+    expect(cumulative).toEqual({});
+  });
+});
+
+describe('calculateSkillPointsAvailableAtLevel', () => {
+  it('calculates available points for level 1 (no carryover)', () => {
+    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [], unspentSkillPoints: 0 }];
+    // Fighter: 2 base + 2 INT = 4, first level 4x = 16
+    expect(calculateSkillPointsAvailableAtLevel(0, levels, 2)).toBe(16);
+  });
+
+  it('calculates available points for level 2+ with carryover', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [], unspentSkillPoints: 3 },
+      { level: 2, class: 'Fighter', feats: [], unspentSkillPoints: 0 },
+    ];
+    // Fighter: 2 base + 2 INT = 4, plus 3 carryover = 7
+    expect(calculateSkillPointsAvailableAtLevel(1, levels, 2)).toBe(7);
+  });
+
+  it('returns 0 for invalid level index', () => {
+    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
+    expect(calculateSkillPointsAvailableAtLevel(-1, levels, 2)).toBe(0);
+    expect(calculateSkillPointsAvailableAtLevel(5, levels, 2)).toBe(0);
+  });
+});
+
+describe('calculateSkillPointsSpentAtLevel', () => {
+  it('calculates spent points considering class/cross-class', () => {
+    const level: Level = {
+      level: 1,
+      class: 'Fighter',
+      feats: [],
+      skillRanks: { Climb: 2, Diplomacy: 1 }, // Climb is class, Diplomacy is cross-class
+    };
+    // Climb: 2 ranks × 1 = 2, Diplomacy: 1 rank × 2 = 2, Total: 4
+    expect(calculateSkillPointsSpentAtLevel(level, [level])).toBe(4);
+  });
+
+  it('returns 0 for level with no skill ranks', () => {
+    const level: Level = {
+      level: 1,
+      class: 'Fighter',
+      feats: [],
+      skillRanks: {},
+    };
+    expect(calculateSkillPointsSpentAtLevel(level, [level])).toBe(0);
+  });
+});
+
+describe('validateSkillRanksAtLevel', () => {
+  it('validates skill ranks within max', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 2 } }, // Max: 4 for class skill
+    ];
+    const result = validateSkillRanksAtLevel(levels[0], levels);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+
+  it('detects when skill ranks exceed max', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 5 } }, // Max: 4 for class skill
+    ];
+    const result = validateSkillRanksAtLevel(levels[0], levels);
+    expect(result.valid).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+    expect(result.errors[0]).toContain('exceeds max');
+  });
+});
+
+describe('recalculateSkillPointsFromLevel', () => {
+  it('recalculates carryover from specified level forward', () => {
+    const levels: Level[] = [
+      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 2 }, unspentSkillPoints: 0 },
+      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      { level: 3, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+    ];
+    const updated = recalculateSkillPointsFromLevel(0, levels, 2);
+    // Level 1: 16 available, 2 spent (class skill), 14 remaining
+    expect(updated[0].unspentSkillPoints).toBe(14);
+    // Level 2: 4 base + 14 carryover = 18 available, 0 spent, 18 remaining
+    expect(updated[1].unspentSkillPoints).toBe(18);
+    // Level 3: 4 base + 18 carryover = 22 available, 0 spent, 22 remaining
+    expect(updated[2].unspentSkillPoints).toBe(22);
+  });
+
+  it('returns original array for invalid level index', () => {
+    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
+    const updated = recalculateSkillPointsFromLevel(-1, levels, 2);
+    expect(updated).toEqual(levels);
   });
 });

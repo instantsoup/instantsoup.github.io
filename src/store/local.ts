@@ -1,4 +1,4 @@
-import { CharacterSchemaV1, type CharacterV1 } from '../schema/schema';
+import { type Character, CharacterSchema } from '../schema/schema';
 import { emptyScores } from '../types';
 
 const KEY = 'v0-char';
@@ -8,7 +8,7 @@ export function loadLocal(): { name: string; scores: typeof emptyScores } {
     const raw = localStorage.getItem(KEY);
     if (!raw) return { name: '', scores: emptyScores };
     const json = JSON.parse(raw);
-    const safe = CharacterSchemaV1.safeParse(json);
+    const safe = CharacterSchema.safeParse(json);
     if (safe.success) return { name: safe.data.name, scores: safe.data.scores };
     return { name: json?.name ?? '', scores: json?.scores ?? emptyScores };
   } catch {
@@ -16,7 +16,7 @@ export function loadLocal(): { name: string; scores: typeof emptyScores } {
   }
 }
 
-export function saveLocal(v: CharacterV1) {
+export function saveLocal(v: Character) {
   localStorage.setItem(KEY, JSON.stringify(v));
 }
 

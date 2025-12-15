@@ -2,8 +2,13 @@ import { useState } from 'react';
 
 import { classes } from '../data/classes';
 import { feats } from '../data/feats';
+import {
+  calculateSkillPointsAvailableAtLevel,
+  calculateSkillPointsSpentAtLevel,
+} from '../lib/progressions';
 import type { ClassName } from '../schema/schema';
 import type { Level } from '../types/level';
+import { SkillSpendingPanel } from './SkillSpendingPanel';
 
 type LevelsPanelProps = {
   levels: Level[];
@@ -12,6 +17,8 @@ type LevelsPanelProps = {
   updateLevelClass: (levelNumber: number, className: ClassName) => void;
   addFeatToLevel: (levelNumber: number, featName: string) => void;
   removeFeatFromLevel: (levelNumber: number, featName: string) => void;
+  updateLevelSkillRanks: (levelNumber: number, skillName: string, ranks: number) => void;
+  intModifier: number;
   onBlur?: () => void;
 };
 
@@ -22,10 +29,13 @@ export function LevelsPanel({
   updateLevelClass,
   addFeatToLevel,
   removeFeatFromLevel,
+  updateLevelSkillRanks,
+  intModifier,
   onBlur,
 }: LevelsPanelProps) {
   const canAddLevel = levels.length < 20;
   const [expandedLevel, setExpandedLevel] = useState<number | null>(null);
+  const [expandedSkills, setExpandedSkills] = useState<number | null>(null);
   const [searchTerms, setSearchTerms] = useState<Record<number, string>>({});
 
   const handleAddLevel = () => {
@@ -57,6 +67,10 @@ export function LevelsPanel({
     setExpandedLevel(expandedLevel === levelNumber ? null : levelNumber);
   };
 
+  const toggleExpandedSkills = (levelNumber: number) => {
+    setExpandedSkills(expandedSkills === levelNumber ? null : levelNumber);
+  };
+
   const getSearchResults = (levelNumber: number) => {
     const searchTerm = searchTerms[levelNumber] ?? '';
     if (!searchTerm.trim()) return [];
@@ -74,10 +88,16 @@ export function LevelsPanel({
 
       {levels.length > 0 && (
         <div className="levels-list">
-          {levels.map((lvl) => {
+          {levels.map((lvl, levelIndex) => {
             const isExpanded = expandedLevel === lvl.level;
+            const isSkillsExpanded = expandedSkills === lvl.level;
             const levelFeats = lvl.feats ?? [];
             const searchResults = getSearchResults(lvl.level);
+
+            // Calculate skill points for this level
+            const available = calculateSkillPointsAvailableAtLevel(levelIndex, levels, intModifier);
+            const spent = calculateSkillPointsSpentAtLevel(lvl, levels);
+            const remaining = available - spent;
 
             return (
               <div key={lvl.level} className="level-card">
@@ -100,14 +120,28 @@ export function LevelsPanel({
                         {levelFeats.length} feat{levelFeats.length !== 1 ? 's' : ''}
                       </span>
                     )}
+                    <span
+                      className={`level-card__skill-points ${remaining < 0 ? 'level-card__skill-points--negative' : ''}`}
+                    >
+                      {available} / {remaining}
+                    </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => toggleExpanded(lvl.level)}
-                    className="level-card__toggle"
-                  >
-                    {isExpanded ? '▼ Hide Feats' : '▶ Manage Feats'}
-                  </button>
+                  <div className="level-card__buttons">
+                    <button
+                      type="button"
+                      onClick={() => toggleExpanded(lvl.level)}
+                      className="level-card__toggle"
+                    >
+                      {isExpanded ? '▼ Hide Feats' : '▶ Manage Feats'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleExpandedSkills(lvl.level)}
+                      className="level-card__toggle level-card__toggle--skills"
+                    >
+                      {isSkillsExpanded ? '▼ Hide Skills' : '▶ Manage Skills'}
+                    </button>
+                  </div>
                 </div>
 
                 {isExpanded && (
@@ -190,6 +224,19 @@ export function LevelsPanel({
                           : 'Search above to add feats for this level.'}
                       </div>
                     )}
+                  </div>
+                )}
+
+                {isSkillsExpanded && (
+                  <div className="level-card__skills">
+                    <SkillSpendingPanel
+                      levelIndex={levelIndex}
+                      level={lvl}
+                      allLevels={levels}
+                      intModifier={intModifier}
+                      updateLevelSkillRanks={updateLevelSkillRanks}
+                      onBlur={onBlur}
+                    />
                   </div>
                 )}
               </div>

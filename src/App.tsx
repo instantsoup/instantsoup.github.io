@@ -23,10 +23,9 @@ export function App() {
     updateLevelClass,
     addFeatToLevel,
     removeFeatFromLevel,
+    updateLevelSkillRanks,
     alignment,
     setAlignment,
-    skillRanks,
-    setSkillRank,
     saveBonuses,
     setSaveBonus,
     combatStats,
@@ -114,13 +113,7 @@ export function App() {
 
         {/* Skills */}
         <PanelSection title="Skills" defaultOpen={false}>
-          <SkillsPanel
-            mods={mods}
-            skillRanks={skillRanks}
-            setSkillRank={setSkillRank}
-            levels={levels}
-            onBlur={persistLocal}
-          />
+          <SkillsPanel mods={mods} levels={levels} />
         </PanelSection>
 
         {/* Levels - at bottom */}
@@ -132,6 +125,8 @@ export function App() {
             updateLevelClass={updateLevelClass}
             addFeatToLevel={addFeatToLevel}
             removeFeatFromLevel={removeFeatFromLevel}
+            updateLevelSkillRanks={updateLevelSkillRanks}
+            intModifier={mods.int}
             onBlur={persistLocal}
           />
         </PanelSection>

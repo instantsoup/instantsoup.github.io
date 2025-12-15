@@ -242,3 +242,144 @@ export function calculateMaxRanks(characterLevel: number, isClassSkill: boolean)
     return Math.floor((characterLevel + 3) / 2);
   }
 }
+
+/**
+ * Calculate cumulative skill ranks across all levels
+ * Aggregates skillRanks from each level into a single total per skill
+ */
+export function calculateCumulativeSkillRanks(levels: Level[]): Record<string, number> {
+  const cumulative: Record<string, number> = {};
+
+  for (const level of levels) {
+    const levelSkillRanks = level.skillRanks ?? {};
+    for (const [skillName, ranks] of Object.entries(levelSkillRanks)) {
+      cumulative[skillName] = (cumulative[skillName] || 0) + ranks;
+    }
+  }
+
+  return cumulative;
+}
+
+/**
+ * Calculate skill points available at a specific level
+ * Returns: base points for this level + carryover from previous level
+ */
+export function calculateSkillPointsAvailableAtLevel(
+  levelIndex: number,
+  levels: Level[],
+  intModifier: number,
+): number {
+  if (levelIndex < 0 || levelIndex >= levels.length) return 0;
+
+  const level = levels[levelIndex];
+  const basePoints = calculateSkillPointsForLevel(levelIndex + 1, level.class, intModifier);
+  const carryover = levelIndex === 0 ? 0 : (levels[levelIndex - 1].unspentSkillPoints ?? 0);
+
+  return basePoints + carryover;
+}
+
+/**
+ * Calculate skill points spent at a specific level
+ * Considers class/cross-class skill costs
+ */
+export function calculateSkillPointsSpentAtLevel(level: Level, allLevels: Level[]): number {
+  const levelSkillRanks = level.skillRanks ?? {};
+  if (Object.keys(levelSkillRanks).length === 0) return 0;
+
+  let spent = 0;
+
+  for (const [skillName, ranks] of Object.entries(levelSkillRanks)) {
+    if (ranks === 0) continue;
+
+    // Check if this skill is a class skill for any of the character's classes up to this level
+    const levelIndex = level.level - 1;
+    const relevantLevels = allLevels.slice(0, levelIndex + 1);
+
+    const isClassSkill = relevantLevels.some((lvl) => {
+      const classData = classes.find((c) => c.name === lvl.class);
+      return classData?.classSkills?.includes(skillName) ?? false;
+    });
+
+    // Class skills cost 1 point per rank, cross-class cost 2 points per rank
+    spent += isClassSkill ? ranks : ranks * 2;
+  }
+
+  return spent;
+}
+
+/**
+ * Validation result for skill ranks at a level
+ */
+export interface SkillValidationResult {
+  valid: boolean;
+  errors: string[];
+  warnings: string[];
+}
+
+/**
+ * Validate skill ranks at a specific level
+ * Checks max ranks and points available constraints
+ */
+export function validateSkillRanksAtLevel(level: Level, allLevels: Level[]): SkillValidationResult {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  const levelIndex = level.level - 1;
+  const levelSkillRanks = level.skillRanks ?? {};
+  const characterLevel = level.level;
+
+  // Check each skill's ranks against max ranks
+  for (const [skillName, ranks] of Object.entries(levelSkillRanks)) {
+    if (ranks === 0) continue;
+
+    const relevantLevels = allLevels.slice(0, levelIndex + 1);
+    const isClassSkill = relevantLevels.some((lvl) => {
+      const classData = classes.find((c) => c.name === lvl.class);
+      return classData?.classSkills?.includes(skillName) ?? false;
+    });
+
+    const maxRanks = calculateMaxRanks(characterLevel, isClassSkill);
+    const cumulative = calculateCumulativeSkillRanks(relevantLevels);
+    const totalRanks = cumulative[skillName] || 0;
+
+    if (totalRanks > maxRanks) {
+      errors.push(
+        `${skillName}: ${totalRanks} ranks exceeds max of ${maxRanks} at level ${characterLevel}`,
+      );
+    }
+  }
+
+  return {
+    valid: errors.length === 0,
+    errors,
+    warnings,
+  };
+}
+
+/**
+ * Recalculate skill points and carryover from a specific level forward
+ * Updates unspentSkillPoints for all levels starting from levelIndex
+ */
+export function recalculateSkillPointsFromLevel(
+  levelIndex: number,
+  levels: Level[],
+  intModifier: number,
+): Level[] {
+  if (levelIndex < 0 || levels.length === 0) return levels;
+
+  const updated = [...levels];
+
+  for (let i = levelIndex; i < updated.length; i++) {
+    const level = updated[i];
+    const available = calculateSkillPointsAvailableAtLevel(i, updated, intModifier);
+    const spent = calculateSkillPointsSpentAtLevel(level, updated);
+    const remaining = available - spent;
+
+    updated[i] = {
+      ...level,
+      unspentSkillPoints: Math.max(0, remaining),
+    };
+  }
+
+  return updated;
+}
