@@ -93,79 +93,79 @@
 }
 
 /* ================================
-   Skill Card
+   Skill Item (Read-only Display)
 =================================== */
 
-.skill-card {
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
   background: #fff;
   border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  padding: var(--space-3);
-  display: flex;
-  flex-direction: column;
+  transition: background 0.15s;
   gap: var(--space-2);
-  transition: all 0.15s;
 }
 
-.skill-card:hover {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+.skill-item:hover {
+  background: #f9fafb;
 }
 
-.skill-card--class {
+.skill-item--class {
   background: #f0fdf4;
   border-color: #86efac;
 }
 
-.skill-card--cross-class {
+.skill-item--cross-class {
   background: #fef9c3;
   border-color: #fde047;
 }
 
-.skill-card__header {
+.skill-item__name {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-
-.skill-card__name-row {
-  display: flex;
-  flex-direction: column;
+  align-items: center;
   gap: var(--space-2);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #1f2937;
   flex: 1;
 }
 
-.skill-card__name {
+.skill-item__ability {
+  font-size: 0.75rem;
+  color: #6b7280;
   font-weight: 600;
-  font-size: 1rem;
-  color: #0f172a;
+  text-transform: uppercase;
 }
 
-.skill-card__badges {
+.skill-item__calculation {
   display: flex;
+  align-items: center;
   gap: var(--space-2);
-  flex-wrap: wrap;
+  flex-shrink: 0;
 }
 
-.skill-card__total {
-  font-size: 2rem;
+.skill-item__total {
+  font-size: 1.1rem;
   font-weight: 700;
   color: #0f172a;
   font-variant-numeric: tabular-nums;
-  flex-shrink: 0;
-  line-height: 1;
+  min-width: 2.5rem;
+  text-align: right;
 }
 
-.skill-card__breakdown {
-  font-size: 0.85rem;
+.skill-item__breakdown {
+  font-size: 0.8rem;
   color: #6b7280;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
-.skill-card__fractional {
+.skill-item__fractional {
   font-size: 0.75rem;
   font-style: italic;
-  color: #9ca3af;
+  color: #f59e0b;
 }
 
 /* ================================
@@ -209,6 +209,31 @@
   border: 1px solid #818cf8;
 }
 
+/* Inline badge variants for compact display */
+.skill-badge--class-inline {
+  background: #10b981;
+  color: #fff;
+  border: 1px solid #059669;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.65rem;
+}
+
+.skill-badge--trained-inline {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fbbf24;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.65rem;
+}
+
+.skill-badge--armor-inline {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #f87171;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.65rem;
+}
+
 /* ================================
    Responsive Design
 =================================== */
@@ -222,7 +247,17 @@
     width: 100%;
   }
 
-  .skill-card__total {
-    font-size: 1.5rem;
+  .skill-item__name {
+    font-size: 0.85rem;
+  }
+
+  .skill-item__calculation {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  .skill-item__breakdown {
+    font-size: 0.7rem;
   }
 }

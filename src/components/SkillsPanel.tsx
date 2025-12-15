@@ -129,37 +129,30 @@ export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
                       return (
                         <div
                           key={skill.name}
-                          className={`skill-card ${isClassSkill ? 'skill-card--class' : 'skill-card--cross-class'}`}
+                          className={`skill-item ${isClassSkill ? 'skill-item--class' : 'skill-item--cross-class'}`}
                         >
-                          <div className="skill-card__header">
-                            <div className="skill-card__name-row">
-                              <span className="skill-card__name">{skill.name}</span>
-                              <div className="skill-card__badges">
-                                {isClassSkill && (
-                                  <span className="skill-badge skill-badge--class">Class</span>
-                                )}
-                                {skill.trainedOnly && (
-                                  <span className="skill-badge skill-badge--trained">
-                                    Trained Only
-                                  </span>
-                                )}
-                                {skill.armorCheckPenalty && (
-                                  <span className="skill-badge skill-badge--armor">ACP</span>
-                                )}
-                              </div>
-                            </div>
-                            <div className="skill-card__total">{totalDisplay}</div>
-                          </div>
-                          <div className="skill-card__breakdown">
-                            {rawRanks} rank{rawRanks !== 1 ? 's' : ''} +{' '}
-                            {abilityMod >= 0 ? '+' : ''}
-                            {abilityMod} {skill.ability.toUpperCase()} = {totalDisplay}
-                            {rawRanks !== ranks && (
-                              <span className="skill-card__fractional">
-                                {' '}
-                                (half ranks don't count)
-                              </span>
+                          <div className="skill-item__name">
+                            {skill.name}
+                            <span className="skill-item__ability">({skill.ability.toUpperCase()})</span>
+                            {isClassSkill && (
+                              <span className="skill-badge skill-badge--class-inline">C</span>
                             )}
+                            {skill.trainedOnly && (
+                              <span className="skill-badge skill-badge--trained-inline">T</span>
+                            )}
+                            {skill.armorCheckPenalty && (
+                              <span className="skill-badge skill-badge--armor-inline">ACP</span>
+                            )}
+                          </div>
+                          <div className="skill-item__calculation">
+                            <span className="skill-item__total">{totalDisplay}</span>
+                            <span className="skill-item__breakdown">
+                              ({rawRanks} {rawRanks !== 1 ? 'ranks' : 'rank'} {abilityMod >= 0 ? '+' : ''}
+                              {abilityMod})
+                              {rawRanks !== ranks && (
+                                <span className="skill-item__fractional"> *half</span>
+                              )}
+                            </span>
                           </div>
                         </div>
                       );
