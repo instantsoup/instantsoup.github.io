@@ -6,137 +6,176 @@
   margin-top: var(--space-6);
 }
 
-.skills-panel__title {
-  margin: 0 0 var(--space-3);
-  font-size: 20px;
-  font-weight: 600;
-  color: #0f172a;
+.skills-panel__empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: #6b7280;
+  font-style: italic;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
 }
 
 /* ================================
-   Skill Points Summary
+   Skills Filter
 =================================== */
 
-.skill-points-summary {
+.skills-filter {
   display: flex;
-  gap: var(--space-4);
-  padding: var(--space-3);
-  background: #f8fafc;
-  border: 1px solid var(--clr-border);
-  border-radius: 8px;
+  gap: var(--space-2);
   margin-bottom: var(--space-4);
+  flex-wrap: wrap;
 }
 
-.skill-points-summary__item {
+.skills-filter__btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.skills-filter__btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.skills-filter__btn--active {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+}
+
+.skills-filter__btn--active:hover {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* ================================
+   Skills List
+=================================== */
+
+.skills-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+/* ================================
+   Skills Ability Group
+=================================== */
+
+.skills-ability-group {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.skills-ability-group__header {
+  background: #f3f4f6;
+  padding: 0.75rem 1rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #1f2937;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.skills-ability-group__skills {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
-}
-
-.skill-points-summary__label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.skill-points-summary__value {
-  font-size: 24px;
-  font-weight: 700;
-  color: #0f172a;
-  font-variant-numeric: tabular-nums;
-}
-
-.skill-points-summary__value--negative {
-  color: #dc2626;
+  padding: var(--space-2);
 }
 
 /* ================================
-   Skills Table
+   Skill Card
 =================================== */
 
-.skills-table {
-  border: 1px solid var(--clr-border);
-  border-radius: 8px;
-  overflow: hidden;
-  background: #ffffff;
-}
-
-.skills-table__header {
-  display: grid;
-  grid-template-columns: 2fr 80px 80px 80px;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  background: var(--clr-panel-open-bg);
-  color: var(--clr-panel-open-fg);
-  font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.skills-table__row {
-  display: grid;
-  grid-template-columns: 2fr 80px 80px 80px;
-  gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-top: 1px solid var(--clr-border);
-  align-items: center;
-}
-
-.skills-table__row:hover {
-  background: #f8fafc;
-}
-
-.skills-table__cell {
-  font-size: 14px;
-}
-
-.skills-table__cell--skill {
+.skill-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: var(--space-3);
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--space-2);
+  transition: all 0.15s;
+}
+
+.skill-card:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.skill-card--class {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.skill-card--cross-class {
+  background: #fef9c3;
+  border-color: #fde047;
+}
+
+.skill-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+}
+
+.skill-card__name-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1;
+}
+
+.skill-card__name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #0f172a;
+}
+
+.skill-card__badges {
+  display: flex;
   gap: var(--space-2);
   flex-wrap: wrap;
 }
 
-.skills-table__cell--ability {
-  text-align: center;
-  font-size: 12px;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-}
-
-.skills-table__cell--ranks {
-  text-align: center;
-}
-
-.skills-table__cell--total {
-  text-align: center;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+.skill-card__total {
+  font-size: 2rem;
+  font-weight: 700;
   color: #0f172a;
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.skill-card__breakdown {
+  font-size: 0.85rem;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
 }
 
 /* ================================
-   Skill Name & Badges
+   Skill Badges
 =================================== */
-
-.skill-name {
-  flex: 0 0 auto;
-}
 
 .skill-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 6px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.7rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.025em;
   line-height: 1;
 }
 
@@ -153,9 +192,9 @@
 }
 
 .skill-badge--class {
-  background: #d1fae5;
-  color: #065f46;
-  border: 1px solid #10b981;
+  background: #10b981;
+  color: #fff;
+  border: 1px solid #059669;
 }
 
 .skill-badge--cross-class {
@@ -165,32 +204,19 @@
 }
 
 /* ================================
-   Skill Input
+   Responsive Design
 =================================== */
 
-.skill-input {
-  width: 60px;
-  padding: 6px 8px;
-  border: 1px solid var(--clr-btn-border);
-  border-radius: 6px;
-  font: inherit;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-}
+@media (max-width: 640px) {
+  .skills-filter {
+    flex-direction: column;
+  }
 
-.skill-input:focus {
-  outline: none;
-  border-color: var(--clr-primary-border);
-  box-shadow: 0 0 0 2px var(--clr-primary-bg);
-}
+  .skills-filter__btn {
+    width: 100%;
+  }
 
-/* Remove spinner arrows on number inputs */
-.skill-input::-webkit-outer-spin-button,
-.skill-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.skill-input[type='number'] {
-  -moz-appearance: textfield;
+  .skill-card__total {
+    font-size: 1.5rem;
+  }
 }

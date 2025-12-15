@@ -1,135 +1,169 @@
+import { useMemo, useState } from 'react';
+
 import { classes } from '../data/classes';
-import skillsData from '../data/skills.json';
-import {
-  calculateTotalSkillPoints,
-  calculateSkillPointsSpent,
-  calculateMaxRanks,
-} from '../lib/progressions';
+import { skills } from '../data/skills';
+import { calculateCumulativeSkillRanks } from '../lib/progressions';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 
 interface SkillsPanelProps {
   mods: Scores;
-  skillRanks: Record<string, number>;
-  setSkillRank: (skillName: string, ranks: number) => void;
   levels: Level[];
-  onBlur: () => void;
 }
 
-export function SkillsPanel({ mods, skillRanks, setSkillRank, levels, onBlur }: SkillsPanelProps) {
-  // Calculate skill points
-  const intModifier = mods.int || 0;
-  const totalAvailable = levels.length > 0 ? calculateTotalSkillPoints(levels, intModifier) : 0;
-  const totalSpent = levels.length > 0 ? calculateSkillPointsSpent(skillRanks, levels) : 0;
-  const remaining = totalAvailable - totalSpent;
-  const calculateTotal = (skillName: string, abilityKey: string): number => {
-    const ranks = skillRanks[skillName] || 0;
-    const abilityMod = mods[abilityKey as keyof Scores] || 0;
-    return abilityMod + ranks;
-  };
+type FilterOption = 'all' | 'trained' | 'class' | 'cross-class';
 
-  // Check if a skill is a class skill for any of the character's classes
-  const isClassSkill = (skillName: string): boolean => {
-    if (levels.length === 0) return false;
+export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
+  const [filter, setFilter] = useState<FilterOption>('trained');
 
-    return levels.some((level) => {
+  // Calculate cumulative skill ranks from all levels
+  const cumulativeRanks = useMemo(() => calculateCumulativeSkillRanks(levels), [levels]);
+
+  // Determine which skills are class skills
+  const classSkillsSet = useMemo(() => {
+    const set = new Set<string>();
+    for (const level of levels) {
       const classData = classes.find((c) => c.name === level.class);
-      return classData?.classSkills?.includes(skillName) ?? false;
+      if (classData?.classSkills) {
+        classData.classSkills.forEach((skill) => set.add(skill));
+      }
+    }
+    return set;
+  }, [levels]);
+
+  // Filter and group skills by ability
+  const skillsByAbility = useMemo(() => {
+    const grouped: Record<string, typeof skills> = {
+      str: [],
+      dex: [],
+      con: [],
+      int: [],
+      wis: [],
+      cha: [],
+    };
+
+    skills.forEach((skill) => {
+      const ranks = cumulativeRanks[skill.name] || 0;
+      const isClassSkill = classSkillsSet.has(skill.name);
+
+      // Apply filter
+      if (filter === 'trained' && ranks === 0) return;
+      if (filter === 'class' && !isClassSkill) return;
+      if (filter === 'cross-class' && isClassSkill) return;
+
+      grouped[skill.ability].push(skill);
     });
+
+    return grouped;
+  }, [cumulativeRanks, classSkillsSet, filter]);
+
+  const abilityLabels: Record<string, string> = {
+    str: 'Strength',
+    dex: 'Dexterity',
+    con: 'Constitution',
+    int: 'Intelligence',
+    wis: 'Wisdom',
+    cha: 'Charisma',
   };
+
+  const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 
   return (
     <div className="skills-panel">
-      {levels.length > 0 && (
-        <div className="skill-points-summary">
-          <div className="skill-points-summary__item">
-            <span className="skill-points-summary__label">Available:</span>
-            <span className="skill-points-summary__value">{totalAvailable}</span>
-          </div>
-          <div className="skill-points-summary__item">
-            <span className="skill-points-summary__label">Spent:</span>
-            <span className="skill-points-summary__value">{totalSpent}</span>
-          </div>
-          <div className="skill-points-summary__item">
-            <span className="skill-points-summary__label">Remaining:</span>
-            <span
-              className={`skill-points-summary__value ${remaining < 0 ? 'skill-points-summary__value--negative' : ''}`}
-            >
-              {remaining}
-            </span>
-          </div>
+      {levels.length === 0 && (
+        <div className="skills-panel__empty">
+          Add at least one level to see your skills. Manage skill ranks in the Levels section above.
         </div>
       )}
-      <div className="skills-table">
-        <div className="skills-table__header">
-          <div className="skills-table__cell skills-table__cell--skill">Skill</div>
-          <div className="skills-table__cell skills-table__cell--ability">Ability</div>
-          <div className="skills-table__cell skills-table__cell--ranks">Ranks</div>
-          <div className="skills-table__cell skills-table__cell--total">Total</div>
-        </div>
-        {skillsData.map((skill) => {
-          const ranks = skillRanks[skill.name] || 0;
-          const total = calculateTotal(skill.name, skill.ability);
-          const totalDisplay = total >= 0 ? `+${total}` : `${total}`;
-          const isClass = isClassSkill(skill.name);
-          const characterLevel = levels.length;
-          const maxRanks = characterLevel > 0 ? calculateMaxRanks(characterLevel, isClass) : 99;
 
-          return (
-            <div key={skill.name} className="skills-table__row">
-              <div className="skills-table__cell skills-table__cell--skill">
-                <span className="skill-name">{skill.name}</span>
-                {levels.length > 0 && (
-                  <span
-                    className={`skill-badge ${isClass ? 'skill-badge--class' : 'skill-badge--cross-class'}`}
-                    title={
-                      isClass
-                        ? 'Class Skill (1 point per rank)'
-                        : 'Cross-Class Skill (2 points per rank)'
-                    }
-                  >
-                    {isClass ? 'C' : 'CC'}
-                  </span>
-                )}
-                {skill.trainedOnly && (
-                  <span className="skill-badge skill-badge--trained" title="Trained Only">
-                    T
-                  </span>
-                )}
-                {skill.armorCheckPenalty && (
-                  <span className="skill-badge skill-badge--armor" title="Armor Check Penalty">
-                    ACP
-                  </span>
-                )}
-              </div>
-              <div className="skills-table__cell skills-table__cell--ability">
-                {skill.ability.toUpperCase()}
-              </div>
-              <div className="skills-table__cell skills-table__cell--ranks">
-                <input
-                  type="number"
-                  min="0"
-                  max={maxRanks}
-                  className="skill-input"
-                  value={ranks}
-                  onChange={(e) => {
-                    const val = parseInt(e.target.value || '0', 10);
-                    const clampedVal = Math.max(0, Math.min(maxRanks, val));
-                    setSkillRank(skill.name, clampedVal);
-                  }}
-                  onBlur={onBlur}
-                  title={
-                    characterLevel > 0
-                      ? `Max ranks: ${maxRanks} (${isClass ? 'class skill' : 'cross-class'})`
-                      : undefined
-                  }
-                />
-              </div>
-              <div className="skills-table__cell skills-table__cell--total">{totalDisplay}</div>
+      {levels.length > 0 && (
+        <>
+          <div className="skills-filter">
+            <button
+              type="button"
+              className={`skills-filter__btn ${filter === 'all' ? 'skills-filter__btn--active' : ''}`}
+              onClick={() => setFilter('all')}
+            >
+              All Skills
+            </button>
+            <button
+              type="button"
+              className={`skills-filter__btn ${filter === 'trained' ? 'skills-filter__btn--active' : ''}`}
+              onClick={() => setFilter('trained')}
+            >
+              Trained Only
+            </button>
+            <button
+              type="button"
+              className={`skills-filter__btn ${filter === 'class' ? 'skills-filter__btn--active' : ''}`}
+              onClick={() => setFilter('class')}
+            >
+              Class Skills
+            </button>
+            <button
+              type="button"
+              className={`skills-filter__btn ${filter === 'cross-class' ? 'skills-filter__btn--active' : ''}`}
+              onClick={() => setFilter('cross-class')}
+            >
+              Cross-Class Skills
+            </button>
+          </div>
+
+          <div className="skills-list">
+            {abilityKeys.map((abilityKey) => {
+              const abilitySkills = skillsByAbility[abilityKey];
+              if (abilitySkills.length === 0) return null;
+
+              return (
+                <div key={abilityKey} className="skills-ability-group">
+                  <div className="skills-ability-group__header">{abilityLabels[abilityKey]}</div>
+                  <div className="skills-ability-group__skills">
+                    {abilitySkills.map((skill) => {
+                      const ranks = cumulativeRanks[skill.name] || 0;
+                      const abilityMod = mods[abilityKey as keyof Scores] || 0;
+                      const total = ranks + abilityMod;
+                      const totalDisplay = total >= 0 ? `+${total}` : `${total}`;
+                      const isClassSkill = classSkillsSet.has(skill.name);
+
+                      return (
+                        <div
+                          key={skill.name}
+                          className={`skill-card ${isClassSkill ? 'skill-card--class' : 'skill-card--cross-class'}`}
+                        >
+                          <div className="skill-card__header">
+                            <div className="skill-card__name-row">
+                              <span className="skill-card__name">{skill.name}</span>
+                              <div className="skill-card__badges">
+                                {isClassSkill && <span className="skill-badge skill-badge--class">Class</span>}
+                                {skill.trainedOnly && (
+                                  <span className="skill-badge skill-badge--trained">Trained Only</span>
+                                )}
+                                {skill.armorCheckPenalty && <span className="skill-badge skill-badge--armor">ACP</span>}
+                              </div>
+                            </div>
+                            <div className="skill-card__total">{totalDisplay}</div>
+                          </div>
+                          <div className="skill-card__breakdown">
+                            {ranks} rank{ranks !== 1 ? 's' : ''} + {abilityMod >= 0 ? '+' : ''}
+                            {abilityMod} {skill.ability.toUpperCase()} = {totalDisplay}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {Object.values(skillsByAbility).every((skills) => skills.length === 0) && (
+            <div className="skills-panel__empty">
+              No skills match the current filter. Try a different filter or add skill ranks in the Levels section
+              above.
             </div>
-          );
-        })}
-      </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
