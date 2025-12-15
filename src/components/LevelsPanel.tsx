@@ -2,7 +2,11 @@ import { useState } from 'react';
 
 import { classes } from '../data/classes';
 import { feats } from '../data/feats';
-import { calculateCumulativeSkillRanks } from '../lib/progressions';
+import {
+  calculateCumulativeSkillRanks,
+  calculateSkillPointsAvailableAtLevel,
+  calculateSkillPointsSpentAtLevel,
+} from '../lib/progressions';
 import type { ClassName } from '../schema/schema';
 import type { Level } from '../types/level';
 
@@ -91,8 +95,11 @@ export function LevelsPanel({
             const isSkillsExpanded = expandedSkills === lvl.level;
             const levelFeats = lvl.feats ?? [];
             const searchResults = getSearchResults(lvl.level);
-            const levelSkillRanks = lvl.skillRanks ?? {};
-            const skillCount = Object.values(levelSkillRanks).filter((ranks) => ranks > 0).length;
+
+            // Calculate skill points for this level
+            const available = calculateSkillPointsAvailableAtLevel(levelIndex, levels, intModifier);
+            const spent = calculateSkillPointsSpentAtLevel(lvl, levels);
+            const remaining = available - spent;
 
             return (
               <div key={lvl.level} className="level-card">
@@ -115,11 +122,9 @@ export function LevelsPanel({
                         {levelFeats.length} feat{levelFeats.length !== 1 ? 's' : ''}
                       </span>
                     )}
-                    {skillCount > 0 && (
-                      <span className="level-card__skill-count">
-                        {skillCount} skill{skillCount !== 1 ? 's' : ''}
-                      </span>
-                    )}
+                    <span className={`level-card__skill-points ${remaining < 0 ? 'level-card__skill-points--negative' : ''}`}>
+                      {available} / {remaining}
+                    </span>
                   </div>
                   <div className="level-card__buttons">
                     <button
