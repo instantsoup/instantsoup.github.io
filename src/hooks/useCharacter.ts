@@ -6,11 +6,10 @@ import { computeMods } from '../lib/mods';
 import { recalculateSkillPointsFromLevel } from '../lib/progressions';
 import {
   type AlignmentCode,
-  CharacterSchemaV2,
-  type CharacterV2,
+  type Character,
+  CharacterSchema,
   type ClassName,
   type CombatStats,
-  migrateToLatest,
   type RaceName,
   VERSION,
 } from '../schema/schema';
@@ -34,7 +33,7 @@ export function useCharacter() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const mods = useMemo(() => computeMods(scores), [scores]);
-  const current: CharacterV2 = {
+  const current: Character = {
     version: VERSION,
     name,
     scores,
@@ -60,7 +59,7 @@ export function useCharacter() {
 
   const exportJson = () => {
     try {
-      const parsed = CharacterSchemaV2.parse(current);
+      const parsed = CharacterSchema.parse(current);
       const safeName = (parsed.name || 'character').replace(/[^\w-]+/g, '_').slice(0, 40);
       downloadJson(`${safeName || 'character'}_v${parsed.version}.json`, parsed);
       setError(null);
@@ -80,18 +79,18 @@ export function useCharacter() {
     try {
       const text = await file.text();
       const json = JSON.parse(text);
-      const migrated = migrateToLatest(json);
-      setName(migrated.name);
-      setScores(migrated.scores);
-      setRace(migrated.race);
-      setClassName(migrated.class);
-      setLevels(migrated.levels ?? []);
-      setAlignment(migrated.alignment);
-      setFeats(migrated.feats ?? []);
-      setSkillRanks(migrated.skillRanks ?? {});
-      setSaveBonuses(migrated.saveBonuses ?? {});
-      setCombatStats(migrated.combatStats ?? {});
-      saveLocal(migrated);
+      const parsed = CharacterSchema.parse(json);
+      setName(parsed.name);
+      setScores(parsed.scores);
+      setRace(parsed.race);
+      setClassName(parsed.class);
+      setLevels(parsed.levels ?? []);
+      setAlignment(parsed.alignment);
+      setFeats(parsed.feats ?? []);
+      setSkillRanks(parsed.skillRanks ?? {});
+      setSaveBonuses(parsed.saveBonuses ?? {});
+      setCombatStats(parsed.combatStats ?? {});
+      saveLocal(parsed);
       setError(null);
     } catch (e: unknown) {
       if (e instanceof ZodError) {

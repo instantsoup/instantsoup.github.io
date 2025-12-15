@@ -133,7 +133,9 @@ export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
                         >
                           <div className="skill-item__name">
                             {skill.name}
-                            <span className="skill-item__ability">({skill.ability.toUpperCase()})</span>
+                            <span className="skill-item__ability">
+                              ({skill.ability.toUpperCase()})
+                            </span>
                             {isClassSkill && (
                               <span className="skill-badge skill-badge--class-inline">C</span>
                             )}
@@ -147,7 +149,8 @@ export function SkillsPanel({ mods, levels }: SkillsPanelProps) {
                           <div className="skill-item__calculation">
                             <span className="skill-item__total">{totalDisplay}</span>
                             <span className="skill-item__breakdown">
-                              ({rawRanks} {rawRanks !== 1 ? 'ranks' : 'rank'} {abilityMod >= 0 ? '+' : ''}
+                              ({rawRanks} {rawRanks !== 1 ? 'ranks' : 'rank'}{' '}
+                              {abilityMod >= 0 ? '+' : ''}
                               {abilityMod})
                               {rawRanks !== ranks && (
                                 <span className="skill-item__fractional"> *half</span>
