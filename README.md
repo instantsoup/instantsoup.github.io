@@ -28,14 +28,22 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
   - Hover tooltips show calculation breakdowns
   - Full multiclass support
 - **Combat Statistics**: HP tracking, Armor Class calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative
-- **Skills Panel**: All 43 D&D 3.5e skills with complete D&D 3.5e skill points system
-  - Skill points tracking: Available/Spent/Remaining display
+- **Per-Level Skill Tracking**: Complete D&D 3.5e skill points system with per-level allocation
+  - Skill points tracked per level (not globally)
+  - Available/Spent/Remaining display for each level
   - First level gets 4× skill points (class base + INT modifier, minimum 1)
-  - Class/cross-class skill indicators with cost badges
-  - Green "C" badge for class skills (1 point per rank)
-  - Blue "CC" badge for cross-class skills (2 points per rank)
+  - Class skills: 1 point = 1 rank, Cross-class: 1 point = 0.5 ranks
   - Automatic max rank validation (level + 3 for class, (level + 3) ÷ 2 for cross-class)
-  - Visual feedback for overspending (red highlighting)
+  - Carryover of unspent points to next level
+  - Forward recalculation when editing past levels
+  - Collapsible class/cross-class sections in level cards
+- **Skills Panel (Read-Only)**: Compact single-line display of all 43 D&D 3.5e skills
+  - Shows cumulative skill totals from all levels
+  - Skill name, attribute, total modifier, and calculation breakdown
+  - Only full ranks count toward modifier (half ranks shown with *half indicator)
+  - Color-coded by class/cross-class status
+  - Filter by: All Skills, Trained Only, Class Skills, Cross-Class Skills
+  - Grouped by ability score (STR, DEX, CON, INT, WIS, CHA)
 - **Dice Roller**: Sidebar panel for rolling multiple dice
 - **Persistence**: localStorage auto-save and JSON import/export
 
@@ -97,7 +105,8 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │   │   ├── RaceSelector.tsx       # 7 core race selection
 │   │   ├── RollCharacterPanel.tsx
 │   │   ├── SavesPanel.tsx         # Fortitude, Reflex, Will saves (with auto-calc)
-│   │   ├── SkillsPanel.tsx        # skills with rank tracking
+│   │   ├── SkillsPanel.tsx        # read-only cumulative skills display
+│   │   ├── SkillSpendingPanel.tsx # per-level skill allocation interface
 │   │   ├── SourceBadge.tsx / SourceBadges.tsx
 │   │   └── UtilitiesPanel.tsx     # general character tools
 │
@@ -134,7 +143,7 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │   │   └── dice.test.ts
 │
 │   ├── schema/
-│   │   └── schema.ts             # CharacterSchemaV1 + migrateToLatest()
+│   │   └── schema.ts             # CharacterSchema (Zod validation)
 │
 │   ├── store/
 │   │   └── local.ts              # localStorage save/load/clear
@@ -153,7 +162,7 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 │       ├── alignment.ts          # alignment type + schema
 │       ├── class.ts              # class type + schema
 │       ├── feat.ts               # feat type + schema
-│       ├── level.ts              # level type + schema (with feats)
+│       ├── level.ts              # level type + schema (with feats, skillRanks, unspentSkillPoints)
 │       ├── race.ts               # race type + schema
 │       ├── save.ts               # save type + schema
 │       └── skill.ts              # skill type + schema
@@ -219,17 +228,25 @@ All sections use consistent collapsible panels with no redundant internal header
    - Green text indicates calculated values
    - Manual base bonus inputs available for characters without levels
 
-7. **Skills** (closed by default) - All 43 D&D 3.5e skills:
-   - Rank inputs (0-99)
-   - Automatic total calculation (ranks + ability modifier)
-   - Trained-only badges and armor check penalty indicators
-
-8. **Levels** (closed by default) - Character progression system at bottom:
+7. **Levels** (closed by default) - Character progression system:
    - 1-20 levels with per-level class selection
-   - Each level card shows level number, class selector, and feat count
-   - Collapsible per-level feat management
+   - Each level card shows: level number, class selector, skill points (available/remaining), feat count
+   - Collapsible per-level feat management (search from 1,826 feats)
+   - Collapsible per-level skill spending:
+     - Class skills section (open by default) - 1 point = 1 rank
+     - Cross-class skills section (closed by default) - 1 point = 0.5 ranks
+     - Unspent points carry forward to next level
+     - Editing past levels automatically recalculates forward
    - Add/remove levels with full persistence
    - Natural multiclassing support
+
+8. **Skills** (closed by default) - Read-only display of all 43 D&D 3.5e skills:
+   - Shows cumulative totals from all levels
+   - Compact single-line format: Skill (ABILITY) [badges] +modifier (calculation)
+   - Filter options: All Skills, Trained Only, Class Skills, Cross-Class Skills
+   - Grouped by ability score (STR, DEX, CON, INT, WIS, CHA)
+   - Color-coded: green for class skills, yellow for cross-class
+   - Only full ranks count toward modifiers (fractional ranks marked with *half)
 
 ---
 
@@ -287,7 +304,7 @@ Examples:
   - `lib/progressions.test.ts` → `lib/progressions.ts`
   - `data/skills.test.ts` → `data/skills.json` and `data/skills.ts`
   - `data/feats.test.ts` → `data/feats.json` and `data/feats.ts`
-- **53 tests** currently passing
+- **64 tests** currently passing
 - Run tests:
   ```bash
   npm run test              # Run all tests
@@ -317,8 +334,9 @@ Examples:
 ## Local Persistence
 
 - **Local save key:** `v0-char`
-- **Stored format:** validated `CharacterV1`
+- **Stored format:** validated `Character` (version 1 schema)
 - **Source:** `src/store/local.ts`
+- **Note:** No schema migrations exist yet (waiting for real users before versioning)
 
 ---
 
@@ -371,7 +389,7 @@ Adjust toward 28-point buy:
 - No backend — client-only SPA
 - All logic is local, schema-validated with Zod
 - Data-driven architecture: All game data in JSON files
-- Tests live next to source files (53 tests passing, ~85% coverage)
+- Tests live next to source files (64 tests passing, ~85% coverage)
 - Styles are modular CSS classes (no inline styles)
 - Components are all named exports (except App)
 - All dependencies pinned to exact versions for security
@@ -379,13 +397,15 @@ Adjust toward 28-point buy:
 - Character features:
   - Name field
   - Race selection (7 core races)
-  - Levels system (1-20 levels with per-level class selection)
-  - Per-level feats (1,826 feats available)
   - Alignment (9 options)
   - Ability Scores (6 abilities with modifiers)
-  - Saving Throws (3 saves with automatic calculation)
   - Combat Statistics (HP, AC, SR, Initiative, BAB with automatic calculation)
-  - Skills (43 total)
+  - Saving Throws (3 saves with automatic calculation)
+  - Levels system (1-20 levels with per-level class selection)
+    - Per-level feats (search from 1,826 feats)
+    - Per-level skill allocation (class/cross-class sections)
+    - Skill point carryover and forward recalculation
+  - Skills panel (read-only cumulative display of 43 skills)
 - Automatic calculations from class progressions with multiclass support
 - Every feature is self-contained, type-safe, and incremental
 
