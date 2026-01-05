@@ -1,111 +1,81 @@
-copilot-instructions.md
-Purpose
-
-These rules define how GitHub Copilot (chat or Agent Mode) should behave in this repository.
-The project is a static single-page application (SPA) built with React, TypeScript, and Vite, deployed via GitHub Pages, with JSON export/import for persistence.
-There is no server, no database, and no backend logic.
-
-Scope and Structure
-
-Language & Framework: TypeScript + React (Vite build system)
-
-Deployment: GitHub Actions → GitHub Pages (instantsoup.github.io)
-
-Persistence: localStorage (temporary) and JSON export/import only
-
-Licensing: D&D 3.5e SRD/OGL-compliant — no proprietary or product-identity content
-
-Project Boundaries
-✅ Allowed
-
-Create or edit TypeScript (.ts) and React (.tsx) files under src/.
-
-Add small, self-contained components under src/components/.
-
-Add utility functions under src/lib/, persistence helpers under src/store/, and hooks under src/hooks/.
-
-Update schemas and types in src/schema.ts and src/types.ts only if backward compatible.
-
-Modify configuration files (vite.config.ts, tsconfig.json, or .github/workflows/pages.yml) as needed for build/deploy fixes.
-
-Maintain accessibility, keyboard navigation, and labeled form fields.
-
-Keep all builds passing (npm run build).
-
-🚫 Disallowed
-
-❌ Adding any server, API, backend, or database.
-
-❌ Introducing network calls, analytics, telemetry, or third-party tracking.
-
-❌ Committing build artifacts (dist/), dependencies (node_modules/), or local settings files.
-
-❌ Adding environment variables or secret files (.env\*).
-
-❌ Including non-SRD or copyrighted D&D content.
-
-❌ Changing deployment target away from GitHub Pages.
-
-❌ Modifying repository permissions, branch protection, or workflow environment names.
-
-Coding Standards
-
-Type Safety: All runtime inputs validated with Zod schemas.
-
-Schema Changes: Additive only — do not break existing JSON imports.
-
-Accessibility: Every input must have a label; components must remain keyboard-friendly.
-
-Error Handling: Always catch and display import/export errors; the app must never crash.
-
-File Organization:
-
 src/components → UI elements
-
 src/hooks → state and logic
-
 src/lib → pure functions and helpers
-
 src/store → localStorage and persistence
-
 src/schema.ts → JSON shape definitions
-
 src/types.ts → static TypeScript types
-
-Git & Build Rules
-
-node_modules/, dist/, and .env\* must remain in .gitignore.
-
-Use the provided npm scripts:
-
 npm ci
-
 npm run dev
-
 npm run build
-
 npm run preview
 
-Do not modify the GitHub Pages workflow except for necessary maintenance.
+# copilot-instructions.md
 
-Commit messages should describe intent clearly and remain small in scope.
+These rules define how GitHub Copilot (chat or Agent Mode) should behave in this repository.
 
-Licensing & Compliance
+## Project Overview
 
-Only use material derived from the D&D 3.5e System Reference Document (SRD) under OGL 1.0a.
+- **SPA**: Static, client-only React + TypeScript app (Vite build), deployed via GitHub Pages. No server, API, or backend logic.
+- **Persistence**: Only localStorage (`v0-char` key) and JSON import/export (see `src/store/local.ts`).
+- **Data-driven**: All game data (races, classes, feats, skills, etc.) lives in `src/data/*.json`, validated by Zod schemas in `src/types/`, and loaded via helpers in `src/data/*.ts`. The character schema (`src/schema/schema.ts`) derives from these sources.
+- **UI**: Two-column layout (`LeftSidebar.tsx` for panels, main area for character sheet). All panels are collapsible and use consistent CSS classes from `src/styles/` (no inline styles).
+- **Automatic calculations**: HP, BAB, saves, and skill totals are computed from class progressions and ability scores, supporting multiclassing and per-level history.
 
-Do not include any product identity (e.g., Beholders, Forgotten Realms, etc.).
+## File & Directory Conventions
 
-Maintain a valid LICENSE-OGL.md whenever SRD data is referenced.
+- `src/components/` — UI elements (named exports only; `App.tsx` is the sole default export)
+- `src/hooks/` — state and logic (named exports)
+- `src/lib/` — pure helpers (e.g., dice, statline, progressions)
+- `src/store/` — localStorage and persistence logic
+- `src/data/` — all game data (JSON + helpers)
+- `src/types/` — Zod schemas and static types
+- `src/styles/` — modular CSS, imported globally via `index.css`
+- Tests are co-located: e.g., `lib/statline.test.ts` tests `lib/statline.ts`
 
-Environment and Safety
+## Coding Standards & Patterns
 
-If builds fail or Vite dependencies are missing, run:
-rm -rf node_modules package-lock.json && npm ci
+- **Type safety**: All runtime data validated with Zod schemas.
+- **Schema changes**: Additive only—never break existing JSON imports.
+- **Accessibility**: Every input must have a label; all UI must be keyboard-friendly.
+- **Error handling**: Always catch and display import/export errors; never crash the app.
+- **Exports**: Use named exports for all modules except `App.tsx` (default export).
+- **Styling**: Use only class-based CSS from `src/styles/`; never use inline styles.
+- **Data pattern**: For any new data type, follow: `src/data/*.json` (source) → `src/types/*.ts` (Zod schema) → `src/data/*.ts` (helper) → `src/schema/schema.ts` (integration).
 
-Never copy node_modules or dist between Codespaces.
+## Build, Test, and Validation Workflows
 
-Do not modify or disable environment protection rules.
+- **Build**: `npm run build` (output: `dist/`).
+- **Dev server**: `npm run dev`
+- **Preview**: `npm run preview`
+- **Test**: `npm run test` (all tests), `npm run test:watch`, `npm run test:coverage` (HTML in `coverage/`)
+- **Validation scripts**: `npm run validate:feats`, `npm run validate:skills` (see `scripts/` for CSV→JSON and Zod validation helpers)
+- **If builds fail or dependencies break**: `rm -rf node_modules package-lock.json && npm ci`
 
-This file serves as the source of truth for all AI or Copilot-driven operations in this repository.
-All generated code and configuration must adhere to these guardrails.
+## Project Boundaries
+
+- ✅ Add/edit TypeScript/React files under `src/` (components, hooks, lib, store, data, types, styles)
+- ✅ Update schemas/types only in a backward-compatible way
+- ✅ Maintain accessibility and keyboard navigation
+- ✅ Keep all builds/tests passing
+- ❌ Never add a server, API, backend, or network call
+- ❌ Never add analytics, telemetry, or tracking
+- ❌ Never commit build artifacts, dependencies, or local settings
+- ❌ Never add environment variables or secret files
+- ❌ Never include non-SRD or product-identity D&D content
+- ❌ Never change deployment target from GitHub Pages
+
+## Licensing & Compliance
+
+- Only use D&D 3.5e SRD/OGL content (see LICENSE-OGL.md)
+- Never include product identity (e.g., Beholders, Forgotten Realms)
+- Maintain a valid LICENSE-OGL.md if SRD data is referenced
+
+## Examples & Patterns
+
+- **Data-driven**: To add a new race, update `src/data/races.json`, validate with `race.ts`, and integrate via `schema.ts`.
+- **Component**: All new UI goes in `src/components/` as a named export, styled via `src/styles/`.
+- **Test**: Place `*.test.ts` next to the file it tests; use Vitest.
+- **Persistence**: Use only helpers in `src/store/local.ts` for save/load/clear.
+
+---
+This file is the source of truth for all AI/Copilot-driven operations in this repository. All generated code and config **must** follow these rules.

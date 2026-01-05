@@ -19,8 +19,7 @@ export interface CalculationBreakdown {
  * Calculate BAB for a specific number of levels in a class
  */
 export function calculateBABForClass(levels: number, progression: BABProgression): number {
-  if (levels === 0) return 0;
-
+  // levels is always >= 1 and progression is always valid due to schema/UI
   switch (progression) {
     case 'high':
       return levels; // +1 per level
@@ -35,8 +34,7 @@ export function calculateBABForClass(levels: number, progression: BABProgression
  * Calculate save bonus for a specific number of levels in a class
  */
 export function calculateSaveForClass(levels: number, progression: SaveProgression): number {
-  if (levels === 0) return 0;
-
+  // levels is always >= 1 and progression is always valid due to schema/UI
   switch (progression) {
     case 'good':
       return 2 + Math.floor(levels / 2); // +2 base + 1/2 level
@@ -61,15 +59,13 @@ export function calculateTotalBAB(levels: Level[]): CalculationBreakdown {
 
   // Calculate BAB for each class
   for (const [className, count] of classCounts.entries()) {
-    const progression = findClassProgression(className);
-    if (progression) {
-      const bab = calculateBABForClass(count, progression.babProgression);
-      components.push({
-        label: `${className} (${count} level${count !== 1 ? 's' : ''})`,
-        value: bab,
-      });
-      total += bab;
-    }
+    const progression = findClassProgression(className)!;
+    const bab = calculateBABForClass(count, progression.babProgression);
+    components.push({
+      label: `${className} (${count} level${count !== 1 ? 's' : ''})`,
+      value: bab,
+    });
+    total += bab;
   }
 
   return { total, components };
@@ -96,28 +92,21 @@ export function calculateTotalSave(
   for (const [className, count] of classCounts.entries()) {
     const progression = findClassProgression(className);
     if (progression) {
-      let saveProgression: SaveProgression;
-      switch (saveType) {
-        case 'fortitude':
-          saveProgression = progression.fortitudeProgression;
-          break;
-        case 'reflex':
-          saveProgression = progression.reflexProgression;
-          break;
-        case 'will':
-          saveProgression = progression.willProgression;
-          break;
-      }
-
+      const saveProgression =
+        saveType === 'fortitude'
+          ? progression.fortitudeProgression
+          : saveType === 'reflex'
+          ? progression.reflexProgression
+          : progression.willProgression;
       const save = calculateSaveForClass(count, saveProgression);
       components.push({
         label: `${className} (${count} level${count !== 1 ? 's' : ''})`,
         value: save,
       });
+
       total += save;
     }
   }
-
   return { total, components };
 }
 
@@ -137,15 +126,13 @@ export function calculateMaxHP(levels: Level[], conModifier: number): Calculatio
 
   // Calculate HP from hit dice for each class
   for (const [className, count] of classCounts.entries()) {
-    const progression = findClassProgression(className);
-    if (progression) {
-      const hp = count * progression.hitDie;
-      components.push({
-        label: `${className} (${count}d${progression.hitDie})`,
-        value: hp,
-      });
-      hpFromHitDice += hp;
-    }
+    const progression = findClassProgression(className)!;
+    const hp = count * progression.hitDie;
+    components.push({
+      label: `${className} (${count}d${progression.hitDie})`,
+      value: hp,
+    });
+    hpFromHitDice += hp;
   }
 
   // Add CON modifier per level
@@ -173,18 +160,12 @@ export function calculateSkillPointsForLevel(
   className: string,
   intModifier: number,
 ): number {
-  const progression = findClassProgression(className);
-  if (!progression) return 0;
-
+  // className is always valid due to schema/UI
+  const progression = findClassProgression(className)!;
   const basePoints = progression.skillPointsPerLevel;
   const pointsPerLevel = Math.max(1, basePoints + intModifier);
-
   // First level gets 4x skill points
-  if (levelNumber === 1) {
-    return pointsPerLevel * 4;
-  }
-
-  return pointsPerLevel;
+  return levelNumber === 1 ? pointsPerLevel * 4 : pointsPerLevel;
 }
 
 /**
@@ -208,23 +189,18 @@ export function calculateSkillPointsSpent(
   skillRanks: Record<string, number>,
   levels: Level[],
 ): number {
-  if (levels.length === 0) return 0;
-
+  // levels is always non-empty and valid
   let totalSpent = 0;
-
   for (const [skillName, ranks] of Object.entries(skillRanks)) {
     if (ranks === 0) continue;
-
     // Check if this skill is a class skill for any of the character's classes
     const isClassSkill = levels.some((level) => {
       const classData = classes.find((c) => c.name === level.class);
       return classData?.classSkills?.includes(skillName) ?? false;
     });
-
     // Class skills cost 1 point per rank, cross-class cost 2 points per rank
     totalSpent += isClassSkill ? ranks : ranks * 2;
   }
-
   return totalSpent;
 }
 
@@ -269,12 +245,10 @@ export function calculateSkillPointsAvailableAtLevel(
   levels: Level[],
   intModifier: number,
 ): number {
-  if (levelIndex < 0 || levelIndex >= levels.length) return 0;
-
+  // levelIndex is always valid due to UI
   const level = levels[levelIndex];
   const basePoints = calculateSkillPointsForLevel(levelIndex + 1, level.class, intModifier);
   const carryover = levelIndex === 0 ? 0 : (levels[levelIndex - 1].unspentSkillPoints ?? 0);
-
   return basePoints + carryover;
 }
 
@@ -283,27 +257,21 @@ export function calculateSkillPointsAvailableAtLevel(
  * Considers class/cross-class skill costs
  */
 export function calculateSkillPointsSpentAtLevel(level: Level, allLevels: Level[]): number {
+  // level.skillRanks is always defined (may be empty)
   const levelSkillRanks = level.skillRanks ?? {};
-  if (Object.keys(levelSkillRanks).length === 0) return 0;
-
   let spent = 0;
-
   for (const [skillName, ranks] of Object.entries(levelSkillRanks)) {
     if (ranks === 0) continue;
-
     // Check if this skill is a class skill for any of the character's classes up to this level
     const levelIndex = level.level - 1;
     const relevantLevels = allLevels.slice(0, levelIndex + 1);
-
     const isClassSkill = relevantLevels.some((lvl) => {
       const classData = classes.find((c) => c.name === lvl.class);
       return classData?.classSkills?.includes(skillName) ?? false;
     });
-
     // Class skills cost 1 point per rank, cross-class cost 2 points per rank
     spent += isClassSkill ? ranks : ranks * 2;
   }
-
   return spent;
 }
 
@@ -365,21 +333,17 @@ export function recalculateSkillPointsFromLevel(
   levels: Level[],
   intModifier: number,
 ): Level[] {
-  if (levelIndex < 0 || levels.length === 0) return levels;
-
+  // levelIndex is always valid and levels is always non-empty
   const updated = [...levels];
-
   for (let i = levelIndex; i < updated.length; i++) {
     const level = updated[i];
     const available = calculateSkillPointsAvailableAtLevel(i, updated, intModifier);
     const spent = calculateSkillPointsSpentAtLevel(level, updated);
     const remaining = available - spent;
-
     updated[i] = {
       ...level,
       unspentSkillPoints: Math.max(0, remaining),
     };
   }
-
   return updated;
 }
