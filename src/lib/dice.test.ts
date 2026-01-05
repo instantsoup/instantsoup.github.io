@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { formatPool, type RNG, rollMany, rollOnce, rollManyDetailed, formatDetailed } from './dice';
+import { formatDetailed,formatPool, type RNG, rollMany, rollManyDetailed, rollOnce } from './dice';
 
 function seqRng(values: number[]): RNG {
   let i = 0;

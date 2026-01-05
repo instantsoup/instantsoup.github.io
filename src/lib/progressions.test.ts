@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import type { Level } from '../types/level';
 import {
   calculateBABForClass,
+  calculateCumulativeSkillRanks,
   calculateMaxHP,
   calculateMaxRanks,
   calculateSaveForClass,
@@ -12,11 +13,9 @@ import {
   calculateSkillPointsSpent,
   calculateSkillPointsSpentAtLevel,
   calculateTotalBAB,
-  calculateTotalSave,
   calculateTotalSkillPoints,
   recalculateSkillPointsFromLevel,
   validateSkillRanksAtLevel,
-  calculateCumulativeSkillRanks,
 } from './progressions';
 
 describe('calculateBABForClass', () => {
@@ -96,7 +95,9 @@ describe('calculateTotalBAB', () => {
   });
 
   it('calculates HP for single-class character with negative CON modifier', () => {
-    const levels: Level[] = [{ level: 1, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 }]; // d4
+    const levels: Level[] = [
+      { level: 1, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+    ]; // d4
     const result = calculateMaxHP(levels, -1);
     expect(result.total).toBe(3); // 1 × 4 + 1 × (-1) = 4 - 1 = 3
     expect(result.components).toHaveLength(2);

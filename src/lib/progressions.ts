@@ -96,8 +96,8 @@ export function calculateTotalSave(
         saveType === 'fortitude'
           ? progression.fortitudeProgression
           : saveType === 'reflex'
-          ? progression.reflexProgression
-          : progression.willProgression;
+            ? progression.reflexProgression
+            : progression.willProgression;
       const save = calculateSaveForClass(count, saveProgression);
       components.push({
         label: `${className} (${count} level${count !== 1 ? 's' : ''})`,

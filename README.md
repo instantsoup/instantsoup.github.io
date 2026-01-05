@@ -40,7 +40,7 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 - **Skills Panel (Read-Only)**: Compact single-line display of all 43 D&D 3.5e skills
   - Shows cumulative skill totals from all levels
   - Skill name, attribute, total modifier, and calculation breakdown
-  - Only full ranks count toward modifier (half ranks shown with *half indicator)
+  - Only full ranks count toward modifier (half ranks shown with \*half indicator)
   - Color-coded by class/cross-class status
   - Filter by: All Skills, Trained Only, Class Skills, Cross-Class Skills
   - Grouped by ability score (STR, DEX, CON, INT, WIS, CHA)
@@ -246,7 +246,7 @@ All sections use consistent collapsible panels with no redundant internal header
    - Filter options: All Skills, Trained Only, Class Skills, Cross-Class Skills
    - Grouped by ability score (STR, DEX, CON, INT, WIS, CHA)
    - Color-coded: green for class skills, yellow for cross-class
-   - Only full ranks count toward modifiers (fractional ranks marked with *half)
+   - Only full ranks count toward modifiers (fractional ranks marked with \*half)
 
 ---
 

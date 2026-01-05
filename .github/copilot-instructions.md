@@ -78,4 +78,5 @@ These rules define how GitHub Copilot (chat or Agent Mode) should behave in this
 - **Persistence**: Use only helpers in `src/store/local.ts` for save/load/clear.
 
 ---
+
 This file is the source of truth for all AI/Copilot-driven operations in this repository. All generated code and config **must** follow these rules.
