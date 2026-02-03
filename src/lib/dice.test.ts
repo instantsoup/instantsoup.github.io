@@ -37,6 +37,15 @@ describe('dice', () => {
     expect(() => rollOnce(2.5)).toThrow();
   });
 
+  it('uses default RNG when none provided', () => {
+    // Run multiple times to verify it produces valid results with default RNG
+    for (let i = 0; i < 20; i++) {
+      const result = rollOnce(6);
+      expect(result).toBeGreaterThanOrEqual(1);
+      expect(result).toBeLessThanOrEqual(6);
+    }
+  });
+
   it('rollManyDetailed groups and rolls dice correctly', () => {
     const rng = seqRng([0.0, 0.5, 0.9, 0.1]);
     // Pool: [6, 6, 8, 100] → d6×2, d8, d100
