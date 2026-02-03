@@ -6,6 +6,7 @@ import './styles/class.css';
 import './styles/alignment.css';
 import './styles/feats.css';
 import './styles/spells.css';
+import './styles/browser.css';
 import './styles/saves.css';
 import './styles/combat-stats.css';
 

@@ -1,6 +1,10 @@
+import { ClassesBrowser } from './ClassesBrowser';
 import { DiceRollerPanel } from './DiceRollerPanel';
+import { FeatsBrowser } from './FeatsBrowser';
 import { PanelSection } from './PanelSection';
 import { RollCharacterPanel } from './RollCharacterPanel';
+import { SkillsBrowser } from './SkillsBrowser';
+import { SpellsBrowser } from './SpellsBrowser';
 import { UtilitiesPanel } from './UtilitiesPanel';
 
 interface LeftSidebarProps {
@@ -38,6 +42,22 @@ export function LeftSidebar({
         <div className="panel__content">
           <RollCharacterPanel />
         </div>
+      </PanelSection>
+
+      <PanelSection title="Classes" defaultOpen={false}>
+        <ClassesBrowser />
+      </PanelSection>
+
+      <PanelSection title="Skills" defaultOpen={false}>
+        <SkillsBrowser />
+      </PanelSection>
+
+      <PanelSection title="Feats" defaultOpen={false}>
+        <FeatsBrowser />
+      </PanelSection>
+
+      <PanelSection title="Spells" defaultOpen={false}>
+        <SpellsBrowser />
       </PanelSection>
     </aside>
   );
