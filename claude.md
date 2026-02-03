@@ -36,16 +36,17 @@ src/schema/schema.ts → Character schema uses z.enum(DERIVED_CONSTANTS)
 
 ### Key Modules
 
-| Path | Purpose |
-|------|---------|
-| `src/hooks/useCharacter.ts` | Main character state management |
-| `src/lib/progressions.ts` | HP, BAB, saves calculations (multiclass support) |
-| `src/store/local.ts` | localStorage persistence |
-| `src/schema/schema.ts` | Zod character validation |
+| Path                        | Purpose                                          |
+| --------------------------- | ------------------------------------------------ |
+| `src/hooks/useCharacter.ts` | Main character state management                  |
+| `src/lib/progressions.ts`   | HP, BAB, saves calculations (multiclass support) |
+| `src/store/local.ts`        | localStorage persistence                         |
+| `src/schema/schema.ts`      | Zod character validation                         |
 
 ### Per-Level Tracking
 
 Feats and skills tracked per character level:
+
 - Class skills: 1 point = 1 rank
 - Cross-class: 1 point = 0.5 ranks
 - First level gets 4× skill points
@@ -68,12 +69,12 @@ Feats and skills tracked per character level:
 
 Load these on request for detailed context:
 
-| File | Contents |
-|------|----------|
-| [readme.md](readme.md) | Full feature docs, directory structure, UI layout |
-| [.github/copilot-instructions.md](.github/copilot-instructions.md) | Detailed coding standards |
-| [src/data/classes.json](src/data/classes.json) | 11 core classes |
-| [src/data/races.json](src/data/races.json) | 7 core races |
-| [src/data/skills.json](src/data/skills.json) | 43 skills with abilities |
-| [src/data/class-progressions.json](src/data/class-progressions.json) | HD, BAB, saves by level |
-| [src/data/feats.json](src/data/feats.json) | 1,826 feats (507KB) |
+| File                                                                 | Contents                                          |
+| -------------------------------------------------------------------- | ------------------------------------------------- |
+| [readme.md](readme.md)                                               | Full feature docs, directory structure, UI layout |
+| [.github/copilot-instructions.md](.github/copilot-instructions.md)   | Detailed coding standards                         |
+| [src/data/classes.json](src/data/classes.json)                       | 11 core classes                                   |
+| [src/data/races.json](src/data/races.json)                           | 7 core races                                      |
+| [src/data/skills.json](src/data/skills.json)                         | 43 skills with abilities                          |
+| [src/data/class-progressions.json](src/data/class-progressions.json) | HD, BAB, saves by level                           |
+| [src/data/feats.json](src/data/feats.json)                           | 1,826 feats (507KB)                               |
