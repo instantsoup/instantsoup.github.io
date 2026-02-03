@@ -5,6 +5,7 @@ import './styles/race.css';
 import './styles/class.css';
 import './styles/alignment.css';
 import './styles/feats.css';
+import './styles/spells.css';
 import './styles/saves.css';
 import './styles/combat-stats.css';
 

@@ -7,6 +7,7 @@ import { PanelSection } from './components/PanelSection';
 import { RaceSelector } from './components/RaceSelector';
 import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
+import { SpellsPanel } from './components/SpellsPanel';
 import { useCharacter } from './hooks/useCharacter';
 
 export function App() {
@@ -26,6 +27,9 @@ export function App() {
     updateLevelSkillRanks,
     alignment,
     setAlignment,
+    spells,
+    addSpell,
+    removeSpell,
     saveBonuses,
     setSaveBonus,
     combatStats,
@@ -114,6 +118,16 @@ export function App() {
         {/* Skills */}
         <PanelSection title="Skills" defaultOpen={false}>
           <SkillsPanel mods={mods} levels={levels} />
+        </PanelSection>
+
+        {/* Spells */}
+        <PanelSection title="Spells" defaultOpen={false}>
+          <SpellsPanel
+            selectedSpells={spells}
+            onAddSpell={addSpell}
+            onRemoveSpell={removeSpell}
+            onBlur={persistLocal}
+          />
         </PanelSection>
 
         {/* Levels - at bottom */}

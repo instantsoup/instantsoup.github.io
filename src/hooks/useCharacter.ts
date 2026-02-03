@@ -29,6 +29,7 @@ export function useCharacter() {
   const [skillRanks, setSkillRanks] = useState<Record<string, number>>(initial.skillRanks ?? {});
   const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
   const [combatStats, setCombatStats] = useState<CombatStats>(initial.combatStats ?? {});
+  const [spells, setSpells] = useState<string[]>(initial.spells ?? []);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -45,6 +46,7 @@ export function useCharacter() {
     skillRanks,
     saveBonuses,
     combatStats,
+    spells,
   };
 
   const onNum = (k: keyof Scores) => (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +92,7 @@ export function useCharacter() {
       setSkillRanks(parsed.skillRanks ?? {});
       setSaveBonuses(parsed.saveBonuses ?? {});
       setCombatStats(parsed.combatStats ?? {});
+      setSpells(parsed.spells ?? []);
       saveLocal(parsed);
       setError(null);
     } catch (e: unknown) {
@@ -123,6 +126,7 @@ export function useCharacter() {
     setSkillRanks({});
     setSaveBonuses({});
     setCombatStats({});
+    setSpells([]);
     setError(null);
     clearLocal();
   };
@@ -147,6 +151,16 @@ export function useCharacter() {
 
   const removeFeat = (featName: string) => {
     setFeats((prev) => prev.filter((name) => name !== featName));
+  };
+
+  const addSpell = (spellName: string) => {
+    if (!spells.includes(spellName)) {
+      setSpells((prev) => [...prev, spellName]);
+    }
+  };
+
+  const removeSpell = (spellName: string) => {
+    setSpells((prev) => prev.filter((name) => name !== spellName));
   };
 
   const addLevel = () => {
@@ -244,6 +258,9 @@ export function useCharacter() {
     feats,
     addFeat,
     removeFeat,
+    spells,
+    addSpell,
+    removeSpell,
     skillRanks,
     setSkillRank,
     saveBonuses,

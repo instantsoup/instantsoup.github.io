@@ -60,6 +60,7 @@ export const CharacterSchema = z.object({
   skillRanks: SkillRanksSchema.optional().default({}), // Deprecated - use levels[].skillRanks instead
   saveBonuses: SaveBonusesSchema.optional().default({}),
   combatStats: CombatStatsSchema.optional().default({}),
+  spells: z.array(z.string()).optional().default([]),
   notes: z.string().optional(),
 });
 

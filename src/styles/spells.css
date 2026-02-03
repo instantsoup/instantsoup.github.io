@@ -1,0 +1,370 @@
+/* ================================
+   Spells Panel
+=================================== */
+
+.spells-panel {
+  margin-top: var(--space-6);
+}
+
+/* Uses shared .panel-title from index.css */
+
+/* ================================
+   Search Section
+=================================== */
+
+.spells-search {
+  margin-bottom: var(--space-4);
+}
+
+.spells-search__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: var(--space-2);
+}
+
+.spells-search__row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.spells-search__input {
+  flex: 1;
+  min-width: 200px;
+  max-width: 300px;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--clr-btn-border);
+  border-radius: 6px;
+  font: inherit;
+}
+
+.spells-search__input:focus {
+  outline: none;
+  border-color: var(--clr-primary-border);
+  box-shadow: 0 0 0 2px var(--clr-primary-bg);
+}
+
+.spells-search__filter {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--clr-btn-border);
+  border-radius: 6px;
+  font: inherit;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.spells-search__filter:focus {
+  outline: none;
+  border-color: var(--clr-primary-border);
+  box-shadow: 0 0 0 2px var(--clr-primary-bg);
+}
+
+.spells-search__filter--level {
+  width: 100px;
+}
+
+/* ================================
+   Search Results
+=================================== */
+
+.spells-results {
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  background: #ffffff;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.spells-results__header {
+  padding: var(--space-2) var(--space-3);
+  font-size: 12px;
+  font-weight: 600;
+  color: #64748b;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--clr-border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.spells-results__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.spells-results__empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* ================================
+   Individual Spell Result
+=================================== */
+
+.spell-result {
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.spell-result:last-child {
+  border-bottom: none;
+}
+
+.spell-result:hover {
+  background: #f8fafc;
+}
+
+.spell-result__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+}
+
+.spell-result__name {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.spell-result__button {
+  padding: 4px 12px;
+  border: 1px solid var(--clr-primary-border);
+  border-radius: 4px;
+  background: #ffffff;
+  color: #0369a1;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.spell-result__button:hover:not(:disabled) {
+  background: var(--clr-primary-bg);
+  transform: translateY(-1px);
+}
+
+.spell-result__button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.spell-result__button--selected {
+  background: #e0f2fe;
+  border-color: #0284c7;
+  cursor: default;
+}
+
+.spell-result__button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spell-result__meta {
+  font-size: 13px;
+  color: #7c3aed;
+  margin-bottom: var(--space-1);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.spell-result__school {
+  font-weight: 600;
+}
+
+.spell-result__subschool {
+  color: #6d28d9;
+}
+
+.spell-result__descriptor {
+  color: #059669;
+  font-style: italic;
+}
+
+.spell-result__levels {
+  font-size: 13px;
+  color: #0369a1;
+  font-weight: 500;
+  margin-bottom: var(--space-1);
+}
+
+.spell-result__description {
+  font-size: 14px;
+  color: #475569;
+  margin-bottom: var(--space-2);
+  line-height: 1.5;
+}
+
+.spell-result__details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: var(--space-1);
+}
+
+.spell-result__details strong {
+  color: #475569;
+}
+
+.spell-result__source {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* ================================
+   Selected Spells
+=================================== */
+
+.spells-selected {
+  margin-top: var(--space-4);
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.spells-selected__header {
+  padding: var(--space-2) var(--space-3);
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--clr-border);
+  border-radius: 8px 8px 0 0;
+}
+
+.spells-selected__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* ================================
+   Individual Selected Spell
+=================================== */
+
+.spell-selected {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.spell-selected:last-child {
+  border-bottom: none;
+}
+
+.spell-selected:hover {
+  background: #f8fafc;
+}
+
+.spell-selected__content {
+  flex: 1;
+  min-width: 0;
+}
+
+.spell-selected__name {
+  display: block;
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 14px;
+  margin-bottom: var(--space-1);
+}
+
+.spell-selected__info {
+  display: block;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.spell-selected__remove {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.spell-selected__remove:hover {
+  background: #fee2e2;
+  border-color: #ef4444;
+  color: #dc2626;
+}
+
+/* ================================
+   Empty State
+=================================== */
+
+.spells-empty {
+  padding: var(--space-4);
+  text-align: center;
+  color: #94a3b8;
+  font-size: 14px;
+  border: 1px dashed var(--clr-border);
+  border-radius: 8px;
+  background: #f8fafc;
+}
+
+/* ================================
+   Responsive adjustments
+=================================== */
+
+@media (max-width: 640px) {
+  .spells-search__row {
+    flex-direction: column;
+  }
+
+  .spells-search__input {
+    max-width: 100%;
+  }
+
+  .spells-search__filter {
+    width: 100%;
+  }
+
+  .spells-search__filter--level {
+    width: 100%;
+  }
+
+  .spell-result__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .spell-result__button {
+    align-self: stretch;
+  }
+
+  .spells-results {
+    max-height: 400px;
+  }
+
+  .spell-result__details {
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+}
