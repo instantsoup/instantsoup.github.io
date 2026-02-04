@@ -10,9 +10,8 @@
 @import './race.css';
 @import './class.css';
 @import './levels.css';
-@import './feats.css';
-@import './spells.css';
 @import './browser.css';
+@import './summary.css';
 @import './saves.css';
 @import './combat-stats.css';
 @import './skills.css';

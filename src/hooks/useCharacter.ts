@@ -168,7 +168,7 @@ export function useCharacter() {
     if (nextLevel > 20) return; // Max level 20
     setLevels((prev) => [
       ...prev,
-      { level: nextLevel, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      { level: nextLevel, class: 'Fighter', feats: [], spells: [], skillRanks: {}, unspentSkillPoints: 0 },
     ]);
   };
 
@@ -218,6 +218,30 @@ export function useCharacter() {
     );
   };
 
+  const addSpellToLevel = (levelNumber: number, spellName: string) => {
+    setLevels((prev) =>
+      prev.map((lvl) => {
+        if (lvl.level === levelNumber) {
+          const currentSpells = lvl.spells ?? [];
+          if (!currentSpells.includes(spellName)) {
+            return { ...lvl, spells: [...currentSpells, spellName] };
+          }
+        }
+        return lvl;
+      }),
+    );
+  };
+
+  const removeSpellFromLevel = (levelNumber: number, spellName: string) => {
+    setLevels((prev) =>
+      prev.map((lvl) =>
+        lvl.level === levelNumber
+          ? { ...lvl, spells: (lvl.spells ?? []).filter((name) => name !== spellName) }
+          : lvl,
+      ),
+    );
+  };
+
   const updateLevelSkillRanks = (levelNumber: number, skillName: string, ranks: number) => {
     setLevels((prev) => {
       const updated = prev.map((lvl) =>
@@ -252,6 +276,8 @@ export function useCharacter() {
     updateLevelClass,
     addFeatToLevel,
     removeFeatFromLevel,
+    addSpellToLevel,
+    removeSpellFromLevel,
     updateLevelSkillRanks,
     alignment,
     setAlignment,

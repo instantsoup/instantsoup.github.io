@@ -42,9 +42,7 @@ export function ClassesBrowser() {
 
               {isExpanded && (
                 <div className="browser__details">
-                  {cls.description && (
-                    <div className="browser__details-row">{cls.description}</div>
-                  )}
+                  {cls.description && <div className="browser__details-row">{cls.description}</div>}
                   <div className="browser__details-row">
                     <span className="browser__details-label">Class Skills:</span>
                   </div>

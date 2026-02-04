@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { classes } from '../data/classes';
 import { feats } from '../data/feats';
+import { spells } from '../data/spells';
 import {
   calculateSkillPointsAvailableAtLevel,
   calculateSkillPointsSpentAtLevel,
@@ -17,6 +18,8 @@ type LevelsPanelProps = {
   updateLevelClass: (levelNumber: number, className: ClassName) => void;
   addFeatToLevel: (levelNumber: number, featName: string) => void;
   removeFeatFromLevel: (levelNumber: number, featName: string) => void;
+  addSpellToLevel: (levelNumber: number, spellName: string) => void;
+  removeSpellFromLevel: (levelNumber: number, spellName: string) => void;
   updateLevelSkillRanks: (levelNumber: number, skillName: string, ranks: number) => void;
   intModifier: number;
   onBlur?: () => void;
@@ -29,14 +32,18 @@ export function LevelsPanel({
   updateLevelClass,
   addFeatToLevel,
   removeFeatFromLevel,
+  addSpellToLevel,
+  removeSpellFromLevel,
   updateLevelSkillRanks,
   intModifier,
   onBlur,
 }: LevelsPanelProps) {
   const canAddLevel = levels.length < 20;
-  const [expandedLevel, setExpandedLevel] = useState<number | null>(null);
+  const [expandedFeats, setExpandedFeats] = useState<number | null>(null);
+  const [expandedSpells, setExpandedSpells] = useState<number | null>(null);
   const [expandedSkills, setExpandedSkills] = useState<number | null>(null);
-  const [searchTerms, setSearchTerms] = useState<Record<number, string>>({});
+  const [featSearchTerms, setFeatSearchTerms] = useState<Record<number, string>>({});
+  const [spellSearchTerms, setSpellSearchTerms] = useState<Record<number, string>>({});
 
   const handleAddLevel = () => {
     addLevel();
@@ -63,21 +70,44 @@ export function LevelsPanel({
     onBlur?.();
   };
 
-  const toggleExpanded = (levelNumber: number) => {
-    setExpandedLevel(expandedLevel === levelNumber ? null : levelNumber);
+  const handleAddSpell = (levelNumber: number, spellName: string) => {
+    addSpellToLevel(levelNumber, spellName);
+    onBlur?.();
+  };
+
+  const handleRemoveSpell = (levelNumber: number, spellName: string) => {
+    removeSpellFromLevel(levelNumber, spellName);
+    onBlur?.();
+  };
+
+  const toggleExpandedFeats = (levelNumber: number) => {
+    setExpandedFeats(expandedFeats === levelNumber ? null : levelNumber);
+  };
+
+  const toggleExpandedSpells = (levelNumber: number) => {
+    setExpandedSpells(expandedSpells === levelNumber ? null : levelNumber);
   };
 
   const toggleExpandedSkills = (levelNumber: number) => {
     setExpandedSkills(expandedSkills === levelNumber ? null : levelNumber);
   };
 
-  const getSearchResults = (levelNumber: number) => {
-    const searchTerm = searchTerms[levelNumber] ?? '';
+  const getFeatSearchResults = (levelNumber: number) => {
+    const searchTerm = featSearchTerms[levelNumber] ?? '';
     if (!searchTerm.trim()) return [];
     return feats
       .filter((feat) => feat.name.toLowerCase().includes(searchTerm.toLowerCase()))
       .sort((a, b) => a.name.localeCompare(b.name))
-      .slice(0, 10); // Show max 10 results per level
+      .slice(0, 10);
+  };
+
+  const getSpellSearchResults = (levelNumber: number) => {
+    const searchTerm = spellSearchTerms[levelNumber] ?? '';
+    if (!searchTerm.trim()) return [];
+    return spells
+      .filter((spell) => spell.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .slice(0, 10);
   };
 
   return (
@@ -89,12 +119,14 @@ export function LevelsPanel({
       {levels.length > 0 && (
         <div className="levels-list">
           {levels.map((lvl, levelIndex) => {
-            const isExpanded = expandedLevel === lvl.level;
+            const isFeatsExpanded = expandedFeats === lvl.level;
+            const isSpellsExpanded = expandedSpells === lvl.level;
             const isSkillsExpanded = expandedSkills === lvl.level;
             const levelFeats = lvl.feats ?? [];
-            const searchResults = getSearchResults(lvl.level);
+            const levelSpells = lvl.spells ?? [];
+            const featSearchResults = getFeatSearchResults(lvl.level);
+            const spellSearchResults = getSpellSearchResults(lvl.level);
 
-            // Calculate skill points for this level
             const available = calculateSkillPointsAvailableAtLevel(levelIndex, levels, intModifier);
             const spent = calculateSkillPointsSpentAtLevel(lvl, levels);
             const remaining = available - spent;
@@ -120,6 +152,11 @@ export function LevelsPanel({
                         {levelFeats.length} feat{levelFeats.length !== 1 ? 's' : ''}
                       </span>
                     )}
+                    {levelSpells.length > 0 && (
+                      <span className="level-card__spell-count">
+                        {levelSpells.length} spell{levelSpells.length !== 1 ? 's' : ''}
+                      </span>
+                    )}
                     <span
                       className={`level-card__skill-points ${remaining < 0 ? 'level-card__skill-points--negative' : ''}`}
                     >
@@ -129,38 +166,46 @@ export function LevelsPanel({
                   <div className="level-card__buttons">
                     <button
                       type="button"
-                      onClick={() => toggleExpanded(lvl.level)}
+                      onClick={() => toggleExpandedFeats(lvl.level)}
                       className="level-card__toggle"
                     >
-                      {isExpanded ? '▼ Hide Feats' : '▶ Manage Feats'}
+                      {isFeatsExpanded ? '▼ Feats' : '▶ Feats'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => toggleExpandedSpells(lvl.level)}
+                      className="level-card__toggle level-card__toggle--spells"
+                    >
+                      {isSpellsExpanded ? '▼ Spells' : '▶ Spells'}
                     </button>
                     <button
                       type="button"
                       onClick={() => toggleExpandedSkills(lvl.level)}
                       className="level-card__toggle level-card__toggle--skills"
                     >
-                      {isSkillsExpanded ? '▼ Hide Skills' : '▶ Manage Skills'}
+                      {isSkillsExpanded ? '▼ Skills' : '▶ Skills'}
                     </button>
                   </div>
                 </div>
 
-                {isExpanded && (
+                {/* Feats Section */}
+                {isFeatsExpanded && (
                   <div className="level-card__feats">
                     <div className="level-feats-search">
                       <input
                         type="text"
                         placeholder="Search feats..."
-                        value={searchTerms[lvl.level] ?? ''}
+                        value={featSearchTerms[lvl.level] ?? ''}
                         onChange={(e) =>
-                          setSearchTerms((prev) => ({ ...prev, [lvl.level]: e.target.value }))
+                          setFeatSearchTerms((prev) => ({ ...prev, [lvl.level]: e.target.value }))
                         }
                         className="level-feats-search__input"
                       />
                     </div>
 
-                    {searchResults.length > 0 && (
+                    {featSearchResults.length > 0 && (
                       <div className="level-feats-results">
-                        {searchResults.map((feat, idx) => {
+                        {featSearchResults.map((feat, idx) => {
                           const isSelected = levelFeats.includes(feat.name);
                           return (
                             <div
@@ -217,9 +262,9 @@ export function LevelsPanel({
                       </div>
                     )}
 
-                    {levelFeats.length === 0 && searchResults.length === 0 && (
+                    {levelFeats.length === 0 && featSearchResults.length === 0 && (
                       <div className="level-feats-empty">
-                        {searchTerms[lvl.level]?.trim()
+                        {featSearchTerms[lvl.level]?.trim()
                           ? 'No feats found. Try a different search.'
                           : 'Search above to add feats for this level.'}
                       </div>
@@ -227,6 +272,90 @@ export function LevelsPanel({
                   </div>
                 )}
 
+                {/* Spells Section */}
+                {isSpellsExpanded && (
+                  <div className="level-card__spells">
+                    <div className="level-spells-search">
+                      <input
+                        type="text"
+                        placeholder="Search spells..."
+                        value={spellSearchTerms[lvl.level] ?? ''}
+                        onChange={(e) =>
+                          setSpellSearchTerms((prev) => ({ ...prev, [lvl.level]: e.target.value }))
+                        }
+                        className="level-spells-search__input"
+                      />
+                    </div>
+
+                    {spellSearchResults.length > 0 && (
+                      <div className="level-spells-results">
+                        {spellSearchResults.map((spell, idx) => {
+                          const isSelected = levelSpells.includes(spell.name);
+                          return (
+                            <div
+                              key={`${spell.name}-${spell.source.abbr}-${spell.source.page}-${idx}`}
+                              className="level-spell-result"
+                            >
+                              <div className="level-spell-result__header">
+                                <span className="level-spell-result__name">{spell.name}</span>
+                                <button
+                                  type="button"
+                                  className={`level-spell-result__button ${isSelected ? 'level-spell-result__button--selected' : ''}`}
+                                  onClick={() =>
+                                    isSelected
+                                      ? handleRemoveSpell(lvl.level, spell.name)
+                                      : handleAddSpell(lvl.level, spell.name)
+                                  }
+                                  disabled={isSelected}
+                                >
+                                  {isSelected ? '✓ Added' : '+ Add'}
+                                </button>
+                              </div>
+                              <div className="level-spell-result__meta">
+                                {spell.school}
+                                {spell.subschool && ` (${spell.subschool})`}
+                              </div>
+                              <div className="level-spell-result__description">
+                                {spell.description}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {levelSpells.length > 0 && (
+                      <div className="level-spells-selected">
+                        <div className="level-spells-selected__header">Selected Spells</div>
+                        <ul className="level-spells-selected__list">
+                          {levelSpells.map((spellName) => (
+                            <li key={spellName} className="level-spell-selected">
+                              <span className="level-spell-selected__name">{spellName}</span>
+                              <button
+                                type="button"
+                                className="level-spell-selected__remove"
+                                onClick={() => handleRemoveSpell(lvl.level, spellName)}
+                                aria-label={`Remove ${spellName}`}
+                              >
+                                ×
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {levelSpells.length === 0 && spellSearchResults.length === 0 && (
+                      <div className="level-spells-empty">
+                        {spellSearchTerms[lvl.level]?.trim()
+                          ? 'No spells found. Try a different search.'
+                          : 'Search above to add spells for this level.'}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Skills Section */}
                 {isSkillsExpanded && (
                   <div className="level-card__skills">
                     <SkillSpendingPanel

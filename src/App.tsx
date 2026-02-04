@@ -1,13 +1,14 @@
 import { AbilityGrid } from './components/AbilityGrid';
 import { AlignmentSelector } from './components/AlignmentSelector';
 import { CombatStatsPanel } from './components/CombatStats';
+import { FeatsSummary } from './components/FeatsSummary';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
 import { PanelSection } from './components/PanelSection';
 import { RaceSelector } from './components/RaceSelector';
 import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
-import { SpellsPanel } from './components/SpellsPanel';
+import { SpellsSummary } from './components/SpellsSummary';
 import { useCharacter } from './hooks/useCharacter';
 
 export function App() {
@@ -24,12 +25,11 @@ export function App() {
     updateLevelClass,
     addFeatToLevel,
     removeFeatFromLevel,
+    addSpellToLevel,
+    removeSpellFromLevel,
     updateLevelSkillRanks,
     alignment,
     setAlignment,
-    spells,
-    addSpell,
-    removeSpell,
     saveBonuses,
     setSaveBonus,
     combatStats,
@@ -120,14 +120,14 @@ export function App() {
           <SkillsPanel mods={mods} levels={levels} />
         </PanelSection>
 
-        {/* Spells */}
+        {/* Feats Summary */}
+        <PanelSection title="Feats" defaultOpen={false}>
+          <FeatsSummary levels={levels} />
+        </PanelSection>
+
+        {/* Spells Summary */}
         <PanelSection title="Spells" defaultOpen={false}>
-          <SpellsPanel
-            selectedSpells={spells}
-            onAddSpell={addSpell}
-            onRemoveSpell={removeSpell}
-            onBlur={persistLocal}
-          />
+          <SpellsSummary levels={levels} />
         </PanelSection>
 
         {/* Levels - at bottom */}
@@ -139,6 +139,8 @@ export function App() {
             updateLevelClass={updateLevelClass}
             addFeatToLevel={addFeatToLevel}
             removeFeatFromLevel={removeFeatFromLevel}
+            addSpellToLevel={addSpellToLevel}
+            removeSpellFromLevel={removeSpellFromLevel}
             updateLevelSkillRanks={updateLevelSkillRanks}
             intModifier={mods.int}
             onBlur={persistLocal}
