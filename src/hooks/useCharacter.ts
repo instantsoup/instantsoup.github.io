@@ -168,7 +168,14 @@ export function useCharacter() {
     if (nextLevel > 20) return; // Max level 20
     setLevels((prev) => [
       ...prev,
-      { level: nextLevel, class: 'Fighter', feats: [], spells: [], skillRanks: {}, unspentSkillPoints: 0 },
+      {
+        level: nextLevel,
+        class: 'Fighter',
+        feats: [],
+        spells: [],
+        skillRanks: {},
+        unspentSkillPoints: 0,
+      },
     ]);
   };
 
