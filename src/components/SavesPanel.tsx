@@ -12,7 +12,14 @@ interface SavesPanelProps {
   readOnly?: boolean;
 }
 
-export function SavesPanel({ mods, saveBonuses, levels, setSaveBonus, onBlur, readOnly }: SavesPanelProps) {
+export function SavesPanel({
+  mods,
+  saveBonuses,
+  levels,
+  setSaveBonus,
+  onBlur,
+  readOnly,
+}: SavesPanelProps) {
   const calculateTotal = (saveName: string, abilityKey: string): number => {
     const bonus = saveBonuses[saveName] || 0;
     const abilityMod = mods[abilityKey as keyof Scores] || 0;

@@ -10,7 +10,14 @@ type TaintPanelProps = {
   readOnly?: boolean;
 };
 
-export function TaintPanel({ taint, onEnable, onDisable, onUpdate, onBlur, readOnly }: TaintPanelProps) {
+export function TaintPanel({
+  taint,
+  onEnable,
+  onDisable,
+  onUpdate,
+  onBlur,
+  readOnly,
+}: TaintPanelProps) {
   if (!taint) {
     if (readOnly) {
       return (

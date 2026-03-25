@@ -10,7 +10,13 @@ type LanguagesPanelProps = {
   readOnly?: boolean;
 };
 
-export function LanguagesPanel({ selected, onAdd, onRemove, onBlur, readOnly }: LanguagesPanelProps) {
+export function LanguagesPanel({
+  selected,
+  onAdd,
+  onRemove,
+  onBlur,
+  readOnly,
+}: LanguagesPanelProps) {
   const [search, setSearch] = useState('');
 
   const filtered = languages.filter(

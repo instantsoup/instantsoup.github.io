@@ -104,19 +104,29 @@ export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
                   <div className="skill-item__info">
                     <span className="skill-item__name">
                       {skill.name}
-                      <span className="skill-item__ability">
-                        {' '}({skill.ability.toUpperCase()})
-                      </span>
+                      <span className="skill-item__ability"> ({skill.ability.toUpperCase()})</span>
                     </span>
                     <span className="skill-item__badges">
                       {isClassSkill && (
-                        <span className="skill-badge skill-badge--class-inline" title="Class skill">C</span>
+                        <span className="skill-badge skill-badge--class-inline" title="Class skill">
+                          C
+                        </span>
                       )}
                       {skill.trainedOnly && (
-                        <span className="skill-badge skill-badge--trained-inline" title="Trained only">T</span>
+                        <span
+                          className="skill-badge skill-badge--trained-inline"
+                          title="Trained only"
+                        >
+                          T
+                        </span>
                       )}
                       {skill.armorCheckPenalty && (
-                        <span className="skill-badge skill-badge--armor-inline" title="Armor check penalty">ACP</span>
+                        <span
+                          className="skill-badge skill-badge--armor-inline"
+                          title="Armor check penalty"
+                        >
+                          ACP
+                        </span>
                       )}
                     </span>
                   </div>

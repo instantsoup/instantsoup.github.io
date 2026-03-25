@@ -24,7 +24,7 @@ import { TaintPanel } from './components/TaintPanel';
 import { useCharacter } from './hooks/useCharacter';
 
 export function App() {
-  const [tab, setTab] = useState<Tab>('overview');
+  const [tab, setTab] = useState<Tab>('character');
   const [mode, setMode] = useState<'build' | 'play'>('build');
 
   const {
@@ -80,15 +80,15 @@ export function App() {
     error,
   } = useCharacter();
 
-  const isPlay = mode === 'play';
-
   const toggleMode = () => {
     setMode((m) => {
       if (m === 'build') {
-        if (tab === 'build') setTab('overview');
+        setTab('sheet');
         return 'play';
+      } else {
+        setTab('character');
+        return 'build';
       }
-      return 'build';
     });
   };
 
@@ -122,146 +122,111 @@ export function App() {
         <TabNav active={tab} onSelect={setTab} mode={mode} />
 
         <main className="app-main">
-          {/* ── OVERVIEW ─────────────────────────────── */}
-          {tab === 'overview' && (
+          {/* ── CHARACTER (build mode only) ───────────── */}
+          {tab === 'character' && (
             <div className="tab-content">
               <PanelSection title="Name" defaultOpen>
                 <div className="selector">
-                  {isPlay ? (
-                    <div className="overview-readonly__value">{name || <span className="text-muted">Unnamed Character</span>}</div>
-                  ) : (
-                    <input
-                      className="selector-input"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      onBlur={persistLocal}
-                      placeholder="Enter character name..."
-                    />
-                  )}
+                  <input
+                    className="selector-input"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onBlur={persistLocal}
+                    placeholder="Enter character name..."
+                  />
                 </div>
               </PanelSection>
 
-              <PanelSection title="Race" defaultOpen={isPlay}>
-                {isPlay ? (
-                  <div className="panel-body">
-                    <div className="overview-readonly__value">{race || <span className="text-muted">No race selected.</span>}</div>
-                  </div>
-                ) : (
-                  <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
-                )}
+              <PanelSection title="Race" defaultOpen>
+                <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
               </PanelSection>
 
-              <PanelSection title="Alignment" defaultOpen={isPlay}>
-                {isPlay ? (
-                  <div className="panel-body">
-                    <div className="overview-readonly__value">{alignment || <span className="text-muted">No alignment selected.</span>}</div>
-                  </div>
-                ) : (
-                  <AlignmentSelector
-                    alignment={alignment}
-                    setAlignment={setAlignment}
-                    onBlur={persistLocal}
-                  />
-                )}
+              <PanelSection title="Alignment" defaultOpen>
+                <AlignmentSelector
+                  alignment={alignment}
+                  setAlignment={setAlignment}
+                  onBlur={persistLocal}
+                />
               </PanelSection>
 
-              <PanelSection title="Flaws" defaultOpen={isPlay}>
+              <PanelSection title="Flaws" defaultOpen>
                 <FlawsPanel
                   selected={flaws}
                   onAdd={addFlaw}
                   onRemove={removeFlaw}
                   onBlur={persistLocal}
-                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Languages" defaultOpen={isPlay}>
+              <PanelSection title="Languages" defaultOpen>
                 <LanguagesPanel
                   selected={languages}
                   onAdd={addLanguage}
                   onRemove={removeLanguage}
                   onBlur={persistLocal}
-                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Taint / Corruption" defaultOpen={isPlay}>
+              <PanelSection title="Taint / Corruption" defaultOpen>
                 <TaintPanel
                   taint={taint}
                   onEnable={enableTaint}
                   onDisable={disableTaint}
                   onUpdate={updateTaint}
                   onBlur={persistLocal}
-                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Notes" defaultOpen={isPlay}>
-                <NotesPanel notes={notes} setNotes={setNotes} onBlur={persistLocal} readOnly={isPlay} />
+              <PanelSection title="Notes" defaultOpen>
+                <NotesPanel notes={notes} setNotes={setNotes} onBlur={persistLocal} />
               </PanelSection>
             </div>
           )}
 
-          {/* ── COMBAT ───────────────────────────────── */}
-          {tab === 'combat' && (
+          {/* ── BUILD (build mode only) ───────────────── */}
+          {tab === 'build' && (
             <div className="tab-content">
-              <PanelSection title="Hit Points" defaultOpen>
-                <HPTracker
-                  mods={mods}
-                  combatStats={combatStats}
+              <PanelSection title="Abilities" defaultOpen>
+                <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
+              </PanelSection>
+
+              <PanelSection title="Levels" defaultOpen>
+                <LevelsPanel
                   levels={levels}
-                  updateCombatStat={updateCombatStat}
+                  addLevel={addLevel}
+                  removeLevel={removeLevel}
+                  updateLevelClass={updateLevelClass}
+                  addFeatToLevel={addFeatToLevel}
+                  removeFeatFromLevel={removeFeatFromLevel}
+                  addSpellToLevel={addSpellToLevel}
+                  removeSpellFromLevel={removeSpellFromLevel}
+                  updateLevelSkillRanks={updateLevelSkillRanks}
+                  intModifier={mods.int}
                   onBlur={persistLocal}
                 />
               </PanelSection>
 
-              <PanelSection title="Armor Class, Initiative & BAB" defaultOpen={isPlay}>
+              <PanelSection title="Armor Class, Initiative & BAB" defaultOpen>
                 <CombatStatsPanel
                   mods={mods}
                   combatStats={combatStats}
                   levels={levels}
                   updateCombatStat={updateCombatStat}
                   onBlur={persistLocal}
-                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Saving Throws" defaultOpen={isPlay}>
+              <PanelSection title="Saving Throws" defaultOpen>
                 <SavesPanel
                   mods={mods}
                   saveBonuses={saveBonuses}
                   levels={levels}
                   setSaveBonus={setSaveBonus}
                   onBlur={persistLocal}
-                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Resources" defaultOpen={isPlay}>
-                <ResourceTracker
-                  resources={customResources}
-                  onAdd={addCustomResource}
-                  onRemove={removeCustomResource}
-                  onUse={updateCustomResourceUsed}
-                  onReset={resetCustomResource}
-                  onResetAll={resetAllCustomResources}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-            </div>
-          )}
-
-          {/* ── SKILLS ───────────────────────────────── */}
-          {tab === 'skills' && (
-            <div className="tab-content">
-              <SkillsPanel mods={mods} levels={levels} readOnly={isPlay} />
-            </div>
-          )}
-
-          {/* ── SPELLS ───────────────────────────────── */}
-          {tab === 'spells' && (
-            <div className="tab-content">
-              <PanelSection title="Spell Slots" defaultOpen>
+              <PanelSection title="Spell Slots" defaultOpen={false}>
                 <SpellSlotsPanel
                   combatStats={combatStats}
                   updateSpellSlotsMax={updateSpellSlotsMax}
@@ -271,6 +236,10 @@ export function App() {
                 />
               </PanelSection>
 
+              <PanelSection title="Feats" defaultOpen={false}>
+                <FeatsSummary levels={levels} />
+              </PanelSection>
+
               <PanelSection title="Known Spells" defaultOpen={false}>
                 <SpellsSummary levels={levels} />
               </PanelSection>
@@ -278,7 +247,7 @@ export function App() {
           )}
 
           {/* ── SHEET (play mode only) ───────────────── */}
-          {tab === 'sheet' && isPlay && (
+          {tab === 'sheet' && (
             <div className="tab-content">
               <PlaySheet
                 name={name}
@@ -303,31 +272,56 @@ export function App() {
             </div>
           )}
 
-          {/* ── BUILD ────────────────────────────────── */}
-          {tab === 'build' && !isPlay && (
+          {/* ── COMBAT (play mode only) ──────────────── */}
+          {tab === 'combat' && (
             <div className="tab-content">
-              <PanelSection title="Abilities" defaultOpen>
-                <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
-              </PanelSection>
-
-              <PanelSection title="Levels" defaultOpen>
-                <LevelsPanel
+              <PanelSection title="Hit Points" defaultOpen>
+                <HPTracker
+                  mods={mods}
+                  combatStats={combatStats}
                   levels={levels}
-                  addLevel={addLevel}
-                  removeLevel={removeLevel}
-                  updateLevelClass={updateLevelClass}
-                  addFeatToLevel={addFeatToLevel}
-                  removeFeatFromLevel={removeFeatFromLevel}
-                  addSpellToLevel={addSpellToLevel}
-                  removeSpellFromLevel={removeSpellFromLevel}
-                  updateLevelSkillRanks={updateLevelSkillRanks}
-                  intModifier={mods.int}
+                  updateCombatStat={updateCombatStat}
                   onBlur={persistLocal}
                 />
               </PanelSection>
 
-              <PanelSection title="Feats" defaultOpen={false}>
-                <FeatsSummary levels={levels} />
+              <PanelSection title="Resources" defaultOpen>
+                <ResourceTracker
+                  resources={customResources}
+                  onAdd={addCustomResource}
+                  onRemove={removeCustomResource}
+                  onUse={updateCustomResourceUsed}
+                  onReset={resetCustomResource}
+                  onResetAll={resetAllCustomResources}
+                  onBlur={persistLocal}
+                />
+              </PanelSection>
+            </div>
+          )}
+
+          {/* ── SKILLS (play mode only) ──────────────── */}
+          {tab === 'skills' && (
+            <div className="tab-content">
+              <SkillsPanel mods={mods} levels={levels} readOnly={true} />
+            </div>
+          )}
+
+          {/* ── SPELLS (play mode only) ──────────────── */}
+          {tab === 'spells' && (
+            <div className="tab-content">
+              <PanelSection title="Spell Slots" defaultOpen>
+                <SpellSlotsPanel
+                  combatStats={combatStats}
+                  updateSpellSlotsMax={updateSpellSlotsMax}
+                  updateSpellSlotsUsed={updateSpellSlotsUsed}
+                  resetSpellSlots={resetSpellSlots}
+                  onBlur={persistLocal}
+                  readOnly={true}
+                />
+              </PanelSection>
+
+              <PanelSection title="Known Spells" defaultOpen={false}>
+                <SpellsSummary levels={levels} />
               </PanelSection>
             </div>
           )}

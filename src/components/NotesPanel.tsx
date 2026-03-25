@@ -9,7 +9,9 @@ export function NotesPanel({ notes, setNotes, onBlur, readOnly }: NotesPanelProp
   return (
     <div className="panel-body">
       {readOnly ? (
-        <div className="notes-readonly">{notes || <span className="text-muted">No notes.</span>}</div>
+        <div className="notes-readonly">
+          {notes || <span className="text-muted">No notes.</span>}
+        </div>
       ) : (
         <textarea
           className="notes-textarea"

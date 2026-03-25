@@ -265,7 +265,7 @@
   font-variant-numeric: tabular-nums;
   min-width: 2rem;
   text-align: right;
-  title: "Ranks";
+  title: 'Ranks';
 }
 
 .skill-item__total {

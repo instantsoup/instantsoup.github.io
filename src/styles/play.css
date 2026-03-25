@@ -512,6 +512,12 @@
   border: 1px solid var(--clr-border-strong);
   border-radius: 8px;
   min-width: 4.5rem;
+  cursor: help;
+  transition: background 0.1s;
+}
+
+.play-sheet__stat:hover {
+  background: #e8f0fe;
 }
 
 .play-sheet__stat-label {

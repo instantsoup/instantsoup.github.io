@@ -8,6 +8,7 @@ type SpellSlotsPanelProps = {
   updateSpellSlotsUsed: (spellLevel: string, used: number) => void;
   resetSpellSlots: () => void;
   onBlur: () => void;
+  readOnly?: boolean;
 };
 
 export function SpellSlotsPanel({
@@ -16,6 +17,7 @@ export function SpellSlotsPanel({
   updateSpellSlotsUsed,
   resetSpellSlots,
   onBlur,
+  readOnly,
 }: SpellSlotsPanelProps) {
   const slotsMax = combatStats.spellSlotsMax ?? {};
   const slotsUsed = combatStats.spellSlotsUsed ?? {};
@@ -48,9 +50,9 @@ export function SpellSlotsPanel({
     onBlur();
   };
 
-  // Only show levels that have a max set or if all are 0 show them all for setup
+  // Only show levels that have a max set or if all are 0 show them all for setup (not in readOnly)
   const activeRows = SPELL_LEVELS.filter((lvl) => (slotsMax[lvl] ?? 0) > 0);
-  const showAll = activeRows.length === 0;
+  const showAll = activeRows.length === 0 && !readOnly;
   const rows = showAll ? [...SPELL_LEVELS] : SPELL_LEVELS;
 
   return (
@@ -77,15 +79,19 @@ export function SpellSlotsPanel({
             className={`spell-slots__row${isExhausted ? ' spell-slots__row--exhausted' : ''}`}
           >
             <span className="spell-slots__level">{lvl === '0' ? 'Cantrip' : `${lvl}`}</span>
-            <input
-              type="number"
-              className="spell-slots__input"
-              value={max || ''}
-              onChange={handleMaxChange(lvl)}
-              placeholder="0"
-              min={0}
-              title={`Max ${lvl === '0' ? 'cantrip' : `level ${lvl}`} slots`}
-            />
+            {readOnly ? (
+              <span className="spell-slots__max-display">{max > 0 ? max : '—'}</span>
+            ) : (
+              <input
+                type="number"
+                className="spell-slots__input"
+                value={max || ''}
+                onChange={handleMaxChange(lvl)}
+                placeholder="0"
+                min={0}
+                title={`Max ${lvl === '0' ? 'cantrip' : `level ${lvl}`} slots`}
+              />
+            )}
             <span className="spell-slots__used">{max > 0 ? used : '—'}</span>
             <span className="spell-slots__remaining">{max > 0 ? remaining : '—'}</span>
             <div className="spell-slots__actions">

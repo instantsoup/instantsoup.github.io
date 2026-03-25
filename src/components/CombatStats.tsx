@@ -61,7 +61,9 @@ export function CombatStatsPanel({
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Armor:</span>
                 {readOnly ? (
-                  <span className="combat-stat-breakdown__value">{combatStats.armorBonus ?? 0}</span>
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.armorBonus ?? 0}
+                  </span>
                 ) : (
                   <input
                     type="number"
@@ -76,7 +78,9 @@ export function CombatStatsPanel({
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Shield:</span>
                 {readOnly ? (
-                  <span className="combat-stat-breakdown__value">{combatStats.shieldBonus ?? 0}</span>
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.shieldBonus ?? 0}
+                  </span>
                 ) : (
                   <input
                     type="number"
@@ -98,7 +102,9 @@ export function CombatStatsPanel({
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Misc:</span>
                 {readOnly ? (
-                  <span className="combat-stat-breakdown__value">{combatStats.miscACBonus ?? 0}</span>
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.miscACBonus ?? 0}
+                  </span>
                 ) : (
                   <input
                     type="number"
@@ -135,7 +141,9 @@ export function CombatStatsPanel({
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Misc:</span>
                 {readOnly ? (
-                  <span className="combat-stat-breakdown__value">{combatStats.initiativeBonus ?? 0}</span>
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.initiativeBonus ?? 0}
+                  </span>
                 ) : (
                   <input
                     type="number"
