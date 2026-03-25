@@ -1,0 +1,62 @@
+import { useState } from 'react';
+
+import type { Character, CombatStats } from '../schema/schema';
+
+export function useCharacterCombat(initial: Character) {
+  const [combatStats, setCombatStats] = useState<CombatStats>(initial.combatStats ?? {});
+  const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
+
+  const updateCombatStat = (field: keyof CombatStats, value: number | undefined) => {
+    setCombatStats((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const updateSpellSlotsMax = (spellLevel: string, max: number) => {
+    setCombatStats((prev) => ({
+      ...prev,
+      spellSlotsMax: { ...(prev.spellSlotsMax ?? {}), [spellLevel]: Math.max(0, max) },
+    }));
+  };
+
+  const updateSpellSlotsUsed = (spellLevel: string, used: number) => {
+    setCombatStats((prev) => {
+      const max = prev.spellSlotsMax?.[spellLevel] ?? 99;
+      return {
+        ...prev,
+        spellSlotsUsed: {
+          ...(prev.spellSlotsUsed ?? {}),
+          [spellLevel]: Math.max(0, Math.min(max, used)),
+        },
+      };
+    });
+  };
+
+  const resetSpellSlots = () => {
+    setCombatStats((prev) => ({ ...prev, spellSlotsUsed: {} }));
+  };
+
+  const setSaveBonus = (saveName: string, bonus: number) => {
+    setSaveBonuses((prev) => ({ ...prev, [saveName]: Math.max(0, Math.min(99, bonus)) }));
+  };
+
+  const loadFrom = (char: Character) => {
+    setCombatStats(char.combatStats ?? {});
+    setSaveBonuses(char.saveBonuses ?? {});
+  };
+
+  const reset = () => {
+    setCombatStats({});
+    setSaveBonuses({});
+  };
+
+  return {
+    combatStats,
+    updateCombatStat,
+    updateSpellSlotsMax,
+    updateSpellSlotsUsed,
+    resetSpellSlots,
+    saveBonuses,
+    setSaveBonus,
+    loadFrom,
+    reset,
+  };
+}

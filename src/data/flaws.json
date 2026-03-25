@@ -1,0 +1,104 @@
+[
+  {
+    "name": "Aggressive",
+    "source": { "abbr": "UA", "page": 91 },
+    "description": "You are reckless in combat, leaving yourself open to counterattack.",
+    "effect": "-2 penalty to Armor Class."
+  },
+  {
+    "name": "Bleeder",
+    "source": { "abbr": "UA", "page": 91 },
+    "description": "Your wounds bleed profusely.",
+    "effect": "When you take slashing or piercing damage, you take 1 point of damage per round from bleeding until you receive any magical healing or a DC 15 Heal check."
+  },
+  {
+    "name": "Disfigured",
+    "source": { "abbr": "UA", "page": 91 },
+    "description": "You have an unsightly physical deformity.",
+    "effect": "-2 penalty on Charisma-based skill checks."
+  },
+  {
+    "name": "Feeble",
+    "source": { "abbr": "UA", "page": 91 },
+    "description": "Your muscles are weak and underdeveloped.",
+    "effect": "-2 penalty on Strength checks, Strength-based skill checks, and melee attack and damage rolls."
+  },
+  {
+    "name": "Frail",
+    "source": { "abbr": "UA", "page": 91 },
+    "description": "Your body is physically fragile.",
+    "effect": "-2 penalty on Constitution checks and Constitution-based skill checks. You lose 1 hit point per character level."
+  },
+  {
+    "name": "Gullible",
+    "source": { "abbr": "UA", "page": 91 },
+    "description": "You are easily fooled.",
+    "effect": "-2 penalty on Sense Motive checks. Opponents get a +4 bonus to Bluff checks to feint against you in combat."
+  },
+  {
+    "name": "Inattentive",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "You are poor at noticing details.",
+    "effect": "-4 penalty on Listen and Spot checks."
+  },
+  {
+    "name": "Meager Fortitude",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "You have poor physical resilience.",
+    "effect": "-3 penalty on Fortitude saving throws."
+  },
+  {
+    "name": "Murky-Eyed",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "Your vision is poor or distorted.",
+    "effect": "When you attack a creature that has concealment, you must roll the miss chance twice and miss if either roll indicates a miss."
+  },
+  {
+    "name": "Noncombatant",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "You are not trained for combat.",
+    "effect": "-2 penalty on all attack rolls."
+  },
+  {
+    "name": "Poor Reflexes",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "You are slow to react to danger.",
+    "effect": "-3 penalty on Reflex saving throws."
+  },
+  {
+    "name": "Shaky",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "Your hands tremble when you try to aim.",
+    "effect": "-2 penalty on ranged attack rolls."
+  },
+  {
+    "name": "Sickly",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "Your body is susceptible to illness and disease.",
+    "effect": "-2 penalty on Constitution checks and on saving throws against disease and poison."
+  },
+  {
+    "name": "Slow",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "You move more slowly than normal.",
+    "effect": "Your land speed is reduced by 10 feet (minimum 5 feet)."
+  },
+  {
+    "name": "Unreactive",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "You are slow to react at the start of a fight.",
+    "effect": "-6 penalty on Initiative checks."
+  },
+  {
+    "name": "Vulnerable",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "You have difficulty avoiding blows in combat.",
+    "effect": "-1 penalty to Armor Class."
+  },
+  {
+    "name": "Weak Will",
+    "source": { "abbr": "UA", "page": 92 },
+    "description": "Your mind is easily influenced.",
+    "effect": "-3 penalty on Will saving throws."
+  }
+]

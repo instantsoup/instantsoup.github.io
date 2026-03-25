@@ -1,0 +1,107 @@
+{
+  "description": "Taint rules from Heroes of Horror. Depravity measures mental and spiritual corruption; Corruption measures physical corruption. Both are tracked on a 0–9 scale. Effects are cumulative — a character with depravity 5 also has all effects from scores 1–4.",
+  "depravityEffects": [
+    {
+      "score": 0,
+      "label": "Untainted",
+      "effect": "No effect."
+    },
+    {
+      "score": 1,
+      "label": "Touched",
+      "effect": "Occasional nightmares. -1 penalty on Will saving throws against fear effects."
+    },
+    {
+      "score": 2,
+      "label": "Troubled",
+      "effect": "Frequent nightmares. -1 morale penalty on attack rolls and saving throws when not in combat."
+    },
+    {
+      "score": 3,
+      "label": "Haunted",
+      "effect": "Suffers from mild delusions. -2 penalty on Charisma-based skill checks due to erratic behavior."
+    },
+    {
+      "score": 4,
+      "label": "Corrupted",
+      "effect": "Vivid hallucinations and obsessive thoughts. -2 penalty on all Wisdom checks and Wisdom-based skill checks."
+    },
+    {
+      "score": 5,
+      "label": "Tainted",
+      "effect": "Impulse control is compromised. Once per day, must succeed on a DC 14 Will save or take an action compelled by darker urges."
+    },
+    {
+      "score": 6,
+      "label": "Debased",
+      "effect": "Alignment shifts one step toward evil. -2 penalty on Charisma checks with good-aligned creatures."
+    },
+    {
+      "score": 7,
+      "label": "Defiled",
+      "effect": "Cannot benefit from morale bonuses. Must make DC 16 Will save each day or become consumed by a dark compulsion for 1d4 hours."
+    },
+    {
+      "score": 8,
+      "label": "Forsaken",
+      "effect": "Alignment is evil. Other characters can sense the wrongness; -4 penalty on Charisma checks with non-evil creatures."
+    },
+    {
+      "score": 9,
+      "label": "Lost",
+      "effect": "Completely consumed by taint. Character becomes an NPC villain under the DM's control."
+    }
+  ],
+  "corruptionEffects": [
+    {
+      "score": 0,
+      "label": "Untainted",
+      "effect": "No effect."
+    },
+    {
+      "score": 1,
+      "label": "Marked",
+      "effect": "Minor cosmetic change (e.g., an eye changes color, a patch of skin discolors). No mechanical effect."
+    },
+    {
+      "score": 2,
+      "label": "Blemished",
+      "effect": "Skin begins to look unhealthy or wrong. -1 penalty on Charisma checks in formal social situations."
+    },
+    {
+      "score": 3,
+      "label": "Afflicted",
+      "effect": "One of the senses begins to fail or distort (e.g., taste disappears, eye becomes milky). -2 penalty on related skill checks."
+    },
+    {
+      "score": 4,
+      "label": "Marred",
+      "effect": "More pronounced physical changes visible to others. -1 penalty to Charisma score (permanent until taint is reduced)."
+    },
+    {
+      "score": 5,
+      "label": "Corrupted",
+      "effect": "Body warps noticeably (e.g., blackened veins, rotting flesh patches). -2 penalty on Charisma-based skill checks."
+    },
+    {
+      "score": 6,
+      "label": "Mutated",
+      "effect": "Body develops unnatural mutations. Gain one minor mutation (DM's choice) but suffer -2 penalty to one physical ability score."
+    },
+    {
+      "score": 7,
+      "label": "Warped",
+      "effect": "Physical form is grotesque. -4 penalty on Charisma checks; strangers may react with fear or hostility."
+    },
+    {
+      "score": 8,
+      "label": "Ruined",
+      "effect": "Multiple severe mutations. -2 to all physical ability scores and -4 Charisma."
+    },
+    {
+      "score": 9,
+      "label": "Destroyed",
+      "effect": "Body fails entirely; character dies unless sustained by dark magic. If kept alive, is a monstrous shell of their former self."
+    }
+  ]
+}

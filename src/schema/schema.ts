@@ -5,7 +5,7 @@ import { CLASS_NAMES } from '../data/classes';
 import { RACE_NAMES } from '../data/races';
 import { LevelsArraySchema } from '../types/level';
 
-export const VERSION = 1;
+export const VERSION = 2;
 
 export const ScoresSchema = z.object({
   str: z.number().int(),
@@ -36,31 +36,49 @@ export const ClassNameSchema = z.enum(CLASS_NAMES);
 export type ClassName = z.infer<typeof ClassNameSchema>;
 
 export const CombatStatsSchema = z.object({
-  currentHP: z.number().int().min(0).optional(),
+  currentHP: z.number().int().optional(),
   maxHP: z.number().int().min(0).optional(),
+  tempHP: z.number().int().min(0).optional(),
   armorBonus: z.number().int().optional(),
   shieldBonus: z.number().int().optional(),
   miscACBonus: z.number().int().optional(),
   spellResistance: z.number().int().min(0).optional(),
   initiativeBonus: z.number().int().optional(),
   baseAttackBonus: z.number().int().optional(),
+  spellSlotsMax: z.record(z.string(), z.number().int().min(0)).optional().default({}),
+  spellSlotsUsed: z.record(z.string(), z.number().int().min(0)).optional().default({}),
 });
 
 export type CombatStats = z.infer<typeof CombatStatsSchema>;
 
+export const TaintSchema = z.object({
+  depravity: z.number().int().min(0).max(9).optional().default(0),
+  corruption: z.number().int().min(0).max(9).optional().default(0),
+});
+
+export type Taint = z.infer<typeof TaintSchema>;
+
+export const CustomResourceSchema = z.object({
+  name: z.string().min(1),
+  max: z.number().int().min(0),
+  used: z.number().int().min(0),
+});
+
+export type CustomResource = z.infer<typeof CustomResourceSchema>;
+
 export const CharacterSchema = z.object({
-  version: z.literal(1),
+  version: z.literal(2),
   name: z.string().min(0),
   scores: ScoresSchema,
   race: RaceNameSchema.optional(),
-  class: ClassNameSchema.optional(), // Deprecated - use levels[0].class instead
   levels: LevelsArraySchema.optional().default([]),
   alignment: AlignmentCodeSchema.optional(),
-  feats: z.array(z.string()).optional().default([]), // Deprecated - use levels[].feats instead
-  skillRanks: SkillRanksSchema.optional().default({}), // Deprecated - use levels[].skillRanks instead
   saveBonuses: SaveBonusesSchema.optional().default({}),
   combatStats: CombatStatsSchema.optional().default({}),
-  spells: z.array(z.string()).optional().default([]),
+  flaws: z.array(z.string()).optional().default([]),
+  languages: z.array(z.string()).optional().default([]),
+  taint: TaintSchema.optional(),
+  customResources: z.array(CustomResourceSchema).optional().default([]),
   notes: z.string().optional(),
 });
 

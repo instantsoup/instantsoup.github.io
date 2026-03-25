@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Common",
+    "script": "Common",
+    "speakers": "Humans and most other civilized races",
+    "description": "The most widely spoken language in the world, used for trade and diplomacy across all races."
+  },
+  {
+    "name": "Abyssal",
+    "script": "Infernal",
+    "speakers": "Demons and chaotic evil outsiders",
+    "description": "The harsh, guttural language of the Abyss, spoken by demons and those corrupted by chaos and evil."
+  },
+  {
+    "name": "Aquan",
+    "script": "Elven",
+    "speakers": "Water-based creatures",
+    "description": "A flowing, melodic language spoken by creatures of elemental water and aquatic beings."
+  },
+  {
+    "name": "Auran",
+    "script": "Draconic",
+    "speakers": "Air-based creatures",
+    "description": "A breathy, whispered language spoken by creatures of elemental air."
+  },
+  {
+    "name": "Celestial",
+    "script": "Celestial",
+    "speakers": "Good outsiders (angels, archons, guardinals)",
+    "description": "A radiant, musical language spoken by celestial beings and those touched by heavenly power."
+  },
+  {
+    "name": "Draconic",
+    "script": "Draconic",
+    "speakers": "Kobolds, lizardfolk, troglodytes, dragons",
+    "description": "One of the oldest languages, said to be the tongue of magic itself. Used by dragons and many reptilian creatures."
+  },
+  {
+    "name": "Druidic",
+    "script": "Druidic",
+    "speakers": "Druids only",
+    "description": "A secret language known only to druids, forbidden to be taught to non-druids."
+  },
+  {
+    "name": "Dwarven",
+    "script": "Dwarven",
+    "speakers": "Dwarves",
+    "description": "A sturdy, clipped language reflecting dwarven values of practicality and tradition."
+  },
+  {
+    "name": "Elven",
+    "script": "Elven",
+    "speakers": "Elves",
+    "description": "A fluid, melodic language with a rich written tradition of poetry and history."
+  },
+  {
+    "name": "Giant",
+    "script": "Dwarven",
+    "speakers": "Ogres, giants",
+    "description": "A booming language spoken by giant-kin, with simple but expressive vocabulary."
+  },
+  {
+    "name": "Gnoll",
+    "script": "Common",
+    "speakers": "Gnolls",
+    "description": "A guttural, barking language reflecting gnoll pack hierarchy and hunting culture."
+  },
+  {
+    "name": "Gnome",
+    "script": "Dwarven",
+    "speakers": "Gnomes",
+    "description": "A quick, complex language with many terms for engineering, illusion, and jokes."
+  },
+  {
+    "name": "Goblin",
+    "script": "Dwarven",
+    "speakers": "Goblinoids, hobgoblins, bugbears",
+    "description": "A squeaky, fast-paced language spoken throughout goblinoid society."
+  },
+  {
+    "name": "Halfling",
+    "script": "Common",
+    "speakers": "Halflings",
+    "description": "A cheerful, comfortable language full of references to food, family, and home."
+  },
+  {
+    "name": "Ignan",
+    "script": "Draconic",
+    "speakers": "Fire-based creatures",
+    "description": "A crackling, energetic language spoken by creatures of elemental fire."
+  },
+  {
+    "name": "Infernal",
+    "script": "Infernal",
+    "speakers": "Devils and lawful evil outsiders",
+    "description": "The precise, legalistic language of the Nine Hells, filled with contractual nuance and cold authority."
+  },
+  {
+    "name": "Orc",
+    "script": "Dwarven",
+    "speakers": "Orcs",
+    "description": "A brutal, aggressive language that prizes strength and dominance."
+  },
+  {
+    "name": "Sylvan",
+    "script": "Elven",
+    "speakers": "Dryads, brownies, leprechauns, fey",
+    "description": "The ancient tongue of the fey, full of metaphor, nature imagery, and hidden meanings."
+  },
+  {
+    "name": "Terran",
+    "script": "Dwarven",
+    "speakers": "Xorns, earth-based creatures",
+    "description": "A slow, grinding language spoken by creatures of elemental earth."
+  },
+  {
+    "name": "Undercommon",
+    "script": "Elven",
+    "speakers": "Drow, underdark traders, deep gnomes",
+    "description": "A trade language of the Underdark, used by diverse races that dwell beneath the surface."
+  },
+  {
+    "name": "Sahuagin",
+    "script": "Common",
+    "speakers": "Sahuagin",
+    "description": "A harsh, clicking language of the sea devils of the deep oceans."
+  },
+  {
+    "name": "Treant",
+    "script": "Elven",
+    "speakers": "Treants and other intelligent plants",
+    "description": "An extremely slow, creaking language spoken by treants, with concepts that unfold over centuries."
+  }
+]

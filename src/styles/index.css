@@ -15,6 +15,8 @@
 @import './saves.css';
 @import './combat-stats.css';
 @import './skills.css';
+@import './play.css';
+@import './tabs.css';
 
 /* ================================
    Variables & Base
@@ -89,11 +91,7 @@ body {
   display: grid;
   grid-template-columns: 260px 1fr;
   height: 100vh;
-}
-
-.app-main {
-  padding: 16px;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 /* ================================
@@ -139,22 +137,6 @@ body {
    App Header & Fields
    (spacing handled by utilities: .container, .flow-lg)
 =================================== */
-
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px; /* aligns with --space-2 in utilities */
-  flex-wrap: wrap;
-  padding-bottom: 8px;
-  border-bottom: 1px dashed var(--clr-border);
-}
-
-.app-title {
-  margin: 0;
-  font-size: 28px;
-  line-height: 1.2;
-}
 
 .field {
   display: flex;
@@ -204,6 +186,60 @@ body {
   border: 1px solid var(--clr-danger-border);
   background: var(--clr-danger-bg);
   font-weight: 600;
+}
+
+.btn--secondary {
+  padding: 8px 12px;
+  border: 1px solid var(--clr-border-strong);
+  background: #f1f5f9;
+  font-weight: 500;
+}
+
+.btn--secondary:hover:not(:disabled) {
+  background: #e2e8f0;
+}
+
+.btn--success {
+  padding: 8px 12px;
+  border: 1px solid #22c55e;
+  background: #dcfce7;
+  font-weight: 600;
+  color: #15803d;
+}
+
+.btn--ghost {
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #64748b;
+}
+
+.btn--ghost:hover {
+  background: #f1f5f9;
+}
+
+.btn--sm {
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+.btn--xs {
+  padding: 2px 7px;
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.mb-8 {
+  margin-bottom: 8px;
+}
+
+.text-error {
+  color: #b91c1c;
 }
 
 /* ================================

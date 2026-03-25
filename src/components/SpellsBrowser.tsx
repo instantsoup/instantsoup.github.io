@@ -16,8 +16,9 @@ export function SpellsBrowser() {
   const [levelFilter, setLevelFilter] = useState<number | ''>('');
   const [expandedSpell, setExpandedSpell] = useState<string | null>(null);
 
-  // Get unique schools
+  // Get unique schools and class/domain names from data
   const allSchools = [...new Set(spells.map((s) => s.school))].sort();
+  const allClasses = [...new Set(spells.flatMap((s) => Object.keys(s.levels)))].sort();
 
   const filtered = spells.filter((spell) => {
     const matchesSearch = spell.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -63,12 +64,11 @@ export function SpellsBrowser() {
             onChange={(e) => setClassFilter(e.target.value)}
           >
             <option value="">Class</option>
-            <option value="Brd">Brd</option>
-            <option value="Clr">Clr</option>
-            <option value="Drd">Drd</option>
-            <option value="Pal">Pal</option>
-            <option value="Rgr">Rgr</option>
-            <option value="Sor/Wiz">Wiz</option>
+            {allClasses.map((cls) => (
+              <option key={cls} value={cls}>
+                {cls}
+              </option>
+            ))}
           </select>
           <select
             className="browser__filter"

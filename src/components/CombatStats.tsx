@@ -1,4 +1,4 @@
-import { calculateMaxHP, calculateTotalBAB } from '../lib/progressions';
+import { calculateTotalBAB } from '../lib/progressions';
 import type { CombatStats } from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
@@ -30,10 +30,6 @@ export function CombatStatsPanel({
     }
   };
 
-  // Calculate max HP from class progressions
-  const maxHPCalculation = calculateMaxHP(levels, mods.con);
-  const calculatedMaxHP = maxHPCalculation.total;
-
   // Calculate BAB from class progressions
   const babCalculation = calculateTotalBAB(levels);
   const calculatedBAB = babCalculation.total;
@@ -52,45 +48,6 @@ export function CombatStatsPanel({
   return (
     <section className="combat-stats">
       <div className="combat-stats__grid">
-        {/* Hit Points */}
-        <div className="combat-stat-card">
-          <div className="combat-stat-card__header">
-            <span className="combat-stat-card__label">Hit Points</span>
-          </div>
-          <div className="combat-stat-card__content">
-            <div className="combat-stat-hp">
-              <input
-                type="number"
-                className="combat-stat-input combat-stat-input--hp"
-                value={combatStats.currentHP ?? ''}
-                onChange={handleNumInput('currentHP')}
-                onBlur={onBlur}
-                placeholder="0"
-                min="0"
-              />
-              <span className="combat-stat-hp__separator">/</span>
-              <input
-                type="number"
-                className="combat-stat-input combat-stat-input--hp"
-                value={combatStats.maxHP ?? ''}
-                onChange={handleNumInput('maxHP')}
-                onBlur={onBlur}
-                placeholder="0"
-                min="0"
-              />
-            </div>
-            <div className="combat-stat-card__sublabel">Current / Max</div>
-            {levels.length > 0 && (
-              <div
-                className="combat-stat-calculated"
-                title={maxHPCalculation.components.map((c) => `${c.label}: ${c.value}`).join('\n')}
-              >
-                Calculated Max: {calculatedMaxHP}
-              </div>
-            )}
-          </div>
-        </div>
-
         {/* Armor Class */}
         <div className="combat-stat-card">
           <div className="combat-stat-card__header">

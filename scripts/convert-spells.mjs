@@ -23,8 +23,29 @@ const SCHOOL_MAP = {
   Univ: 'Universal',
 };
 
-// Core class columns to extract
-const CLASS_COLUMNS = ['Brd', 'Clr', 'Drd', 'Pal', 'Rgr', 'Sor/Wiz'];
+// Non-class metadata columns to skip when auto-detecting class/domain columns
+const META_COLUMNS = new Set([
+  'Name',
+  'Source Book',
+  'Src Page',
+  'Schl',
+  'Sub-school',
+  'Descriptor',
+  'Components',
+  'Casting Time',
+  'Range',
+  'Effect Type',
+  'Effect',
+  'Duration',
+  'Saving Throw',
+  'Resistance',
+  'Short Description',
+  'Short Desc 2',
+  'Full Description',
+  'Medium Description',
+]);
+
+// CLASS_COLUMNS is detected from CSV headers at runtime (see detectClassColumns)
 
 function parseSource(bookCell, pageCell) {
   if (!bookCell) return null;
@@ -48,12 +69,31 @@ function parseDescriptor(descriptor) {
     .filter(Boolean);
 }
 
-function parseLevels(row) {
+/**
+ * Detect class/domain columns from the CSV records.
+ * Any column not in META_COLUMNS that has at least one numeric value (0–9)
+ * across all rows is treated as a class/domain level column.
+ */
+function detectClassColumns(records) {
+  if (!records.length) return [];
+  const headers = Object.keys(records[0]);
+  const candidates = headers.filter((h) => !META_COLUMNS.has(h));
+
+  // A column qualifies if at least one row has a digit 0-9 in it
+  return candidates.filter((col) =>
+    records.some((r) => {
+      const v = r[col];
+      return v != null && v !== '' && /^\d+$/.test(String(v).trim());
+    }),
+  );
+}
+
+function parseLevels(row, classColumns) {
   const levels = {};
-  for (const cls of CLASS_COLUMNS) {
+  for (const cls of classColumns) {
     const val = row[cls];
     if (val != null && val !== '') {
-      const num = Number(val);
+      const num = Number(String(val).trim());
       if (!isNaN(num)) {
         levels[cls] = num;
       }
@@ -62,7 +102,7 @@ function parseLevels(row) {
   return levels;
 }
 
-function normalizeRow(r) {
+function normalizeRow(r, classColumns) {
   const name = String(r['Name'] ?? '').trim();
   if (!name) return null;
 
@@ -75,7 +115,7 @@ function normalizeRow(r) {
     school: expandSchool(r['Schl']),
     subschool: r['Sub-school']?.trim() || null,
     descriptor: parseDescriptor(r['Descriptor']),
-    levels: parseLevels(r),
+    levels: parseLevels(r, classColumns),
     components: String(r['Components'] ?? '').trim(),
     castingTime: String(r['Casting Time'] ?? '').trim(),
     range: String(r['Range'] ?? '').trim(),
@@ -102,12 +142,15 @@ async function main() {
     relax_column_count: true,
   });
 
+  const classColumns = detectClassColumns(records);
+  console.log(`Detected ${classColumns.length} class/domain columns: ${classColumns.join(', ')}`);
+
   const spells = [];
   let skipped = 0;
   const skippedSources = new Map();
 
   for (const r of records) {
-    const norm = normalizeRow(r);
+    const norm = normalizeRow(r, classColumns);
     if (norm) {
       spells.push(norm);
     } else if (r['Name']?.trim()) {
