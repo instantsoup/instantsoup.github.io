@@ -9,9 +9,10 @@ interface SavesPanelProps {
   levels: Level[];
   setSaveBonus: (saveName: string, bonus: number) => void;
   onBlur: () => void;
+  readOnly?: boolean;
 }
 
-export function SavesPanel({ mods, saveBonuses, levels, setSaveBonus, onBlur }: SavesPanelProps) {
+export function SavesPanel({ mods, saveBonuses, levels, setSaveBonus, onBlur, readOnly }: SavesPanelProps) {
   const calculateTotal = (saveName: string, abilityKey: string): number => {
     const bonus = saveBonuses[saveName] || 0;
     const abilityMod = mods[abilityKey as keyof Scores] || 0;
@@ -56,6 +57,11 @@ export function SavesPanel({ mods, saveBonuses, levels, setSaveBonus, onBlur }: 
                   >
                     <span className="save-item__calculated-label">Total</span>
                     <span className="save-item__calculated-value">{calculatedDisplay}</span>
+                  </div>
+                ) : readOnly ? (
+                  <div className="save-item__total">
+                    <span className="save-item__total-label">Total</span>
+                    <span className="save-item__total-value">{totalDisplay}</span>
                   </div>
                 ) : (
                   <>

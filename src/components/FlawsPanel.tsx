@@ -7,9 +7,10 @@ type FlawsPanelProps = {
   onAdd: (name: string) => void;
   onRemove: (name: string) => void;
   onBlur?: () => void;
+  readOnly?: boolean;
 };
 
-export function FlawsPanel({ selected, onAdd, onRemove, onBlur }: FlawsPanelProps) {
+export function FlawsPanel({ selected, onAdd, onRemove, onBlur, readOnly }: FlawsPanelProps) {
   const [search, setSearch] = useState('');
   const [expandedFlaw, setExpandedFlaw] = useState<string | null>(null);
 
@@ -26,6 +27,27 @@ export function FlawsPanel({ selected, onAdd, onRemove, onBlur }: FlawsPanelProp
     onRemove(name);
     onBlur?.();
   };
+
+  if (readOnly) {
+    return (
+      <div className="panel-body">
+        {selected.length > 0 ? (
+          <div className="tag-list">
+            {selected.map((name) => {
+              const flaw = flaws.find((f) => f.name === name);
+              return (
+                <span key={name} className="tag" title={flaw?.effect}>
+                  {name}
+                </span>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-muted">No flaws.</p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="panel-body">

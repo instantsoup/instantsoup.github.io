@@ -11,6 +11,7 @@ import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
 import { NotesPanel } from './components/NotesPanel';
 import { PanelSection } from './components/PanelSection';
+import { PlaySheet } from './components/PlaySheet';
 import { RaceSelector } from './components/RaceSelector';
 import { ResourceTracker } from './components/ResourceTracker';
 import { SavesPanel } from './components/SavesPanel';
@@ -79,7 +80,17 @@ export function App() {
     error,
   } = useCharacter();
 
-  const toggleMode = () => setMode((m) => (m === 'build' ? 'play' : 'build'));
+  const isPlay = mode === 'play';
+
+  const toggleMode = () => {
+    setMode((m) => {
+      if (m === 'build') {
+        if (tab === 'build') setTab('overview');
+        return 'play';
+      }
+      return 'build';
+    });
+  };
 
   return (
     <div className="app-grid">
@@ -108,7 +119,7 @@ export function App() {
           onModeToggle={toggleMode}
         />
 
-        <TabNav active={tab} onSelect={setTab} />
+        <TabNav active={tab} onSelect={setTab} mode={mode} />
 
         <main className="app-main">
           {/* ── OVERVIEW ─────────────────────────────── */}
@@ -116,58 +127,77 @@ export function App() {
             <div className="tab-content">
               <PanelSection title="Name" defaultOpen>
                 <div className="selector">
-                  <input
-                    className="selector-input"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    onBlur={persistLocal}
-                    placeholder="Enter character name..."
-                  />
+                  {isPlay ? (
+                    <div className="overview-readonly__value">{name || <span className="text-muted">Unnamed Character</span>}</div>
+                  ) : (
+                    <input
+                      className="selector-input"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      onBlur={persistLocal}
+                      placeholder="Enter character name..."
+                    />
+                  )}
                 </div>
               </PanelSection>
 
-              <PanelSection title="Race" defaultOpen={false}>
-                <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
+              <PanelSection title="Race" defaultOpen={isPlay}>
+                {isPlay ? (
+                  <div className="panel-body">
+                    <div className="overview-readonly__value">{race || <span className="text-muted">No race selected.</span>}</div>
+                  </div>
+                ) : (
+                  <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
+                )}
               </PanelSection>
 
-              <PanelSection title="Alignment" defaultOpen={false}>
-                <AlignmentSelector
-                  alignment={alignment}
-                  setAlignment={setAlignment}
-                  onBlur={persistLocal}
-                />
+              <PanelSection title="Alignment" defaultOpen={isPlay}>
+                {isPlay ? (
+                  <div className="panel-body">
+                    <div className="overview-readonly__value">{alignment || <span className="text-muted">No alignment selected.</span>}</div>
+                  </div>
+                ) : (
+                  <AlignmentSelector
+                    alignment={alignment}
+                    setAlignment={setAlignment}
+                    onBlur={persistLocal}
+                  />
+                )}
               </PanelSection>
 
-              <PanelSection title="Flaws" defaultOpen={false}>
+              <PanelSection title="Flaws" defaultOpen={isPlay}>
                 <FlawsPanel
                   selected={flaws}
                   onAdd={addFlaw}
                   onRemove={removeFlaw}
                   onBlur={persistLocal}
+                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Languages" defaultOpen={false}>
+              <PanelSection title="Languages" defaultOpen={isPlay}>
                 <LanguagesPanel
                   selected={languages}
                   onAdd={addLanguage}
                   onRemove={removeLanguage}
                   onBlur={persistLocal}
+                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Taint / Corruption" defaultOpen={false}>
+              <PanelSection title="Taint / Corruption" defaultOpen={isPlay}>
                 <TaintPanel
                   taint={taint}
                   onEnable={enableTaint}
                   onDisable={disableTaint}
                   onUpdate={updateTaint}
                   onBlur={persistLocal}
+                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Notes" defaultOpen={false}>
-                <NotesPanel notes={notes} setNotes={setNotes} onBlur={persistLocal} />
+              <PanelSection title="Notes" defaultOpen={isPlay}>
+                <NotesPanel notes={notes} setNotes={setNotes} onBlur={persistLocal} readOnly={isPlay} />
               </PanelSection>
             </div>
           )}
@@ -185,27 +215,29 @@ export function App() {
                 />
               </PanelSection>
 
-              <PanelSection title="Armor Class, Initiative & BAB" defaultOpen={false}>
+              <PanelSection title="Armor Class, Initiative & BAB" defaultOpen={isPlay}>
                 <CombatStatsPanel
                   mods={mods}
                   combatStats={combatStats}
                   levels={levels}
                   updateCombatStat={updateCombatStat}
                   onBlur={persistLocal}
+                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Saving Throws" defaultOpen={false}>
+              <PanelSection title="Saving Throws" defaultOpen={isPlay}>
                 <SavesPanel
                   mods={mods}
                   saveBonuses={saveBonuses}
                   levels={levels}
                   setSaveBonus={setSaveBonus}
                   onBlur={persistLocal}
+                  readOnly={isPlay}
                 />
               </PanelSection>
 
-              <PanelSection title="Resources" defaultOpen={false}>
+              <PanelSection title="Resources" defaultOpen={isPlay}>
                 <ResourceTracker
                   resources={customResources}
                   onAdd={addCustomResource}
@@ -222,7 +254,7 @@ export function App() {
           {/* ── SKILLS ───────────────────────────────── */}
           {tab === 'skills' && (
             <div className="tab-content">
-              <SkillsPanel mods={mods} levels={levels} />
+              <SkillsPanel mods={mods} levels={levels} readOnly={isPlay} />
             </div>
           )}
 
@@ -245,14 +277,40 @@ export function App() {
             </div>
           )}
 
+          {/* ── SHEET (play mode only) ───────────────── */}
+          {tab === 'sheet' && isPlay && (
+            <div className="tab-content">
+              <PlaySheet
+                name={name}
+                race={race}
+                alignment={alignment}
+                mods={mods}
+                combatStats={combatStats}
+                levels={levels}
+                saveBonuses={saveBonuses}
+                customResources={customResources}
+                updateCombatStat={updateCombatStat}
+                updateSpellSlotsMax={updateSpellSlotsMax}
+                updateSpellSlotsUsed={updateSpellSlotsUsed}
+                resetSpellSlots={resetSpellSlots}
+                addCustomResource={addCustomResource}
+                removeCustomResource={removeCustomResource}
+                updateCustomResourceUsed={updateCustomResourceUsed}
+                resetCustomResource={resetCustomResource}
+                resetAllCustomResources={resetAllCustomResources}
+                onBlur={persistLocal}
+              />
+            </div>
+          )}
+
           {/* ── BUILD ────────────────────────────────── */}
-          {tab === 'build' && (
+          {tab === 'build' && !isPlay && (
             <div className="tab-content">
               <PanelSection title="Abilities" defaultOpen>
                 <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
               </PanelSection>
 
-              <PanelSection title="Levels" defaultOpen={false}>
+              <PanelSection title="Levels" defaultOpen>
                 <LevelsPanel
                   levels={levels}
                   addLevel={addLevel}
