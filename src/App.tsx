@@ -5,14 +5,13 @@ import { AlignmentSelector } from './components/AlignmentSelector';
 import { CombatStatsPanel } from './components/CombatStats';
 import { FeatsSummary } from './components/FeatsSummary';
 import { FlawsPanel } from './components/FlawsPanel';
-import { HPTracker } from './components/HPTracker';
 import { LanguagesPanel } from './components/LanguagesPanel';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
 import { NotesPanel } from './components/NotesPanel';
 import { PanelSection } from './components/PanelSection';
+import { PlaySheet } from './components/PlaySheet';
 import { RaceSelector } from './components/RaceSelector';
-import { ResourceTracker } from './components/ResourceTracker';
 import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { SpellSlotsPanel } from './components/SpellSlotsPanel';
@@ -23,7 +22,7 @@ import { TaintPanel } from './components/TaintPanel';
 import { useCharacter } from './hooks/useCharacter';
 
 export function App() {
-  const [tab, setTab] = useState<Tab>('overview');
+  const [tab, setTab] = useState<Tab>('character');
   const [mode, setMode] = useState<'build' | 'play'>('build');
 
   const {
@@ -79,7 +78,12 @@ export function App() {
     error,
   } = useCharacter();
 
-  const toggleMode = () => setMode((m) => (m === 'build' ? 'play' : 'build'));
+  const toggleMode = () => {
+    setMode((m) => {
+      setTab('character');
+      return m === 'build' ? 'play' : 'build';
+    });
+  };
 
   return (
     <div className="app-grid">
@@ -108,11 +112,33 @@ export function App() {
           onModeToggle={toggleMode}
         />
 
-        <TabNav active={tab} onSelect={setTab} />
+        <TabNav active={tab} onSelect={setTab} mode={mode} />
 
         <main className="app-main">
-          {/* ── OVERVIEW ─────────────────────────────── */}
-          {tab === 'overview' && (
+          {/* ── CHARACTER ────────────────────────────── */}
+          {tab === 'character' && mode === 'play' && (
+            <div className="tab-content">
+              <PlaySheet
+                name={name}
+                race={race}
+                alignment={alignment}
+                mods={mods}
+                combatStats={combatStats}
+                levels={levels}
+                saveBonuses={saveBonuses}
+                customResources={customResources}
+                updateCombatStat={updateCombatStat}
+                addCustomResource={addCustomResource}
+                removeCustomResource={removeCustomResource}
+                updateCustomResourceUsed={updateCustomResourceUsed}
+                resetCustomResource={resetCustomResource}
+                resetAllCustomResources={resetAllCustomResources}
+                onBlur={persistLocal}
+              />
+            </div>
+          )}
+
+          {tab === 'character' && mode === 'build' && (
             <div className="tab-content">
               <PanelSection title="Name" defaultOpen>
                 <div className="selector">
@@ -126,11 +152,11 @@ export function App() {
                 </div>
               </PanelSection>
 
-              <PanelSection title="Race" defaultOpen={false}>
+              <PanelSection title="Race" defaultOpen>
                 <RaceSelector race={race} setRace={setRace} onBlur={persistLocal} />
               </PanelSection>
 
-              <PanelSection title="Alignment" defaultOpen={false}>
+              <PanelSection title="Alignment" defaultOpen>
                 <AlignmentSelector
                   alignment={alignment}
                   setAlignment={setAlignment}
@@ -138,7 +164,7 @@ export function App() {
                 />
               </PanelSection>
 
-              <PanelSection title="Flaws" defaultOpen={false}>
+              <PanelSection title="Flaws" defaultOpen>
                 <FlawsPanel
                   selected={flaws}
                   onAdd={addFlaw}
@@ -147,7 +173,7 @@ export function App() {
                 />
               </PanelSection>
 
-              <PanelSection title="Languages" defaultOpen={false}>
+              <PanelSection title="Languages" defaultOpen>
                 <LanguagesPanel
                   selected={languages}
                   onAdd={addLanguage}
@@ -156,7 +182,7 @@ export function App() {
                 />
               </PanelSection>
 
-              <PanelSection title="Taint / Corruption" defaultOpen={false}>
+              <PanelSection title="Taint / Corruption" defaultOpen>
                 <TaintPanel
                   taint={taint}
                   onEnable={enableTaint}
@@ -166,93 +192,20 @@ export function App() {
                 />
               </PanelSection>
 
-              <PanelSection title="Notes" defaultOpen={false}>
+              <PanelSection title="Notes" defaultOpen>
                 <NotesPanel notes={notes} setNotes={setNotes} onBlur={persistLocal} />
               </PanelSection>
             </div>
           )}
 
-          {/* ── COMBAT ───────────────────────────────── */}
-          {tab === 'combat' && (
-            <div className="tab-content">
-              <PanelSection title="Hit Points" defaultOpen>
-                <HPTracker
-                  mods={mods}
-                  combatStats={combatStats}
-                  levels={levels}
-                  updateCombatStat={updateCombatStat}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-
-              <PanelSection title="Armor Class, Initiative & BAB" defaultOpen={false}>
-                <CombatStatsPanel
-                  mods={mods}
-                  combatStats={combatStats}
-                  levels={levels}
-                  updateCombatStat={updateCombatStat}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-
-              <PanelSection title="Saving Throws" defaultOpen={false}>
-                <SavesPanel
-                  mods={mods}
-                  saveBonuses={saveBonuses}
-                  levels={levels}
-                  setSaveBonus={setSaveBonus}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-
-              <PanelSection title="Resources" defaultOpen={false}>
-                <ResourceTracker
-                  resources={customResources}
-                  onAdd={addCustomResource}
-                  onRemove={removeCustomResource}
-                  onUse={updateCustomResourceUsed}
-                  onReset={resetCustomResource}
-                  onResetAll={resetAllCustomResources}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-            </div>
-          )}
-
-          {/* ── SKILLS ───────────────────────────────── */}
-          {tab === 'skills' && (
-            <div className="tab-content">
-              <SkillsPanel mods={mods} levels={levels} />
-            </div>
-          )}
-
-          {/* ── SPELLS ───────────────────────────────── */}
-          {tab === 'spells' && (
-            <div className="tab-content">
-              <PanelSection title="Spell Slots" defaultOpen>
-                <SpellSlotsPanel
-                  combatStats={combatStats}
-                  updateSpellSlotsMax={updateSpellSlotsMax}
-                  updateSpellSlotsUsed={updateSpellSlotsUsed}
-                  resetSpellSlots={resetSpellSlots}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-
-              <PanelSection title="Known Spells" defaultOpen={false}>
-                <SpellsSummary levels={levels} />
-              </PanelSection>
-            </div>
-          )}
-
-          {/* ── BUILD ────────────────────────────────── */}
+          {/* ── BUILD (build mode only) ───────────────── */}
           {tab === 'build' && (
             <div className="tab-content">
               <PanelSection title="Abilities" defaultOpen>
                 <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
               </PanelSection>
 
-              <PanelSection title="Levels" defaultOpen={false}>
+              <PanelSection title="Levels" defaultOpen>
                 <LevelsPanel
                   levels={levels}
                   addLevel={addLevel}
@@ -268,8 +221,69 @@ export function App() {
                 />
               </PanelSection>
 
+              <PanelSection title="Armor Class, Initiative & BAB" defaultOpen>
+                <CombatStatsPanel
+                  mods={mods}
+                  combatStats={combatStats}
+                  levels={levels}
+                  updateCombatStat={updateCombatStat}
+                  onBlur={persistLocal}
+                />
+              </PanelSection>
+
+              <PanelSection title="Saving Throws" defaultOpen>
+                <SavesPanel
+                  mods={mods}
+                  saveBonuses={saveBonuses}
+                  levels={levels}
+                  setSaveBonus={setSaveBonus}
+                  onBlur={persistLocal}
+                />
+              </PanelSection>
+
+              <PanelSection title="Spell Slots" defaultOpen={false}>
+                <SpellSlotsPanel
+                  combatStats={combatStats}
+                  updateSpellSlotsMax={updateSpellSlotsMax}
+                  updateSpellSlotsUsed={updateSpellSlotsUsed}
+                  resetSpellSlots={resetSpellSlots}
+                  onBlur={persistLocal}
+                />
+              </PanelSection>
+
               <PanelSection title="Feats" defaultOpen={false}>
                 <FeatsSummary levels={levels} />
+              </PanelSection>
+
+              <PanelSection title="Known Spells" defaultOpen={false}>
+                <SpellsSummary levels={levels} />
+              </PanelSection>
+            </div>
+          )}
+
+          {/* ── SKILLS (play mode only) ──────────────── */}
+          {tab === 'skills' && (
+            <div className="tab-content">
+              <SkillsPanel mods={mods} levels={levels} readOnly={true} />
+            </div>
+          )}
+
+          {/* ── SPELLS (play mode only) ──────────────── */}
+          {tab === 'spells' && (
+            <div className="tab-content">
+              <PanelSection title="Spell Slots" defaultOpen>
+                <SpellSlotsPanel
+                  combatStats={combatStats}
+                  updateSpellSlotsMax={updateSpellSlotsMax}
+                  updateSpellSlotsUsed={updateSpellSlotsUsed}
+                  resetSpellSlots={resetSpellSlots}
+                  onBlur={persistLocal}
+                  readOnly={true}
+                />
+              </PanelSection>
+
+              <PanelSection title="Known Spells" defaultOpen={false}>
+                <SpellsSummary levels={levels} />
               </PanelSection>
             </div>
           )}

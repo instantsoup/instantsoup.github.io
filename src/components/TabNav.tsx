@@ -1,19 +1,24 @@
-export type Tab = 'overview' | 'combat' | 'skills' | 'spells' | 'build';
+export type Tab = 'character' | 'build' | 'skills' | 'spells';
 
-const TABS: { id: Tab; label: string }[] = [
-  { id: 'overview', label: 'Overview' },
-  { id: 'combat', label: 'Combat' },
+const BUILD_TABS: { id: Tab; label: string }[] = [
+  { id: 'character', label: 'Character' },
+  { id: 'build', label: 'Build' },
+];
+
+const PLAY_TABS: { id: Tab; label: string }[] = [
+  { id: 'character', label: 'Character' },
   { id: 'skills', label: 'Skills' },
   { id: 'spells', label: 'Spells' },
-  { id: 'build', label: 'Build' },
 ];
 
 type TabNavProps = {
   active: Tab;
   onSelect: (tab: Tab) => void;
+  mode: 'build' | 'play';
 };
 
-export function TabNav({ active, onSelect }: TabNavProps) {
+export function TabNav({ active, onSelect, mode }: TabNavProps) {
+  const TABS = mode === 'play' ? PLAY_TABS : BUILD_TABS;
   return (
     <nav className="tab-nav" aria-label="Character sheet sections">
       {TABS.map((t) => (

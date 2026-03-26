@@ -1,412 +1,332 @@
-# D&D 3.5e Character Builder (Single Page App)
+# D&D 3.5e Character Sheet (Single Page App)
 
-This project is a client-only React/Vite webapp hosted on GitHub Pages at
+Client-only React/Vite webapp hosted on GitHub Pages at
 [https://instantsoup.github.io/dnd35/](https://instantsoup.github.io/dnd35/)
-
-The app models D&D 3.5e character sheets with full level-based character progression, automatic calculations from class progressions, and comprehensive feat/skill management. All data persists through localStorage and JSON import/export.
 
 No server or persistence beyond localStorage and JSON download/upload will ever be introduced.
 
-## Current Features
+---
 
-- **Character Basics**: Name and ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculation
-- **Race Selector**: Choose from 7 core D&D 3.5e races (Human, Dwarf, Elf, Gnome, Half-Elf, Half-Orc, Halfling)
-- **Levels System**: Character progression from levels 1-20 with per-level class selection
-  - Each level has independent class selection (natural multiclassing support)
-  - Collapsible card-based UI for clean level management
-  - Add/remove levels with full persistence
-- **Per-Level Feats**: Search and select from 1,826 D&D 3.5e feats
-  - Feats assigned to specific character levels (historical tracking)
-  - Collapsible feat management per level
-  - Shows feat prerequisites and descriptions
-  - Alphabetically sorted search results (max 10 per level)
-- **Alignment Selector**: Interactive 3x3 grid for all 9 D&D alignments
-- **Automatic Calculations**: HP, BAB, and saves calculated from class progressions
-  - Max HP calculated from hit dice + CON modifier per level
-  - BAB calculated from class progression tables
-  - Saving throws calculated from class progressions + ability modifiers
-  - Hover tooltips show calculation breakdowns
-  - Full multiclass support
-- **Combat Statistics**: HP tracking, Armor Class calculation (10 + armor + shield + DEX mod + misc), Spell Resistance, Initiative
-- **Per-Level Skill Tracking**: Complete D&D 3.5e skill points system with per-level allocation
-  - Skill points tracked per level (not globally)
-  - Available/Spent/Remaining display for each level
-  - First level gets 4× skill points (class base + INT modifier, minimum 1)
-  - Class skills: 1 point = 1 rank, Cross-class: 1 point = 0.5 ranks
-  - Automatic max rank validation (level + 3 for class, (level + 3) ÷ 2 for cross-class)
-  - Carryover of unspent points to next level
-  - Forward recalculation when editing past levels
-  - Collapsible class/cross-class sections in level cards
-- **Skills Panel (Read-Only)**: Compact single-line display of all 43 D&D 3.5e skills
-  - Shows cumulative skill totals from all levels
-  - Skill name, attribute, total modifier, and calculation breakdown
-  - Only full ranks count toward modifier (half ranks shown with \*half indicator)
-  - Color-coded by class/cross-class status
-  - Filter by: All Skills, Trained Only, Class Skills, Cross-Class Skills
-  - Grouped by ability score (STR, DEX, CON, INT, WIS, CHA)
-- **Dice Roller**: Sidebar panel for rolling multiple dice
-- **Persistence**: localStorage auto-save and JSON import/export
+## Features
+
+### Build Mode
+
+Used when leveling up, starting a character, or making changes to the character's permanent record.
+
+**Character tab** — identity panels (all editable):
+- Name, Race (7 core PHB races), Alignment (9-option grid)
+- Flaws, Languages, Taint/Corruption tracker
+- Notes
+
+**Build tab** — mechanical progression:
+- Ability scores (STR/DEX/CON/INT/WIS/CHA) with auto modifier
+- Levels (1–20): per-level class selection, feats, spell learning, skill allocation
+  - Class skills: 1 point = 1 rank; cross-class: 1 point = 0.5 ranks
+  - First level gets 4× skill points (min 1); unspent points carry forward
+  - Editing a past level triggers forward recalculation
+- Combat stats: AC components (armor/shield/misc), Initiative bonus, Spell Resistance
+- Saving throws: base bonus inputs (auto-calculated from class progressions)
+- Spell slot maximums per level
+- Feats summary, Known spells summary
+
+### Play Mode
+
+Used at the table. Everything is read-only except session-state elements.
+
+**Character tab** — compact play sheet:
+- Identity line (name · race · alignment)
+- HP tracker (current/temp/max with damage input)
+- Stat cards: AC, Initiative, BAB, SR — each with hover tooltip showing breakdown
+- Save cards: Fort, Ref, Will — each with hover tooltip showing breakdown
+- Custom resources (tracked pools: spell slots, ki points, etc.)
+
+**Skills tab** — read-only skill list:
+- Alphabetical, flat list of all 43 D&D 3.5e skills
+- Default view: all usable skills (cross-class skills + trained-only skills with ranks)
+- "Show trained-only skills without ranks" checkbox to reveal hidden skills
+- Each skill shows total modifier with hover tooltip: `3 ranks\n+2 DEX`
+- C badge = class skill, T badge = trained only, ACP badge = armor check penalty
+
+**Spells tab**:
+- Spell slot tracker (cast/recover/new day — max is read-only in play)
+- Known spells summary
+
+### Persistent Sticky Bar
+
+Always visible at the top: name, ability mods, HP, AC, saves, BAB, mode toggle button.
 
 ---
 
-## Project Overview
+## UI Patterns
 
-### Architecture
+### Calculated Numbers → `title` Tooltip
 
-| Layer                | Purpose                                               |
-| -------------------- | ----------------------------------------------------- |
-| React (Vite SPA)     | UI + client logic only                                |
-| TypeScript + Zod     | Schema validation for character, feat, and skill data |
-| localStorage         | Optional convenience cache for the current character  |
-| JSON Download/Upload | True persistence format — no backend                  |
-| GitHub Pages         | Static hosting (via `main` branch `/dist` build)      |
+**Rule:** Any displayed value that is computed from multiple sources must have a `title` attribute showing the full breakdown. Users hover to understand how numbers are derived.
 
-### Core Design Goals
+```tsx
+// Stat card pattern (PlaySheet, StickyBar)
+<div className="play-sheet__stat" title={tooltip}>
+  <span className="play-sheet__stat-label">Fort</span>
+  <span className="play-sheet__stat-value">+5</span>
+</div>
 
-- Full offline support
-- Incremental, testable iteration
-- Data formats portable as JSON
-- Modular, self-contained components + utilities
-- Schema-driven validation with Zod
-- Class-based CSS (no inline styles)
-- Named exports for all modules (except `App.tsx`, which is default)
+// tooltip string assembled from CalculationBreakdown.components:
+const result = calculateTotalSave(levels, 'fortitude');
+const tooltip = [
+  ...result.components.map(c => `${c.label}: +${c.value}`),
+  `CON: ${mods.con >= 0 ? '+' : ''}${mods.con}`,
+].filter(Boolean).join('\n');
+```
+
+`CalculationBreakdown` is defined in `src/lib/progressions.ts`:
+```ts
+interface CalculationBreakdown {
+  total: number;
+  components: Array<{ label: string; value: number }>;
+}
+```
+Used by: `calculateTotalBAB`, `calculateTotalSave`, `calculateMaxHP`.
+
+### Hover-Revealed Breakdown Sources
+
+| Value | Tooltip content |
+|---|---|
+| BAB | `Fighter 3: +3\nRogue 2: +1` (from `calculateTotalBAB`) |
+| Fort/Ref/Will | class components + ability mod + misc bonus |
+| AC | `10 base\nDEX: +2\nArmor: +4\nShield: +2` |
+| Init | `DEX: +2\nMisc: +1` |
+| HP | hit die per level + CON mod (from `calculateMaxHP`) |
+| Skill total | `3 ranks\n+2 DEX` |
+
+### Compact Stat Cards
+
+Used in `PlaySheet` and `StickyBar`. CSS class `.play-sheet__stat` / `.sticky-stat`:
+
+```
+┌─────────┐
+│  FORT   │  ← .play-sheet__stat-label (small, uppercase, muted)
+│   +5    │  ← .play-sheet__stat-value (large, bold)
+└─────────┘
+  cursor: help; title="breakdown"
+```
+
+### `readOnly` Prop Pattern
+
+Components that appear in both build and play modes accept `readOnly?: boolean`. When true:
+- Inputs become static spans or display values
+- Add/remove/edit controls are hidden
+- The component is safe to render in play mode
+
+Components with `readOnly`: `CombatStatsPanel`, `SavesPanel`, `SpellSlotsPanel`, `SkillsPanel`, `FlawsPanel`, `LanguagesPanel`, `TaintPanel`, `NotesPanel`.
+
+### Backward-Compatible Schema Changes
+
+New schema fields use `.optional().default(value)` so existing saved characters load without error. No version bump needed for additive changes.
+
+---
+
+## Architecture
+
+### Mode / Tab Routing
+
+```
+mode: 'build' | 'play'   (top-level App state)
+tab:  'character' | 'build' | 'skills' | 'spells'
+
+Build mode tabs:  character  build
+Play mode tabs:   character  skills  spells
+
+tab === 'character' && mode === 'build'  →  identity editing panels
+tab === 'character' && mode === 'play'   →  PlaySheet (compact play dashboard)
+tab === 'skills'                         →  SkillsPanel (readOnly)
+tab === 'spells'                         →  SpellSlotsPanel (readOnly) + SpellsSummary
+```
+
+Mode toggle always routes to `'character'` in both directions.
+
+### Hook Composition
+
+`useCharacter` composes domain-specific hooks:
+
+| Hook | Owns |
+|---|---|
+| `useCharacterIdentity` | name, race, alignment, flaws, languages |
+| `useCharacterScores` | ability scores, modifiers |
+| `useCharacterLevels` | levels array, feats, spells, skill ranks |
+| `useCharacterCombat` | HP, AC components, saves, spell slots |
+| `useCharacterExtras` | taint, custom resources, notes |
+| `useCharacterPersistence` | localStorage save/load, JSON import/export |
+
+### Calculations Library (`src/lib/progressions.ts`)
+
+All D&D math is pure functions returning `CalculationBreakdown`:
+
+```ts
+calculateTotalBAB(levels)              → { total, components[] }
+calculateTotalSave(levels, saveType)   → { total, components[] }
+calculateMaxHP(levels, conMod)         → { total, components[] }
+calculateCumulativeSkillRanks(levels)  → Record<skillName, ranks>
+```
+
+### Data-Driven Pattern
+
+```
+src/data/*.json      → Source of truth for game data
+src/types/*.ts       → Zod schemas + TypeScript types
+src/data/*.ts        → Parse JSON, export validated data + named constants
+src/schema/schema.ts → Character schema uses z.enum(DERIVED_CONSTANTS)
+```
 
 ---
 
 ## Directory Structure
 
 ```
-/ (repo root)
-├── 404.html                      # GitHub Pages SPA redirect
-├── index.html                    # main Vite entry
-├── package.json / tsconfig.json / vite.config.ts
+src/
+├── App.tsx                    # mode/tab routing, default export
+├── main.tsx                   # entry point
+├── types.ts                   # shared Scores type + emptyScores
 │
-├── scripts/
-│   ├── feats.csv                 # raw feat data (Google Sheets export)
-│   ├── convert-feats.mjs         # CSV → JSON converter
-│   ├── validate-feats.mjs        # Zod validator for feats.json
-│   ├── validate-skills.mjs       # Zod validator for skills.json
-│   └── ...                       # other data validators/converters
+├── components/
+│   ├── AbilityGrid.tsx
+│   ├── AlignmentSelector.tsx
+│   ├── CombatStats.tsx        # AC/Init/SR/BAB inputs; readOnly support
+│   ├── FeatsSummary.tsx
+│   ├── FlawsPanel.tsx         # readOnly support
+│   ├── HPTracker.tsx          # current/temp/max HP with damage input
+│   ├── LanguagesPanel.tsx     # readOnly support
+│   ├── LeftSidebar.tsx        # Import/Export, Dice Roller, Roll Character
+│   ├── LevelsPanel.tsx        # level cards with feats/spells/skills per level
+│   ├── NotesPanel.tsx         # readOnly support
+│   ├── PanelSection.tsx       # collapsible accordion wrapper
+│   ├── PlaySheet.tsx          # compact play mode character tab
+│   ├── RaceSelector.tsx
+│   ├── ResourceTracker.tsx    # custom named resource pools
+│   ├── SavesPanel.tsx         # Fort/Ref/Will with auto-calc; readOnly support
+│   ├── SkillsPanel.tsx        # flat alphabetical skill list; readOnly support
+│   ├── SkillSpendingPanel.tsx # per-level skill point allocation (build)
+│   ├── SpellSlotsPanel.tsx    # cast/recover/max per spell level; readOnly support
+│   ├── SpellsSummary.tsx
+│   ├── StickyBar.tsx          # always-visible stat summary + mode toggle
+│   ├── TabNav.tsx             # mode-aware tab navigation
+│   └── TaintPanel.tsx         # readOnly support
 │
-├── src/
-│   ├── App.tsx                   # main layout (default export)
-│   ├── main.tsx                  # entrypoint (imports global CSS)
-│   ├── types.ts                  # shared Scores + emptyScores
+├── data/
+│   ├── alignments.json / .ts / .test.ts
+│   ├── class-progressions.json / .ts / .test.ts
+│   ├── classes.json / .ts / .test.ts
+│   ├── feats.json / .ts / .test.ts    # 1,826 feats
+│   ├── flaws.json / .ts / .test.ts
+│   ├── languages.json / .ts / .test.ts
+│   ├── races.json / .ts / .test.ts
+│   ├── saves.json / .ts / .test.ts
+│   ├── skills.json / .ts / .test.ts   # 43 skills
+│   ├── sourcebook-abbrevs.json
+│   ├── sourcebooks.ts / .test.ts
+│   ├── spells.json / .ts / .test.ts
+│   └── taint.json / .ts / .test.ts
 │
-│   ├── components/
-│   │   ├── AbilityGrid.tsx
-│   │   ├── AlignmentSelector.tsx  # 3x3 alignment grid
-│   │   ├── CombatStats.tsx        # HP, AC, SR, initiative, BAB (with auto-calc)
-│   │   ├── DiceRollerPanel.tsx    # dice roller UI
-│   │   ├── ImportExportBar.tsx
-│   │   ├── LeftSidebar.tsx        # sidebar with collapsible panels
-│   │   ├── LevelsPanel.tsx        # level-based progression with per-level feats
-│   │   ├── PanelSection.tsx       # reusable collapsible panel
-│   │   ├── RaceSelector.tsx       # 7 core race selection
-│   │   ├── RollCharacterPanel.tsx
-│   │   ├── SavesPanel.tsx         # Fortitude, Reflex, Will saves (with auto-calc)
-│   │   ├── SkillsPanel.tsx        # read-only cumulative skills display
-│   │   ├── SkillSpendingPanel.tsx # per-level skill allocation interface
-│   │   ├── SourceBadge.tsx / SourceBadges.tsx
-│   │   └── UtilitiesPanel.tsx     # general character tools
+├── hooks/
+│   ├── useCharacter.ts            # composes all sub-hooks
+│   ├── useCharacterCombat.ts
+│   ├── useCharacterExtras.ts
+│   ├── useCharacterIdentity.ts
+│   ├── useCharacterLevels.ts
+│   ├── useCharacterPersistence.ts
+│   └── useCharacterScores.ts
 │
-│   ├── data/
-│   │   ├── alignments.json        # 9 D&D alignments
-│   │   ├── alignments.ts          # alignment data helpers
-│   │   ├── class-progressions.json # class progression tables (HD, BAB, saves)
-│   │   ├── classes.json           # 11 core D&D 3.5e classes
-│   │   ├── classes.ts             # class data helpers
-│   │   ├── feats.json             # 1,826 D&D 3.5e feats
-│   │   ├── feats.ts               # feat data helpers
-│   │   ├── feats.test.ts          # feat validation tests
-│   │   ├── races.json             # 7 core D&D 3.5e races
-│   │   ├── races.ts               # race data helpers
-│   │   ├── saves.json             # 3 saving throws
-│   │   ├── saves.ts               # saves data helpers
-│   │   ├── skills.json            # 43 D&D 3.5e skills
-│   │   ├── skills.ts              # skill data helpers
-│   │   ├── skills.test.ts
-│   │   ├── sourcebook-abbrevs.json
-│   │   └── sourcebooks.ts
+├── lib/
+│   ├── dice.ts / .test.ts
+│   ├── download.ts
+│   ├── mods.ts                    # ability score → modifier
+│   ├── progressions.ts / .test.ts # BAB, saves, HP, skill ranks
+│   └── statline.ts / .test.ts     # 28-point-buy normalization
 │
-│   ├── hooks/
-│   │   └── useCharacter.ts       # manages character state
+├── schema/
+│   └── schema.ts                  # CharacterSchema (Zod)
 │
-│   ├── lib/
-│   │   ├── download.ts           # JSON download helper
-│   │   ├── mods.ts               # ability modifier logic
-│   │   ├── progressions.ts       # class progression calculations (HP, BAB, saves)
-│   │   ├── progressions.test.ts  # progression calculation tests
-│   │   ├── statline.ts           # roll + 28-point normalization
-│   │   ├── statline.test.ts
-│   │   ├── dice.ts               # dice utilities
-│   │   └── dice.test.ts
+├── store/
+│   └── local.ts / .test.ts        # localStorage (key: v0-char)
 │
-│   ├── schema/
-│   │   └── schema.ts             # CharacterSchema (Zod validation)
+├── styles/
+│   ├── index.css                  # imports all partials
+│   ├── alignment.css
+│   ├── browser.css                # feat/spell/skill browser panels
+│   ├── combat-stats.css
+│   ├── levels.css
+│   ├── play.css                   # PlaySheet, stat cards, sticky bar
+│   ├── saves.css
+│   ├── selectors.css              # race/class selector styles
+│   ├── skills.css
+│   ├── tabs.css
+│   └── utilities.css
 │
-│   ├── store/
-│   │   └── local.ts              # localStorage save/load/clear
-│
-│   ├── styles/
-│   │   ├── index.css             # imports all partials below
-│   │   ├── utilities.css         # small utility classes
-│   │   ├── alignment.css         # alignment selector styles
-│   │   ├── race.css              # race selector styles
-│   │   ├── saves.css             # saves panel styles
-│   │   ├── combat-stats.css      # combat statistics panel styles
-│   │   ├── skills.css            # skills panel styles
-│   │   └── levels.css            # levels panel with per-level feats
-│
-│   └── types/
-│       ├── alignment.ts          # alignment type + schema
-│       ├── class.ts              # class type + schema
-│       ├── feat.ts               # feat type + schema
-│       ├── level.ts              # level type + schema (with feats, skillRanks, unspentSkillPoints)
-│       ├── race.ts               # race type + schema
-│       ├── save.ts               # save type + schema
-│       └── skill.ts              # skill type + schema
-│
-└── dist/                         # vite build output
+└── types/
+    ├── alignment.ts / class.ts / class-progression.ts
+    ├── feat.ts / flaw.ts / language.ts
+    ├── level.ts / race.ts / save.ts
+    ├── skill.ts / spell.ts / taint-data.ts
+    └── (each exports a Zod schema + TypeScript type)
 ```
-
----
-
-## UI Layout
-
-The app uses a two-column grid layout defined in `layout.css`:
-
-```
-+----------------+--------------------------------+
-|  Left Sidebar  |           Main Area            |
-|  (260px wide)  |   Character sheet + content    |
-+----------------+--------------------------------+
-```
-
-### Left Sidebar
-
-- Built by `LeftSidebar.tsx`
-- Contains collapsible panels using `PanelSection.tsx`
-- All panels start closed by default for fast loading
-- Default panels:
-  - **Import/Export** — JSON import/export and reset functionality
-  - **Dice Roller** — manages a dice pool, roll, and clear
-  - **Roll Character** — random character generation tools
-
-### Dice Roller
-
-- Buttons add dice (e.g., `4` → d4, `6` → d6)
-- "Roll" computes totals using logic from `lib/dice.ts`
-- "Clear" empties the pool
-- Uses CSS classes `.btn`, `.btn--primary`, `.btn--danger`, and `.btn-row`
-
-### Main Content Area
-
-All sections use consistent collapsible panels with no redundant internal headers. Most panels start closed by default for fast loading. Character sheet sections displayed in the main area (top to bottom):
-
-1. **Name** (closed by default) - Character name input field
-
-2. **Race** (closed by default) - Choose from 7 core races with descriptions
-
-3. **Alignment** (closed by default) - 3x3 grid for all 9 D&D alignments
-
-4. **Abilities** (closed by default) - Six ability scores (STR, DEX, CON, INT, WIS, CHA) with automatic modifier calculations
-
-5. **Combat** (closed by default) - Combat statistics:
-   - Max HP auto-calculated from hit dice + CON modifier per level
-   - Current HP tracking
-   - AC calculation (10 + armor + shield + DEX mod + misc)
-   - Spell Resistance
-   - Initiative Bonus
-   - BAB auto-calculated from class progressions
-   - Hover tooltips show calculation breakdowns
-   - Green text indicates calculated values
-
-6. **Saves** (closed by default) - Three saving throws (Fortitude, Reflex, Will):
-   - Auto-calculated from class progressions + ability modifiers
-   - Hover tooltips show calculation breakdown
-   - Green text indicates calculated values
-   - Manual base bonus inputs available for characters without levels
-
-7. **Levels** (closed by default) - Character progression system:
-   - 1-20 levels with per-level class selection
-   - Each level card shows: level number, class selector, skill points (available/remaining), feat count
-   - Collapsible per-level feat management (search from 1,826 feats)
-   - Collapsible per-level skill spending:
-     - Class skills section (open by default) - 1 point = 1 rank
-     - Cross-class skills section (closed by default) - 1 point = 0.5 ranks
-     - Unspent points carry forward to next level
-     - Editing past levels automatically recalculates forward
-   - Add/remove levels with full persistence
-   - Natural multiclassing support
-
-8. **Skills** (closed by default) - Read-only display of all 43 D&D 3.5e skills:
-   - Shows cumulative totals from all levels
-   - Compact single-line format: Skill (ABILITY) [badges] +modifier (calculation)
-   - Filter options: All Skills, Trained Only, Class Skills, Cross-Class Skills
-   - Grouped by ability score (STR, DEX, CON, INT, WIS, CHA)
-   - Color-coded: green for class skills, yellow for cross-class
-   - Only full ranks count toward modifiers (fractional ranks marked with \*half)
-
----
-
-## Data-Driven Architecture
-
-All game data (alignments, races, saves, skills, etc.) follows a consistent pattern:
-
-1. **JSON Data Files** (`src/data/*.json`) - Single source of truth for game data
-2. **Type Definitions** (`src/types/*.ts`) - Zod schemas for validation
-3. **Helper Modules** (`src/data/*.ts`) - Parse and export validated data
-4. **Schema Integration** - Character schema derives from data layer
-
-Examples:
-
-- Alignments are defined in `alignments.json`, validated with `AlignmentSchema`, and the character schema uses derived codes via `z.enum(ALIGNMENT_CODES)`.
-- Races are defined in `races.json`, validated with `RaceSchema`, and exported as `RACE_NAMES` for schema validation.
-- Classes are defined in `classes.json`, validated with `ClassSchema`, and exported as `CLASS_NAMES` for schema validation.
-- Saves are defined in `saves.json` with their governing abilities and descriptions.
-
----
-
-## Styling
-
-- All styles live in `/src/styles/` and are imported globally via `index.css`
-- No inline styles anywhere
-- Common layout classes:
-  - `.app-grid` → main two-column layout
-  - `.app-main` → right-hand content area
-  - `.sidebar` → left column
-  - `.panel__header` / `.panel__header--open` / `.panel__content`
-  - `.btn`, `.btn--primary`, `.btn--danger`, `.btn-row`
-  - `.dice__pool`, `.dice__result`
-- Shared utilities (e.g. `.mb-8`) live in `utilities.css`
-
----
-
-## Code Conventions
-
-| Type       | Export Style                                    |
-| ---------- | ----------------------------------------------- |
-| Components | Named exports (`export function ComponentName`) |
-| Hooks      | Named exports                                   |
-| Utilities  | Named exports                                   |
-| Schemas    | Named exports                                   |
-| App.tsx    | Single default export                           |
 
 ---
 
 ## Testing
 
-- Uses **Vitest** for all tests with **v8 coverage** reporting
-- Tests live **next to the files they verify**
-  - `lib/statline.test.ts` → `lib/statline.ts`
-  - `lib/dice.test.ts` → `lib/dice.ts`
-  - `lib/progressions.test.ts` → `lib/progressions.ts`
-  - `data/skills.test.ts` → `data/skills.json` and `data/skills.ts`
-  - `data/feats.test.ts` → `data/feats.json` and `data/feats.ts`
-- **64 tests** currently passing
-- Run tests:
-  ```bash
-  npm run test              # Run all tests
-  npm run test:watch        # Watch mode
-  npm run test:coverage     # Generate coverage report
-  ```
-- **Current Coverage**: ~85% statements, ~80% branches
-- Coverage reports generated in `coverage/` directory
-  - Text output in console
-  - HTML report: `open coverage/index.html`
-  - JSON report for CI integration
+- **Vitest** with v8 coverage
+- **206 tests**, all passing
+- Tests co-located with source: `foo.ts` → `foo.test.ts`
+- All `src/data/*.ts` modules have test coverage
+- Coverage: ~97% statements, ~94% branches on covered files
+
+```bash
+npm run test              # run all tests
+npm run test:watch        # watch mode
+npm run test:coverage     # coverage report
+```
 
 ---
 
-## Validation and Scripts
+## Styling
 
-| Script                | Purpose                                               | Example                          |
-| --------------------- | ----------------------------------------------------- | -------------------------------- |
-| `convert-feats.mjs`   | Convert `/scripts/feats.csv` → `/src/data/feats.json` | `node scripts/convert-feats.mjs` |
-| `validate-feats.mjs`  | Validate feats.json with Zod                          | `npm run validate:feats`         |
-| `validate-skills.mjs` | Validate skills.json with Zod                         | `npm run validate:skills`        |
-| `vite dev/build`      | Dev server or build                                   | `npm run dev`, `npm run build`   |
-| `test`                | Run all Vitest suites                                 | `npm run test`                   |
+- No inline styles — enforced by pre-commit hook (`guard:no-inline-styles`)
+- All CSS in `src/styles/`, imported via `index.css`
+- CSS custom properties: `var(--space-N)`, `var(--clr-*)`, `var(--clr-border)`, `var(--clr-border-strong)`
+- BEM-style class names: `.play-sheet__stat-label`, `.skill-item--class`, etc.
+- Shared utilities: `.mt-12`, `.text-error`, `.btn`, `.btn--primary`, `.btn--danger`
 
 ---
 
-## Local Persistence
+## Code Conventions
 
-- **Local save key:** `v0-char`
-- **Stored format:** validated `Character` (version 1 schema)
-- **Source:** `src/store/local.ts`
-- **Note:** No schema migrations exist yet (waiting for real users before versioning)
+| Type | Export |
+|---|---|
+| Components | Named (`export function Foo`) |
+| Hooks | Named |
+| Utilities | Named |
+| `App.tsx` | Default |
 
----
-
-## Statline Rules
-
-Roll 3d6 six times → base stat line.  
-Adjust toward 28-point buy:
-
-- If total > 28: drop lowest stat(s) round-robin until ≤ 28
-- If total < 28: raise highest stat(s) round-robin until ≥ 28
-- Clamp scores 3–18
-- Even distribution (no greedy loops)
-- Verified by `lib/statline.test.ts`
+- Pre-commit: Prettier format → ESLint fix → inline style guard → Vitest run
+- All deps pinned to exact versions (no `^`/`~`)
 
 ---
 
 ## Build and Deployment
 
-- Hosted at [https://instantsoup.github.io/dnd35/](https://instantsoup.github.io/dnd35/)
-- Root URL redirects to `/dnd35/`
-- PR previews deploy to `/latest/` for testing before merge
-- Branch: `main`
-- Build command:
-  ```bash
-  npm run build
-  ```
-- Output directory: `dist/`
-- Ensure `404.html` exists for client-side routing fallback
-- **PR Preview**: Pull requests automatically deploy to `/latest/` for testing before merge
-
-## Dependency Management
-
-- **All dependencies pinned to exact versions** (no `^` or `~` prefixes)
-- Prevents automatic updates that could introduce breaking changes or security issues
-- Updates must be done manually and intentionally
-- Check for updates:
-  ```bash
-  npm outdated
-  ```
-- Update process follows security-conscious protocol (see `/home/wesb/git/CLAUDE.md`)
-  - Review release notes and maintainer changes
-  - Update one package at a time
-  - Test after each update
-  - Watch for supply chain attack indicators
+- **Dev:** `npm run dev`
+- **Build:** `npm run build` → `dist/`
+- **Hosted:** `main` branch → GitHub Pages → `/dnd35/`
+- **PR previews** deploy to `/latest/` automatically
+- `404.html` handles client-side routing fallback
 
 ---
 
-## Quick Reference
+## Statline Rules
 
-- No backend — client-only SPA
-- All logic is local, schema-validated with Zod
-- Data-driven architecture: All game data in JSON files
-- Tests live next to source files (64 tests passing, ~85% coverage)
-- Styles are modular CSS classes (no inline styles)
-- Components are all named exports (except App)
-- All dependencies pinned to exact versions for security
-- Sidebar layout provides collapsible **Import/Export**, **Dice Roller**, and **Roll Character** panels
-- Character features:
-  - Name field
-  - Race selection (7 core races)
-  - Alignment (9 options)
-  - Ability Scores (6 abilities with modifiers)
-  - Combat Statistics (HP, AC, SR, Initiative, BAB with automatic calculation)
-  - Saving Throws (3 saves with automatic calculation)
-  - Levels system (1-20 levels with per-level class selection)
-    - Per-level feats (search from 1,826 feats)
-    - Per-level skill allocation (class/cross-class sections)
-    - Skill point carryover and forward recalculation
-  - Skills panel (read-only cumulative display of 43 skills)
-- Automatic calculations from class progressions with multiclass support
-- Every feature is self-contained, type-safe, and incremental
+Roll 3d6 six times → base stat line.
+Adjust toward 28-point buy:
 
----
+- If total > 28: drop lowest stat(s) round-robin until ≤ 28
+- If total < 28: raise highest stat(s) round-robin until ≥ 28
+- Clamp scores 3–18
+- Verified by `lib/statline.test.ts`

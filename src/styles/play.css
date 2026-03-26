@@ -435,6 +435,129 @@
 }
 
 /* ================================
+   Read-only display utilities
+=================================== */
+
+.notes-readonly {
+  padding: 8px 10px;
+  border: 1px solid var(--clr-border);
+  border-radius: 6px;
+  background: #f8fafc;
+  font-size: 14px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  min-height: 3rem;
+  color: #1f2937;
+}
+
+.overview-readonly__value {
+  padding: 8px 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.taint-tracker__value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  min-width: 2rem;
+  text-align: center;
+  color: #1f2937;
+}
+
+/* ================================
+   Play Sheet
+=================================== */
+
+.play-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-2);
+}
+
+.play-sheet__identity {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  padding-bottom: var(--space-2);
+  border-bottom: 2px solid var(--clr-border-strong);
+}
+
+.play-sheet__name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.play-sheet__identity-detail {
+  font-size: 0.9rem;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.play-sheet__stats-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.play-sheet__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-2) var(--space-3);
+  background: #f8fafc;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 8px;
+  min-width: 4.5rem;
+  cursor: help;
+  transition: background 0.1s;
+}
+
+.play-sheet__stat:hover {
+  background: #e8f0fe;
+}
+
+.play-sheet__stat-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+}
+
+.play-sheet__stat-value {
+  font-size: 1.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.play-sheet__section {
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.play-sheet__section-label {
+  background: #f3f4f6;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.play-sheet__section > *:not(.play-sheet__section-label) {
+  padding: var(--space-3);
+}
+
+/* ================================
    Browser compact variant (Flaws/Languages)
 =================================== */
 

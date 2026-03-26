@@ -7,10 +7,25 @@ type TaintPanelProps = {
   onDisable: () => void;
   onUpdate: (field: keyof Taint, value: number) => void;
   onBlur?: () => void;
+  readOnly?: boolean;
 };
 
-export function TaintPanel({ taint, onEnable, onDisable, onUpdate, onBlur }: TaintPanelProps) {
+export function TaintPanel({
+  taint,
+  onEnable,
+  onDisable,
+  onUpdate,
+  onBlur,
+  readOnly,
+}: TaintPanelProps) {
   if (!taint) {
+    if (readOnly) {
+      return (
+        <div className="panel-body">
+          <p className="text-muted">Taint tracking not enabled.</p>
+        </div>
+      );
+    }
     return (
       <div className="panel-body">
         <p className="text-muted mb-8">
@@ -39,6 +54,39 @@ export function TaintPanel({ taint, onEnable, onDisable, onUpdate, onBlur }: Tai
     onUpdate(field, current + delta);
     onBlur?.();
   };
+
+  if (readOnly) {
+    return (
+      <div className="panel-body">
+        <div className="taint-grid">
+          <div className="taint-tracker">
+            <div className="taint-tracker__header">
+              <span className="taint-tracker__label">Depravity</span>
+              <span className="taint-tracker__value">{taint.depravity ?? 0}</span>
+            </div>
+            {depravityEffect && (
+              <div className="taint-tracker__effect">
+                <span className="taint-tracker__effect-label">{depravityEffect.label}:</span>{' '}
+                {depravityEffect.effect}
+              </div>
+            )}
+          </div>
+          <div className="taint-tracker">
+            <div className="taint-tracker__header">
+              <span className="taint-tracker__label">Corruption</span>
+              <span className="taint-tracker__value">{taint.corruption ?? 0}</span>
+            </div>
+            {corruptionEffect && (
+              <div className="taint-tracker__effect">
+                <span className="taint-tracker__effect-label">{corruptionEffect.label}:</span>{' '}
+                {corruptionEffect.effect}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="panel-body">

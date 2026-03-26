@@ -9,6 +9,7 @@ interface CombatStatsProps {
   levels: Level[];
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
   onBlur: () => void;
+  readOnly?: boolean;
 }
 
 export function CombatStatsPanel({
@@ -17,6 +18,7 @@ export function CombatStatsPanel({
   levels,
   updateCombatStat,
   onBlur,
+  readOnly,
 }: CombatStatsProps) {
   const handleNumInput = (field: keyof CombatStats) => (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -58,25 +60,37 @@ export function CombatStatsPanel({
             <div className="combat-stat-breakdown">
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Armor:</span>
-                <input
-                  type="number"
-                  className="combat-stat-input combat-stat-input--small"
-                  value={combatStats.armorBonus ?? ''}
-                  onChange={handleNumInput('armorBonus')}
-                  onBlur={onBlur}
-                  placeholder="0"
-                />
+                {readOnly ? (
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.armorBonus ?? 0}
+                  </span>
+                ) : (
+                  <input
+                    type="number"
+                    className="combat-stat-input combat-stat-input--small"
+                    value={combatStats.armorBonus ?? ''}
+                    onChange={handleNumInput('armorBonus')}
+                    onBlur={onBlur}
+                    placeholder="0"
+                  />
+                )}
               </div>
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Shield:</span>
-                <input
-                  type="number"
-                  className="combat-stat-input combat-stat-input--small"
-                  value={combatStats.shieldBonus ?? ''}
-                  onChange={handleNumInput('shieldBonus')}
-                  onBlur={onBlur}
-                  placeholder="0"
-                />
+                {readOnly ? (
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.shieldBonus ?? 0}
+                  </span>
+                ) : (
+                  <input
+                    type="number"
+                    className="combat-stat-input combat-stat-input--small"
+                    value={combatStats.shieldBonus ?? ''}
+                    onChange={handleNumInput('shieldBonus')}
+                    onBlur={onBlur}
+                    placeholder="0"
+                  />
+                )}
               </div>
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">DEX:</span>
@@ -87,14 +101,20 @@ export function CombatStatsPanel({
               </div>
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Misc:</span>
-                <input
-                  type="number"
-                  className="combat-stat-input combat-stat-input--small"
-                  value={combatStats.miscACBonus ?? ''}
-                  onChange={handleNumInput('miscACBonus')}
-                  onBlur={onBlur}
-                  placeholder="0"
-                />
+                {readOnly ? (
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.miscACBonus ?? 0}
+                  </span>
+                ) : (
+                  <input
+                    type="number"
+                    className="combat-stat-input combat-stat-input--small"
+                    value={combatStats.miscACBonus ?? ''}
+                    onChange={handleNumInput('miscACBonus')}
+                    onBlur={onBlur}
+                    placeholder="0"
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -120,14 +140,20 @@ export function CombatStatsPanel({
               </div>
               <div className="combat-stat-breakdown__row">
                 <span className="combat-stat-breakdown__label">Misc:</span>
-                <input
-                  type="number"
-                  className="combat-stat-input combat-stat-input--small"
-                  value={combatStats.initiativeBonus ?? ''}
-                  onChange={handleNumInput('initiativeBonus')}
-                  onBlur={onBlur}
-                  placeholder="0"
-                />
+                {readOnly ? (
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.initiativeBonus ?? 0}
+                  </span>
+                ) : (
+                  <input
+                    type="number"
+                    className="combat-stat-input combat-stat-input--small"
+                    value={combatStats.initiativeBonus ?? ''}
+                    onChange={handleNumInput('initiativeBonus')}
+                    onBlur={onBlur}
+                    placeholder="0"
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -146,6 +172,8 @@ export function CombatStatsPanel({
               >
                 +{calculatedBAB}
               </div>
+            ) : readOnly ? (
+              <div className="combat-stat-display">{combatStats.baseAttackBonus ?? 0}</div>
             ) : (
               <input
                 type="number"
@@ -165,15 +193,19 @@ export function CombatStatsPanel({
             <span className="combat-stat-card__label">Spell Resistance</span>
           </div>
           <div className="combat-stat-card__content">
-            <input
-              type="number"
-              className="combat-stat-input combat-stat-input--centered"
-              value={combatStats.spellResistance ?? ''}
-              onChange={handleNumInput('spellResistance')}
-              onBlur={onBlur}
-              placeholder="0"
-              min="0"
-            />
+            {readOnly ? (
+              <div className="combat-stat-display">{combatStats.spellResistance ?? 0}</div>
+            ) : (
+              <input
+                type="number"
+                className="combat-stat-input combat-stat-input--centered"
+                value={combatStats.spellResistance ?? ''}
+                onChange={handleNumInput('spellResistance')}
+                onBlur={onBlur}
+                placeholder="0"
+                min="0"
+              />
+            )}
           </div>
         </div>
       </div>

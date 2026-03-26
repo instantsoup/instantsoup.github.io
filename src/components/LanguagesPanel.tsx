@@ -7,9 +7,16 @@ type LanguagesPanelProps = {
   onAdd: (name: string) => void;
   onRemove: (name: string) => void;
   onBlur?: () => void;
+  readOnly?: boolean;
 };
 
-export function LanguagesPanel({ selected, onAdd, onRemove, onBlur }: LanguagesPanelProps) {
+export function LanguagesPanel({
+  selected,
+  onAdd,
+  onRemove,
+  onBlur,
+  readOnly,
+}: LanguagesPanelProps) {
   const [search, setSearch] = useState('');
 
   const filtered = languages.filter(
@@ -25,6 +32,27 @@ export function LanguagesPanel({ selected, onAdd, onRemove, onBlur }: LanguagesP
     onRemove(name);
     onBlur?.();
   };
+
+  if (readOnly) {
+    return (
+      <div className="panel-body">
+        {selected.length > 0 ? (
+          <div className="tag-list">
+            {selected.map((name) => {
+              const lang = languages.find((l) => l.name === name);
+              return (
+                <span key={name} className="tag" title={lang?.speakers}>
+                  {name}
+                </span>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-muted">No languages.</p>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="panel-body">
