@@ -1,26 +1,42 @@
 import { alignments } from '../data/alignments';
 import { calculateTotalBAB, calculateTotalSave } from '../lib/progressions';
-import type { CombatStats, CustomResource } from '../schema/schema';
+import type { AbilityDamage, CombatStats, CustomResource, EquipmentItem, StatusEffect } from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
+import { AbilityDamagePanel } from './AbilityDamagePanel';
+import { EquipmentPanel } from './EquipmentPanel';
 import { HPTracker } from './HPTracker';
 import { ResourceTracker } from './ResourceTracker';
+import { StatusEffectsPanel } from './StatusEffectsPanel';
 
 type PlaySheetProps = {
   name: string;
   race: string | undefined;
   alignment: string | undefined;
+  scores: Scores;
+  effectiveScores: Scores;
   mods: Scores;
   combatStats: CombatStats;
   levels: Level[];
   saveBonuses: Record<string, number>;
   customResources: CustomResource[];
+  statusEffects: Record<string, StatusEffect>;
+  abilityDamage: AbilityDamage;
+  equipment: EquipmentItem[];
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
   addCustomResource: (resource: CustomResource) => void;
   removeCustomResource: (index: number) => void;
   updateCustomResourceUsed: (index: number, used: number) => void;
   resetCustomResource: (index: number) => void;
   resetAllCustomResources: () => void;
+  toggleStatusEffect: (name: string) => void;
+  setStatusEffectRounds: (name: string, rounds: number) => void;
+  clearAllStatusEffects: () => void;
+  setAbilityDamage: (key: keyof AbilityDamage, value: number) => void;
+  addEquipment: (item: EquipmentItem) => void;
+  removeEquipment: (index: number) => void;
+  toggleEquipped: (index: number) => void;
+  setEquipmentNotes: (index: number, notes: string) => void;
   onBlur: () => void;
 };
 
@@ -28,17 +44,30 @@ export function PlaySheet({
   name,
   race,
   alignment,
+  scores,
+  effectiveScores,
   mods,
   combatStats,
   levels,
   saveBonuses,
   customResources,
+  statusEffects,
+  abilityDamage,
+  equipment,
   updateCombatStat,
   addCustomResource,
   removeCustomResource,
   updateCustomResourceUsed,
   resetCustomResource,
   resetAllCustomResources,
+  toggleStatusEffect,
+  setStatusEffectRounds,
+  clearAllStatusEffects,
+  setAbilityDamage,
+  addEquipment,
+  removeEquipment,
+  toggleEquipped,
+  setEquipmentNotes,
   onBlur,
 }: PlaySheetProps) {
   const alignmentLabel = alignment
@@ -110,6 +139,8 @@ export function PlaySheet({
 
   const fmt = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
+  const activeConditionCount = Object.values(statusEffects).filter((e) => e.active).length;
+
   return (
     <div className="play-sheet">
       {/* Identity */}
@@ -175,21 +206,58 @@ export function PlaySheet({
         </div>
       </div>
 
-      {/* Resources */}
-      {customResources.length > 0 && (
-        <div className="play-sheet__section">
-          <div className="play-sheet__section-label">Resources</div>
-          <ResourceTracker
-            resources={customResources}
-            onAdd={addCustomResource}
-            onRemove={removeCustomResource}
-            onUse={updateCustomResourceUsed}
-            onReset={resetCustomResource}
-            onResetAll={resetAllCustomResources}
-            onBlur={onBlur}
-          />
+      {/* Conditions */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">
+          Conditions{activeConditionCount > 0 ? ` (${activeConditionCount} active)` : ''}
         </div>
-      )}
+        <StatusEffectsPanel
+          statusEffects={statusEffects}
+          onToggle={toggleStatusEffect}
+          onSetRounds={setStatusEffectRounds}
+          onClearAll={clearAllStatusEffects}
+          onBlur={onBlur}
+        />
+      </div>
+
+      {/* Ability Damage */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Ability Score Damage</div>
+        <AbilityDamagePanel
+          scores={scores}
+          effectiveScores={effectiveScores}
+          abilityDamage={abilityDamage}
+          onSetDamage={setAbilityDamage}
+          onBlur={onBlur}
+        />
+      </div>
+
+      {/* Resources */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Resources</div>
+        <ResourceTracker
+          resources={customResources}
+          onAdd={addCustomResource}
+          onRemove={removeCustomResource}
+          onUse={updateCustomResourceUsed}
+          onReset={resetCustomResource}
+          onResetAll={resetAllCustomResources}
+          onBlur={onBlur}
+        />
+      </div>
+
+      {/* Equipment */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Equipment</div>
+        <EquipmentPanel
+          equipment={equipment}
+          onAdd={addEquipment}
+          onRemove={removeEquipment}
+          onToggleEquipped={toggleEquipped}
+          onSetNotes={setEquipmentNotes}
+          onBlur={onBlur}
+        />
+      </div>
     </div>
   );
 }

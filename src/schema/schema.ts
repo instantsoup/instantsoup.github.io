@@ -68,6 +68,32 @@ export const CustomResourceSchema = z.object({
 
 export type CustomResource = z.infer<typeof CustomResourceSchema>;
 
+export const StatusEffectSchema = z.object({
+  active: z.boolean(),
+  rounds: z.number().int().min(0).optional(),
+});
+
+export type StatusEffect = z.infer<typeof StatusEffectSchema>;
+
+export const AbilityDamageSchema = z.object({
+  str: z.number().int().min(0).optional().default(0),
+  dex: z.number().int().min(0).optional().default(0),
+  con: z.number().int().min(0).optional().default(0),
+  int: z.number().int().min(0).optional().default(0),
+  wis: z.number().int().min(0).optional().default(0),
+  cha: z.number().int().min(0).optional().default(0),
+});
+
+export type AbilityDamage = z.infer<typeof AbilityDamageSchema>;
+
+export const EquipmentItemSchema = z.object({
+  name: z.string().min(1),
+  equipped: z.boolean().default(false),
+  notes: z.string().optional(),
+});
+
+export type EquipmentItem = z.infer<typeof EquipmentItemSchema>;
+
 export const CharacterSchema = z.object({
   version: z.literal(2),
   name: z.string().min(0),
@@ -82,6 +108,9 @@ export const CharacterSchema = z.object({
   taint: TaintSchema.optional(),
   customResources: z.array(CustomResourceSchema).optional().default([]),
   notes: z.string().optional(),
+  statusEffects: z.record(z.string(), StatusEffectSchema).optional().default({}),
+  abilityDamage: AbilityDamageSchema.optional().default({}),
+  equipment: z.array(EquipmentItemSchema).optional().default([]),
 });
 
 export type Character = z.infer<typeof CharacterSchema>;

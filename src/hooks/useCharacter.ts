@@ -15,10 +15,11 @@ export function useCharacter() {
   const initial = loadLocal();
 
   const identity = useCharacterIdentity(initial);
-  const scoring = useCharacterScores(initial);
+  // extras must be initialized before scoring so abilityDamage can flow into mods
+  const extras = useCharacterExtras(initial);
+  const scoring = useCharacterScores(initial, extras.abilityDamage);
   const leveling = useCharacterLevels(initial, scoring.mods.int);
   const combat = useCharacterCombat(initial);
-  const extras = useCharacterExtras(initial);
 
   const getCurrent = (): Character => ({
     version: VERSION,
@@ -34,6 +35,9 @@ export function useCharacter() {
     taint: extras.taint,
     customResources: extras.customResources,
     notes: extras.notes || undefined,
+    statusEffects: extras.statusEffects,
+    abilityDamage: extras.abilityDamage,
+    equipment: extras.equipment,
   });
 
   const loadAll = (char: Character) => {
@@ -67,6 +71,7 @@ export function useCharacter() {
     scores: scoring.scores,
     setScores: scoring.setScores,
     mods: scoring.mods,
+    effectiveScores: scoring.effectiveScores,
     onNum: scoring.onNum,
 
     // Levels
@@ -109,6 +114,17 @@ export function useCharacter() {
     resetAllCustomResources: extras.resetAllCustomResources,
     notes: extras.notes,
     setNotes: extras.setNotes,
+    statusEffects: extras.statusEffects,
+    toggleStatusEffect: extras.toggleStatusEffect,
+    setStatusEffectRounds: extras.setStatusEffectRounds,
+    clearAllStatusEffects: extras.clearAllStatusEffects,
+    abilityDamage: extras.abilityDamage,
+    setAbilityDamage: extras.setAbilityDamage,
+    equipment: extras.equipment,
+    addEquipment: extras.addEquipment,
+    removeEquipment: extras.removeEquipment,
+    toggleEquipped: extras.toggleEquipped,
+    setEquipmentNotes: extras.setEquipmentNotes,
 
     // Persistence
     error: persistence.error,

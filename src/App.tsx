@@ -30,6 +30,7 @@ export function App() {
     setName,
     scores,
     mods,
+    effectiveScores,
     race,
     setRace,
     levels,
@@ -50,6 +51,7 @@ export function App() {
     updateSpellSlotsMax,
     updateSpellSlotsUsed,
     resetSpellSlots,
+    setMovementType,
     flaws,
     addFlaw,
     removeFlaw,
@@ -68,6 +70,17 @@ export function App() {
     resetAllCustomResources,
     notes,
     setNotes,
+    statusEffects,
+    toggleStatusEffect,
+    setStatusEffectRounds,
+    clearAllStatusEffects,
+    abilityDamage,
+    setAbilityDamage,
+    equipment,
+    addEquipment,
+    removeEquipment,
+    toggleEquipped,
+    setEquipmentNotes,
     onNum,
     persistLocal,
     exportJson,
@@ -122,17 +135,30 @@ export function App() {
                 name={name}
                 race={race}
                 alignment={alignment}
+                scores={scores}
+                effectiveScores={effectiveScores}
                 mods={mods}
                 combatStats={combatStats}
                 levels={levels}
                 saveBonuses={saveBonuses}
                 customResources={customResources}
+                statusEffects={statusEffects}
+                abilityDamage={abilityDamage}
+                equipment={equipment}
                 updateCombatStat={updateCombatStat}
                 addCustomResource={addCustomResource}
                 removeCustomResource={removeCustomResource}
                 updateCustomResourceUsed={updateCustomResourceUsed}
                 resetCustomResource={resetCustomResource}
                 resetAllCustomResources={resetAllCustomResources}
+                toggleStatusEffect={toggleStatusEffect}
+                setStatusEffectRounds={setStatusEffectRounds}
+                clearAllStatusEffects={clearAllStatusEffects}
+                setAbilityDamage={setAbilityDamage}
+                addEquipment={addEquipment}
+                removeEquipment={removeEquipment}
+                toggleEquipped={toggleEquipped}
+                setEquipmentNotes={setEquipmentNotes}
                 onBlur={persistLocal}
               />
             </div>

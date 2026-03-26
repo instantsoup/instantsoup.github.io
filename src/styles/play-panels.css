@@ -1,0 +1,317 @@
+/* ================================
+   Status Effects Panel
+=================================== */
+
+.status-effects {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.status-effects__list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.status-effect-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  transition: background 0.1s;
+}
+
+.status-effect-row:hover {
+  background: #f1f5f9;
+}
+
+.status-effect-row--active {
+  background: #fef3c7;
+  border-color: #f59e0b;
+}
+
+.status-effect-row--active:hover {
+  background: #fde68a;
+}
+
+.status-effect-row__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  cursor: pointer;
+}
+
+.status-effect-row__check {
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  accent-color: #f59e0b;
+}
+
+.status-effect-row__name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-effect-row--active .status-effect-row__name {
+  font-weight: 700;
+  color: #92400e;
+}
+
+.status-effect-row__rounds {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.status-effect-row__rounds-input {
+  width: 44px;
+  padding: 2px 4px;
+  border: 1px solid #f59e0b;
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+  text-align: center;
+  background: #fffbeb;
+}
+
+.status-effect-row__rounds-input::-webkit-outer-spin-button,
+.status-effect-row__rounds-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.status-effect-row__rounds-input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.status-effect-row__rounds-label {
+  font-size: 11px;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.status-effects__footer {
+  padding-top: 6px;
+  border-top: 1px solid var(--clr-border);
+}
+
+/* ================================
+   Ability Damage Panel
+=================================== */
+
+.ability-damage {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ability-damage__header {
+  display: grid;
+  grid-template-columns: 3rem 3rem 4rem 3rem;
+  gap: 8px;
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #64748b;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.ability-damage__col--center {
+  text-align: center;
+}
+
+.ability-damage__row {
+  display: grid;
+  grid-template-columns: 3rem 3rem 4rem 3rem;
+  gap: 8px;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.ability-damage__row:hover {
+  background: #f1f5f9;
+}
+
+.ability-damage__row--damaged {
+  background: #fff7ed;
+}
+
+.ability-damage__row--damaged:hover {
+  background: #ffedd5;
+}
+
+.ability-damage__ability {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.ability-damage__base {
+  font-size: 14px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: #64748b;
+}
+
+.ability-damage__input {
+  width: 100%;
+  padding: 3px 4px;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 14px;
+  text-align: center;
+  background: #fff;
+}
+
+.ability-damage__input::-webkit-outer-spin-button,
+.ability-damage__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.ability-damage__input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+.ability-damage__effective {
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  color: #0f172a;
+}
+
+.ability-damage__effective--reduced {
+  color: #c2410c;
+}
+
+/* ================================
+   Equipment Panel
+=================================== */
+
+.equipment {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.equipment__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.equipment-item {
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 6px;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.equipment-item--equipped {
+  background: #f0fdf4;
+  border-color: #86efac;
+}
+
+.equipment-item__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+}
+
+.equipment-item__equipped-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.equipment-item__equipped-label input[type='checkbox'] {
+  width: 15px;
+  height: 15px;
+  accent-color: #16a34a;
+  cursor: pointer;
+}
+
+.equipment-item__name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.equipment-item--equipped .equipment-item__name {
+  font-weight: 600;
+  color: #15803d;
+}
+
+.equipment-item__notes {
+  width: 100%;
+  padding: 4px 8px;
+  border: none;
+  border-top: 1px solid var(--clr-border);
+  font: inherit;
+  font-size: 13px;
+  background: #f1f5f9;
+  box-sizing: border-box;
+}
+
+.equipment-item__notes:focus {
+  outline: none;
+  background: #fff;
+}
+
+.equipment__add {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.equipment__add-input {
+  flex: 1;
+  padding: 6px 8px;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+}
+
+/* ================================
+   Utility button variants
+=================================== */
+
+.btn--xs {
+  padding: 1px 5px;
+  font-size: 12px;
+}
+
+.btn--ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #64748b;
+}
+
+.btn--ghost:hover {
+  background: #e2e8f0;
+  border-color: var(--clr-border-strong);
+}
+
+.btn--danger-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #ef4444;
+}
+
+.btn--danger-ghost:hover {
+  background: var(--clr-danger-bg);
+  border-color: var(--clr-danger-border);
+}

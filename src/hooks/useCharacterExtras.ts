@@ -1,6 +1,13 @@
 import { useState } from 'react';
 
-import type { Character, CustomResource, Taint } from '../schema/schema';
+import type {
+  AbilityDamage,
+  Character,
+  CustomResource,
+  EquipmentItem,
+  StatusEffect,
+  Taint,
+} from '../schema/schema';
 
 export function useCharacterExtras(initial: Character) {
   const [flaws, setFlaws] = useState<string[]>(initial.flaws ?? []);
@@ -10,6 +17,13 @@ export function useCharacterExtras(initial: Character) {
     initial.customResources ?? [],
   );
   const [notes, setNotes] = useState<string>(initial.notes ?? '');
+  const [statusEffects, setStatusEffects] = useState<Record<string, StatusEffect>>(
+    initial.statusEffects ?? {},
+  );
+  const [abilityDamage, setAbilityDamageState] = useState<AbilityDamage>(
+    initial.abilityDamage ?? {},
+  );
+  const [equipment, setEquipment] = useState<EquipmentItem[]>(initial.equipment ?? []);
 
   // Flaws
   const addFlaw = (flawName: string) =>
@@ -50,12 +64,55 @@ export function useCharacterExtras(initial: Character) {
   const resetAllCustomResources = () =>
     setCustomResources((prev) => prev.map((r) => ({ ...r, used: 0 })));
 
+  // Status effects
+  const toggleStatusEffect = (name: string) =>
+    setStatusEffects((prev) => {
+      const current = prev[name];
+      if (current?.active) {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      }
+      return { ...prev, [name]: { active: true } };
+    });
+
+  const setStatusEffectRounds = (name: string, rounds: number) =>
+    setStatusEffects((prev) => ({
+      ...prev,
+      [name]: { ...prev[name], active: true, rounds: Math.max(0, rounds) },
+    }));
+
+  const clearAllStatusEffects = () => setStatusEffects({});
+
+  // Ability damage
+  const setAbilityDamage = (key: keyof AbilityDamage, value: number) =>
+    setAbilityDamageState((prev) => ({ ...prev, [key]: Math.max(0, value) }));
+
+  // Equipment
+  const addEquipment = (item: EquipmentItem) => setEquipment((prev) => [...prev, item]);
+
+  const removeEquipment = (index: number) =>
+    setEquipment((prev) => prev.filter((_, i) => i !== index));
+
+  const toggleEquipped = (index: number) =>
+    setEquipment((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, equipped: !item.equipped } : item)),
+    );
+
+  const setEquipmentNotes = (index: number, notes: string) =>
+    setEquipment((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, notes: notes || undefined } : item)),
+    );
+
   const loadFrom = (char: Character) => {
     setFlaws(char.flaws ?? []);
     setLanguages(char.languages ?? []);
     setTaint(char.taint);
     setCustomResources(char.customResources ?? []);
     setNotes(char.notes ?? '');
+    setStatusEffects(char.statusEffects ?? {});
+    setAbilityDamageState(char.abilityDamage ?? {});
+    setEquipment(char.equipment ?? []);
   };
 
   const reset = () => {
@@ -64,6 +121,9 @@ export function useCharacterExtras(initial: Character) {
     setTaint(undefined);
     setCustomResources([]);
     setNotes('');
+    setStatusEffects({});
+    setAbilityDamageState({});
+    setEquipment([]);
   };
 
   return {
@@ -85,6 +145,17 @@ export function useCharacterExtras(initial: Character) {
     resetAllCustomResources,
     notes,
     setNotes,
+    statusEffects,
+    toggleStatusEffect,
+    setStatusEffectRounds,
+    clearAllStatusEffects,
+    abilityDamage,
+    setAbilityDamage,
+    equipment,
+    addEquipment,
+    removeEquipment,
+    toggleEquipped,
+    setEquipmentNotes,
     loadFrom,
     reset,
   };
