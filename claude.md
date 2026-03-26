@@ -1,80 +1,185 @@
 # claude.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working in this repository.
 
 ## Project Overview
 
-**D&D 3.5e Character Builder** — Client-only React/Vite SPA. No backend, API, or database. Persistence via localStorage (`v0-char` key) and JSON import/export only.
+**D&D 3.5e Character Sheet** — Client-only React/Vite SPA. No backend, API, or database ever.
+Persistence: localStorage (`v0-char` key) + JSON import/export only.
 
 **Live:** https://instantsoup.github.io/dnd35/
+
+---
 
 ## Commands
 
 ```bash
-npm run dev                # Dev server
-npm run build              # Production build → /dist
-npm run test               # Run all tests (64 tests, ~85% coverage)
-npm run test:watch         # Watch mode
+npm run dev                # dev server
+npm run build              # production build → /dist
+npm run test               # run all tests (206 tests, all passing)
+npm run test:watch         # watch mode
+npm run test:coverage      # v8 coverage report
 npm run lint               # ESLint check
-npm run check              # Full check (format + lint + no inline styles)
-npm run validate:feats     # Validate feats.json
-npm run validate:skills    # Validate skills.json
+npm run check              # format + lint + inline-style guard
+npm run validate:feats     # validate feats.json with Zod
+npm run validate:skills    # validate skills.json with Zod
 ```
+
+---
 
 ## Architecture
 
+### Mode / Tab Routing (App.tsx)
+
+```
+mode: 'build' | 'play'
+tab:  'character' | 'build' | 'skills' | 'spells'
+
+Build tabs:  character  build
+Play tabs:   character  skills  spells
+
+tab==='character' && mode==='build'  →  identity editing panels
+tab==='character' && mode==='play'   →  PlaySheet (compact play dashboard)
+tab==='skills'                       →  SkillsPanel readOnly
+tab==='spells'                       →  SpellSlotsPanel readOnly + SpellsSummary
+```
+
+Mode toggle always lands on `'character'` in both directions.
+
+### Hook Composition
+
+`useCharacter` composes these domain hooks:
+
+| Hook | Owns |
+|---|---|
+| `useCharacterIdentity` | name, race, alignment, flaws, languages |
+| `useCharacterScores` | ability scores, modifiers |
+| `useCharacterLevels` | levels, feats, spells, skill ranks |
+| `useCharacterCombat` | HP, AC components, saves, spell slots |
+| `useCharacterExtras` | taint, custom resources, notes |
+| `useCharacterPersistence` | localStorage, JSON import/export |
+
 ### Data-Driven Pattern
 
-All game data follows: **JSON → Zod Schema → Helper → Character Schema**
-
 ```
-src/data/*.json     → Source of truth
-src/types/*.ts      → Zod schemas
-src/data/*.ts       → Helpers export validated data + constants (e.g., RACE_NAMES)
-src/schema/schema.ts → Character schema uses z.enum(DERIVED_CONSTANTS)
+src/data/*.json      → source of truth
+src/types/*.ts       → Zod schema + TypeScript type
+src/data/*.ts        → validated exports + named constants (e.g. RACE_NAMES)
+src/schema/schema.ts → uses z.enum(DERIVED_CONSTANTS)
 ```
 
-### Key Modules
+Every `src/data/*.ts` module has a co-located `*.test.ts`.
 
-| Path                        | Purpose                                          |
-| --------------------------- | ------------------------------------------------ |
-| `src/hooks/useCharacter.ts` | Main character state management                  |
-| `src/lib/progressions.ts`   | HP, BAB, saves calculations (multiclass support) |
-| `src/store/local.ts`        | localStorage persistence                         |
-| `src/schema/schema.ts`      | Zod character validation                         |
+### Calculations Library
 
-### Per-Level Tracking
+`src/lib/progressions.ts` exports pure functions returning `CalculationBreakdown`:
 
-Feats and skills tracked per character level:
+```ts
+interface CalculationBreakdown {
+  total: number;
+  components: Array<{ label: string; value: number }>;
+}
 
-- Class skills: 1 point = 1 rank
-- Cross-class: 1 point = 0.5 ranks
-- First level gets 4× skill points
-- Unspent points carry forward; editing past levels triggers forward recalculation
+calculateTotalBAB(levels)              → CalculationBreakdown
+calculateTotalSave(levels, saveType)   → CalculationBreakdown
+calculateMaxHP(levels, conMod)         → CalculationBreakdown
+calculateCumulativeSkillRanks(levels)  → Record<skillName, ranks>
+```
+
+---
+
+## UI Patterns
+
+### Displaying Calculated Numbers
+
+**Any computed value shown in play mode must have a `title` tooltip showing the full breakdown.**
+
+```tsx
+// Build tooltip from CalculationBreakdown
+const result = calculateTotalSave(levels, 'fortitude');
+const tooltip = [
+  ...result.components.map(c => `${c.label}: +${c.value}`),
+  `CON: ${mods.con >= 0 ? '+' : ''}${mods.con}`,
+  miscBonus !== 0 ? `Bonus: +${miscBonus}` : null,
+].filter(Boolean).join('\n');
+
+// Render as stat card
+<div className="play-sheet__stat" title={tooltip}>
+  <span className="play-sheet__stat-label">Fort</span>
+  <span className="play-sheet__stat-value">+5</span>
+</div>
+```
+
+Standard tooltip content per value:
+
+| Value | Sources |
+|---|---|
+| BAB | `calculateTotalBAB(levels).components` |
+| Fort/Ref/Will | `calculateTotalSave` components + ability mod + misc |
+| AC | `10 base`, DEX mod, armor, shield, misc |
+| Init | DEX mod + misc bonus |
+| HP | `calculateMaxHP` components |
+| Skill total | `N ranks\n+M ABILITY` |
+
+Add `cursor: help` on the container when a tooltip is present.
+
+### Stat Cards (compact display)
+
+```tsx
+<div className="play-sheet__stat" title={tooltip}>
+  <span className="play-sheet__stat-label">LABEL</span>   // small, uppercase, muted
+  <span className="play-sheet__stat-value">+5</span>       // large, bold, tabular-nums
+</div>
+```
+
+`sticky-stat` in `StickyBar.tsx` uses the same visual pattern at a smaller size.
+
+### `readOnly` Prop
+
+Components that appear in both build and play modes accept `readOnly?: boolean`:
+- Inputs → static spans
+- Add/remove/edit controls hidden
+- The accordion/PanelSection wrapper is NOT aware of readOnly — only the leaf component
+
+Components with readOnly support: `CombatStatsPanel`, `SavesPanel`, `SpellSlotsPanel`, `SkillsPanel`, `FlawsPanel`, `LanguagesPanel`, `TaintPanel`, `NotesPanel`.
+
+### Schema Changes
+
+New fields: use `.optional().default(value)` for backward compatibility. Existing saved characters load without error, no version bump needed for additive changes.
+
+---
 
 ## Code Conventions
 
-- **No inline styles** — CSS in `src/styles/`, imported via `index.css`
-- **Named exports** — All modules except `App.tsx` (default export)
-- **Co-located tests** — `*.test.ts` next to source files
-- **Zod validation** — All runtime data validated
-- **Exact versions** — No `^` or `~` in dependencies
+- **No inline styles** — enforced by pre-commit guard. CSS only in `src/styles/`.
+- **Named exports** — all modules except `App.tsx` (default export)
+- **Co-located tests** — `foo.ts` → `foo.test.ts`
+- **Zod everywhere** — all runtime data validated at load
+- **Exact dep versions** — no `^` or `~` in package.json
+- **CSS custom properties** — `var(--space-N)`, `var(--clr-*)`, `var(--clr-border)`, `var(--clr-border-strong)`
+- **BEM-style class names** — `.play-sheet__stat-label`, `.skill-item--class`
+- Pre-commit hook order: Prettier → ESLint fix → inline-style guard → Vitest
+
+---
 
 ## Boundaries
 
-✅ Client-only features, backward-compatible schema changes, SRD/OGL content only
-❌ No backend/API, no analytics/telemetry, no product identity content
+✅ Client-only features, additive schema changes, SRD/OGL content
+❌ No backend, no analytics, no product identity content
 
-## Reference Files
+---
 
-Load these on request for detailed context:
+## Key Files
 
-| File                                                                 | Contents                                          |
-| -------------------------------------------------------------------- | ------------------------------------------------- |
-| [readme.md](readme.md)                                               | Full feature docs, directory structure, UI layout |
-| [.github/copilot-instructions.md](.github/copilot-instructions.md)   | Detailed coding standards                         |
-| [src/data/classes.json](src/data/classes.json)                       | 11 core classes                                   |
-| [src/data/races.json](src/data/races.json)                           | 7 core races                                      |
-| [src/data/skills.json](src/data/skills.json)                         | 43 skills with abilities                          |
-| [src/data/class-progressions.json](src/data/class-progressions.json) | HD, BAB, saves by level                           |
-| [src/data/feats.json](src/data/feats.json)                           | 1,826 feats (507KB)                               |
+| File | Purpose |
+|---|---|
+| `src/App.tsx` | Mode/tab routing, all prop wiring |
+| `src/components/PlaySheet.tsx` | Compact play mode character tab |
+| `src/components/StickyBar.tsx` | Always-visible stat bar + mode toggle |
+| `src/components/SkillsPanel.tsx` | Skills list (build + play, readOnly) |
+| `src/lib/progressions.ts` | BAB, saves, HP, skill rank calculations |
+| `src/schema/schema.ts` | CharacterSchema (Zod) |
+| `src/hooks/useCharacter.ts` | Composed character state |
+| `src/styles/play.css` | Stat cards, play sheet layout |
+| `src/styles/skills.css` | Skill list layout and badges |
+| `readme.md` | Full feature docs and UI pattern reference |
