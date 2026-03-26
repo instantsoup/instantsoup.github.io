@@ -47,6 +47,8 @@ export const CombatStatsSchema = z.object({
   baseAttackBonus: z.number().int().optional(),
   spellSlotsMax: z.record(z.string(), z.number().int().min(0)).optional().default({}),
   spellSlotsUsed: z.record(z.string(), z.number().int().min(0)).optional().default({}),
+  movementSpeed: z.number().int().min(0).optional(),
+  movementType: z.string().optional(),
 });
 
 export type CombatStats = z.infer<typeof CombatStatsSchema>;

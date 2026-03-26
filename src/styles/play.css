@@ -536,6 +536,15 @@
   line-height: 1.2;
 }
 
+.play-sheet__stat--wide {
+  min-width: 7rem;
+}
+
+.play-sheet__stat-value--movement {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
 .play-sheet__section {
   border: 1px solid var(--clr-border);
   border-radius: 8px;

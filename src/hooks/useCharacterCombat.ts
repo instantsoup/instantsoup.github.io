@@ -34,6 +34,10 @@ export function useCharacterCombat(initial: Character) {
     setCombatStats((prev) => ({ ...prev, spellSlotsUsed: {} }));
   };
 
+  const setMovementType = (type: string) => {
+    setCombatStats((prev) => ({ ...prev, movementType: type || undefined }));
+  };
+
   const setSaveBonus = (saveName: string, bonus: number) => {
     setSaveBonuses((prev) => ({ ...prev, [saveName]: Math.max(0, Math.min(99, bonus)) }));
   };
@@ -54,6 +58,7 @@ export function useCharacterCombat(initial: Character) {
     updateSpellSlotsMax,
     updateSpellSlotsUsed,
     resetSpellSlots,
+    setMovementType,
     saveBonuses,
     setSaveBonus,
     loadFrom,

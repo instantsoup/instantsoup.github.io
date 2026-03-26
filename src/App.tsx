@@ -227,6 +227,7 @@ export function App() {
                   combatStats={combatStats}
                   levels={levels}
                   updateCombatStat={updateCombatStat}
+                  setMovementType={setMovementType}
                   onBlur={persistLocal}
                 />
               </PanelSection>

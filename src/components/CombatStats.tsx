@@ -8,6 +8,7 @@ interface CombatStatsProps {
   combatStats: CombatStats;
   levels: Level[];
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
+  setMovementType: (type: string) => void;
   onBlur: () => void;
   readOnly?: boolean;
 }
@@ -17,6 +18,7 @@ export function CombatStatsPanel({
   combatStats,
   levels,
   updateCombatStat,
+  setMovementType,
   onBlur,
   readOnly,
 }: CombatStatsProps) {
@@ -205,6 +207,44 @@ export function CombatStatsPanel({
                 placeholder="0"
                 min="0"
               />
+            )}
+          </div>
+        </div>
+
+        {/* Movement */}
+        <div className="combat-stat-card">
+          <div className="combat-stat-card__header">
+            <span className="combat-stat-card__label">Movement</span>
+          </div>
+          <div className="combat-stat-card__content">
+            {readOnly ? (
+              <div className="combat-stat-display combat-stat-display--movement">
+                {combatStats.movementSpeed ?? 30} ft.
+                {combatStats.movementType ? ` (${combatStats.movementType})` : ''}
+              </div>
+            ) : (
+              <div className="combat-stat-movement">
+                <input
+                  type="number"
+                  className="combat-stat-input combat-stat-input--small"
+                  value={combatStats.movementSpeed ?? ''}
+                  onChange={handleNumInput('movementSpeed')}
+                  onBlur={onBlur}
+                  placeholder="30"
+                  min="0"
+                  step="5"
+                />
+                <span className="combat-stat-movement__unit">ft.</span>
+                <input
+                  type="text"
+                  className="combat-stat-input combat-stat-input--type"
+                  value={combatStats.movementType ?? ''}
+                  onChange={(e) => setMovementType(e.target.value)}
+                  onBlur={onBlur}
+                  placeholder="Land"
+                  maxLength={20}
+                />
+              </div>
             )}
           </div>
         </div>

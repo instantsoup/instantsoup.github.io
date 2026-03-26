@@ -86,6 +86,7 @@ export function useCharacter() {
     updateSpellSlotsMax: combat.updateSpellSlotsMax,
     updateSpellSlotsUsed: combat.updateSpellSlotsUsed,
     resetSpellSlots: combat.resetSpellSlots,
+    setMovementType: combat.setMovementType,
     saveBonuses: combat.saveBonuses,
     setSaveBonus: combat.setSaveBonus,
 

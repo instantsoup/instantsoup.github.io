@@ -150,6 +150,13 @@ export function PlaySheet({
             <span className="play-sheet__stat-value">{combatStats.spellResistance}</span>
           </div>
         )}
+        <div className="play-sheet__stat play-sheet__stat--wide">
+          <span className="play-sheet__stat-label">Move</span>
+          <span className="play-sheet__stat-value play-sheet__stat-value--movement">
+            {combatStats.movementSpeed ?? 30} ft.
+            {combatStats.movementType ? ` (${combatStats.movementType})` : ''}
+          </span>
+        </div>
       </div>
 
       {/* Saves Row */}

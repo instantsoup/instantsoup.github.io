@@ -191,6 +191,33 @@
 }
 
 /* ================================
+   Movement Speed Input Layout
+=================================== */
+
+.combat-stat-movement {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.combat-stat-movement__unit {
+  font-size: 14px;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.combat-stat-input--type {
+  flex: 1;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.combat-stat-display--movement {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* ================================
    Responsive adjustments
 =================================== */
 
