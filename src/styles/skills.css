@@ -122,14 +122,6 @@
   flex-shrink: 0;
 }
 
-.skill-item__total {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #0f172a;
-  font-variant-numeric: tabular-nums;
-  min-width: 2.5rem;
-  text-align: right;
-}
 
 .skill-item__breakdown {
   font-size: 0.8rem;
@@ -229,19 +221,9 @@
 
 .skill-item__stats {
   display: flex;
-  gap: var(--space-2);
   align-items: center;
   flex-shrink: 0;
-  min-width: 7rem;
-}
-
-.skill-item__ranks {
-  font-size: 0.8rem;
-  color: #6b7280;
-  font-variant-numeric: tabular-nums;
-  min-width: 2rem;
-  text-align: right;
-  title: 'Ranks';
+  cursor: help;
 }
 
 .skill-item__total {
@@ -249,15 +231,7 @@
   font-weight: 700;
   color: #0f172a;
   font-variant-numeric: tabular-nums;
-  min-width: 2.5rem;
-  text-align: right;
-}
-
-.skill-item__mod {
-  font-size: 0.8rem;
-  color: #6b7280;
-  font-variant-numeric: tabular-nums;
-  min-width: 2rem;
+  min-width: 2.75rem;
   text-align: right;
 }
 
@@ -280,7 +254,6 @@
 =================================== */
 
 @media (max-width: 640px) {
-
   .skill-item__name {
     font-size: 0.85rem;
   }

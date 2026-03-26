@@ -64,24 +64,20 @@ export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
               const abilityMod = mods[skill.ability as keyof Scores] || 0;
               const total = ranks + abilityMod;
               const totalDisplay = total >= 0 ? `+${total}` : `${total}`;
-              const modDisplay = abilityMod >= 0 ? `+${abilityMod}` : `${abilityMod}`;
               const isClassSkill = classSkillsSet.has(skill.name);
+              const ranksLabel = rawRanks !== ranks ? rawRanks.toFixed(1) : String(rawRanks);
+              const tooltip = [
+                `${ranksLabel} ranks`,
+                `${abilityMod >= 0 ? '+' : ''}${abilityMod} ${skill.ability.toUpperCase()}`,
+              ].join('\n');
 
               return (
                 <div
                   key={skill.name}
                   className={`skill-item skill-item--flat ${isClassSkill ? 'skill-item--class' : ''}`}
                 >
-                  <div className="skill-item__stats">
-                    <span className="skill-item__ranks" title="Ranks">
-                      {rawRanks !== ranks ? rawRanks.toFixed(1) : rawRanks}
-                    </span>
-                    <span className="skill-item__total" title="Total bonus">
-                      {totalDisplay}
-                    </span>
-                    <span className="skill-item__mod" title={`${skill.ability.toUpperCase()} mod`}>
-                      {modDisplay}
-                    </span>
+                  <div className="skill-item__stats" title={tooltip}>
+                    <span className="skill-item__total">{totalDisplay}</span>
                   </div>
                   <div className="skill-item__info">
                     <span className="skill-item__name">
