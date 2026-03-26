@@ -151,10 +151,7 @@ export function PlaySheet({
           <span className="play-sheet__stat-label">Init</span>
           <span className="play-sheet__stat-value">{fmt(initiative)}</span>
         </div>
-        <div
-          className="play-sheet__stat"
-          title={babTooltip || undefined}
-        >
+        <div className="play-sheet__stat" title={babTooltip || undefined}>
           <span className="play-sheet__stat-label">BAB</span>
           <span className="play-sheet__stat-value">{fmt(bab)}</span>
         </div>

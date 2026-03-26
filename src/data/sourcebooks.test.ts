@@ -2,11 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import {
   ALL_SOURCE_ABBREVS,
-  SOURCEBOOK_NAMES,
   coerceSourceAbbrev,
   getSourceFullName,
   isCheckWithGM,
   listAllAbbrevs,
+  SOURCEBOOK_NAMES,
 } from './sourcebooks';
 
 describe('sourcebooks data', () => {

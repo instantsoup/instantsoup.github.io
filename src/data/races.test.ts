@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { RACE_NAMES, findRace, races } from './races';
+import { findRace, RACE_NAMES, races } from './races';
 
 describe('races data', () => {
   it('loads all 7 core races from JSON', () => {
@@ -18,7 +18,15 @@ describe('races data', () => {
 
   it('includes all PHB core races', () => {
     expect(RACE_NAMES).toEqual(
-      expect.arrayContaining(['Human', 'Dwarf', 'Elf', 'Gnome', 'Half-Elf', 'Half-Orc', 'Halfling']),
+      expect.arrayContaining([
+        'Human',
+        'Dwarf',
+        'Elf',
+        'Gnome',
+        'Half-Elf',
+        'Half-Orc',
+        'Halfling',
+      ]),
     );
   });
 
