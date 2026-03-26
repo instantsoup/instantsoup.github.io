@@ -1,4 +1,4 @@
-export type Tab = 'character' | 'build' | 'sheet' | 'combat' | 'skills' | 'spells';
+export type Tab = 'character' | 'build' | 'skills' | 'spells';
 
 const BUILD_TABS: { id: Tab; label: string }[] = [
   { id: 'character', label: 'Character' },
@@ -6,8 +6,7 @@ const BUILD_TABS: { id: Tab; label: string }[] = [
 ];
 
 const PLAY_TABS: { id: Tab; label: string }[] = [
-  { id: 'sheet', label: 'Sheet' },
-  { id: 'combat', label: 'Combat' },
+  { id: 'character', label: 'Character' },
   { id: 'skills', label: 'Skills' },
   { id: 'spells', label: 'Spells' },
 ];

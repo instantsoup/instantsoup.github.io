@@ -5,7 +5,6 @@ import { AlignmentSelector } from './components/AlignmentSelector';
 import { CombatStatsPanel } from './components/CombatStats';
 import { FeatsSummary } from './components/FeatsSummary';
 import { FlawsPanel } from './components/FlawsPanel';
-import { HPTracker } from './components/HPTracker';
 import { LanguagesPanel } from './components/LanguagesPanel';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
@@ -13,7 +12,6 @@ import { NotesPanel } from './components/NotesPanel';
 import { PanelSection } from './components/PanelSection';
 import { PlaySheet } from './components/PlaySheet';
 import { RaceSelector } from './components/RaceSelector';
-import { ResourceTracker } from './components/ResourceTracker';
 import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { SpellSlotsPanel } from './components/SpellSlotsPanel';
@@ -82,13 +80,8 @@ export function App() {
 
   const toggleMode = () => {
     setMode((m) => {
-      if (m === 'build') {
-        setTab('sheet');
-        return 'play';
-      } else {
-        setTab('character');
-        return 'build';
-      }
+      setTab('character');
+      return m === 'build' ? 'play' : 'build';
     });
   };
 
@@ -122,8 +115,30 @@ export function App() {
         <TabNav active={tab} onSelect={setTab} mode={mode} />
 
         <main className="app-main">
-          {/* ── CHARACTER (build mode only) ───────────── */}
-          {tab === 'character' && (
+          {/* ── CHARACTER ────────────────────────────── */}
+          {tab === 'character' && mode === 'play' && (
+            <div className="tab-content">
+              <PlaySheet
+                name={name}
+                race={race}
+                alignment={alignment}
+                mods={mods}
+                combatStats={combatStats}
+                levels={levels}
+                saveBonuses={saveBonuses}
+                customResources={customResources}
+                updateCombatStat={updateCombatStat}
+                addCustomResource={addCustomResource}
+                removeCustomResource={removeCustomResource}
+                updateCustomResourceUsed={updateCustomResourceUsed}
+                resetCustomResource={resetCustomResource}
+                resetAllCustomResources={resetAllCustomResources}
+                onBlur={persistLocal}
+              />
+            </div>
+          )}
+
+          {tab === 'character' && mode === 'build' && (
             <div className="tab-content">
               <PanelSection title="Name" defaultOpen>
                 <div className="selector">
@@ -242,59 +257,6 @@ export function App() {
 
               <PanelSection title="Known Spells" defaultOpen={false}>
                 <SpellsSummary levels={levels} />
-              </PanelSection>
-            </div>
-          )}
-
-          {/* ── SHEET (play mode only) ───────────────── */}
-          {tab === 'sheet' && (
-            <div className="tab-content">
-              <PlaySheet
-                name={name}
-                race={race}
-                alignment={alignment}
-                mods={mods}
-                combatStats={combatStats}
-                levels={levels}
-                saveBonuses={saveBonuses}
-                customResources={customResources}
-                updateCombatStat={updateCombatStat}
-                updateSpellSlotsMax={updateSpellSlotsMax}
-                updateSpellSlotsUsed={updateSpellSlotsUsed}
-                resetSpellSlots={resetSpellSlots}
-                addCustomResource={addCustomResource}
-                removeCustomResource={removeCustomResource}
-                updateCustomResourceUsed={updateCustomResourceUsed}
-                resetCustomResource={resetCustomResource}
-                resetAllCustomResources={resetAllCustomResources}
-                onBlur={persistLocal}
-              />
-            </div>
-          )}
-
-          {/* ── COMBAT (play mode only) ──────────────── */}
-          {tab === 'combat' && (
-            <div className="tab-content">
-              <PanelSection title="Hit Points" defaultOpen>
-                <HPTracker
-                  mods={mods}
-                  combatStats={combatStats}
-                  levels={levels}
-                  updateCombatStat={updateCombatStat}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-
-              <PanelSection title="Resources" defaultOpen>
-                <ResourceTracker
-                  resources={customResources}
-                  onAdd={addCustomResource}
-                  onRemove={removeCustomResource}
-                  onUse={updateCustomResourceUsed}
-                  onReset={resetCustomResource}
-                  onResetAll={resetAllCustomResources}
-                  onBlur={persistLocal}
-                />
               </PanelSection>
             </div>
           )}

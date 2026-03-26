@@ -5,8 +5,6 @@ import type { Scores } from '../types';
 import type { Level } from '../types/level';
 import { HPTracker } from './HPTracker';
 import { ResourceTracker } from './ResourceTracker';
-import { SkillsPanel } from './SkillsPanel';
-import { SpellSlotsPanel } from './SpellSlotsPanel';
 
 type PlaySheetProps = {
   name: string;
@@ -18,9 +16,6 @@ type PlaySheetProps = {
   saveBonuses: Record<string, number>;
   customResources: CustomResource[];
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
-  updateSpellSlotsMax: (spellLevel: string, max: number) => void;
-  updateSpellSlotsUsed: (spellLevel: string, used: number) => void;
-  resetSpellSlots: () => void;
   addCustomResource: (resource: CustomResource) => void;
   removeCustomResource: (index: number) => void;
   updateCustomResourceUsed: (index: number, used: number) => void;
@@ -39,9 +34,6 @@ export function PlaySheet({
   saveBonuses,
   customResources,
   updateCombatStat,
-  updateSpellSlotsMax,
-  updateSpellSlotsUsed,
-  resetSpellSlots,
   addCustomResource,
   removeCustomResource,
   updateCustomResourceUsed,
@@ -118,9 +110,6 @@ export function PlaySheet({
 
   const fmt = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
 
-  const spellSlotsMax = combatStats.spellSlotsMax ?? {};
-  const hasSpells = Object.values(spellSlotsMax).some((v) => v > 0);
-
   return (
     <div className="play-sheet">
       {/* Identity */}
@@ -178,29 +167,6 @@ export function PlaySheet({
           <span className="play-sheet__stat-value">{fmt(will)}</span>
         </div>
       </div>
-
-      {/* Skills (has-ranks) */}
-      {levels.length > 0 && (
-        <div className="play-sheet__section">
-          <div className="play-sheet__section-label">Skills</div>
-          <SkillsPanel mods={mods} levels={levels} readOnly />
-        </div>
-      )}
-
-      {/* Spell Slots */}
-      {hasSpells && (
-        <div className="play-sheet__section">
-          <div className="play-sheet__section-label">Spell Slots</div>
-          <SpellSlotsPanel
-            combatStats={combatStats}
-            updateSpellSlotsMax={updateSpellSlotsMax}
-            updateSpellSlotsUsed={updateSpellSlotsUsed}
-            resetSpellSlots={resetSpellSlots}
-            onBlur={onBlur}
-            readOnly
-          />
-        </div>
-      )}
 
       {/* Resources */}
       {customResources.length > 0 && (

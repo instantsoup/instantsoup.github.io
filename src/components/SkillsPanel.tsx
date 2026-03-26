@@ -12,10 +12,8 @@ interface SkillsPanelProps {
   readOnly?: boolean;
 }
 
-type FilterOption = 'all' | 'trained-only' | 'has-ranks';
-
 export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
-  const [filter, setFilter] = useState<FilterOption>('has-ranks');
+  const [showUntrained, setShowUntrained] = useState(false);
 
   const cumulativeRanks = useMemo(() => calculateCumulativeSkillRanks(levels), [levels]);
 
@@ -33,13 +31,12 @@ export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
   const filteredSkills = useMemo(() => {
     return skills
       .filter((skill) => {
+        if (showUntrained) return true;
         const ranks = cumulativeRanks[skill.name] || 0;
-        if (filter === 'trained-only') return skill.trainedOnly;
-        if (filter === 'has-ranks') return ranks > 0;
-        return true;
+        return !skill.trainedOnly || ranks > 0;
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-  }, [cumulativeRanks, filter]);
+  }, [cumulativeRanks, showUntrained]);
 
   return (
     <div className="skills-panel">
@@ -51,29 +48,14 @@ export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
 
       {levels.length > 0 && (
         <>
-          <div className="skills-filter">
-            <button
-              type="button"
-              className={`skills-filter__btn ${filter === 'all' ? 'skills-filter__btn--active' : ''}`}
-              onClick={() => setFilter('all')}
-            >
-              All Skills
-            </button>
-            <button
-              type="button"
-              className={`skills-filter__btn ${filter === 'trained-only' ? 'skills-filter__btn--active' : ''}`}
-              onClick={() => setFilter('trained-only')}
-            >
-              Trained Only
-            </button>
-            <button
-              type="button"
-              className={`skills-filter__btn ${filter === 'has-ranks' ? 'skills-filter__btn--active' : ''}`}
-              onClick={() => setFilter('has-ranks')}
-            >
-              Has Ranks
-            </button>
-          </div>
+          <label className="skills-filter__toggle">
+            <input
+              type="checkbox"
+              checked={showUntrained}
+              onChange={(e) => setShowUntrained(e.target.checked)}
+            />
+            Show trained-only skills without ranks
+          </label>
 
           <div className="skills-list skills-list--flat">
             {filteredSkills.map((skill) => {
@@ -137,8 +119,7 @@ export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
 
           {filteredSkills.length === 0 && (
             <div className="skills-panel__empty">
-              No skills match the current filter.
-              {!readOnly && ' Add skill ranks in the Build tab.'}
+              {!readOnly ? 'Add skill ranks in the Build tab.' : 'No skills to display.'}
             </div>
           )}
         </>

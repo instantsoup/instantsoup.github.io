@@ -20,39 +20,15 @@
    Skills Filter
 =================================== */
 
-.skills-filter {
+.skills-filter__toggle {
   display: flex;
+  align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-4);
-  flex-wrap: wrap;
-}
-
-.skills-filter__btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  background: #fff;
-  color: #374151;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  color: #6b7280;
   cursor: pointer;
-  transition: all 0.15s;
-}
-
-.skills-filter__btn:hover {
-  background: #f3f4f6;
-  border-color: #9ca3af;
-}
-
-.skills-filter__btn--active {
-  background: #3b82f6;
-  color: #fff;
-  border-color: #3b82f6;
-}
-
-.skills-filter__btn--active:hover {
-  background: #2563eb;
-  border-color: #2563eb;
+  user-select: none;
 }
 
 /* ================================
@@ -304,13 +280,6 @@
 =================================== */
 
 @media (max-width: 640px) {
-  .skills-filter {
-    flex-direction: column;
-  }
-
-  .skills-filter__btn {
-    width: 100%;
-  }
 
   .skill-item__name {
     font-size: 0.85rem;
