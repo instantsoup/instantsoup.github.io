@@ -107,35 +107,60 @@
   background: #fee2e2;
 }
 
-.level-card__buttons {
+.level-card__tabs {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  gap: 0;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-.level-card__toggle {
-  padding: 0.5rem 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+.level-card__tab {
+  padding: 0.4rem 0.85rem;
+  border: none;
+  border-right: 1px solid var(--clr-border-strong);
   background: #fff;
   cursor: pointer;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 500;
+  color: #475569;
+  transition: background 0.1s, color 0.1s;
 }
 
-.level-card__toggle:hover {
-  background: #f5f5f5;
-  border-color: #999;
+.level-card__tab:last-child {
+  border-right: none;
 }
 
-.level-card__toggle--spells {
-  border-color: #7c3aed;
-  background: #faf5ff;
+.level-card__tab:hover {
+  background: #f1f5f9;
+  color: #0f172a;
 }
 
-.level-card__toggle--skills {
-  border-color: #10b981;
-  background: #f0fdf4;
+.level-card__tab--active {
+  background: #1e40af;
+  color: #fff;
+  font-weight: 700;
+}
+
+.level-card__tab--active:hover {
+  background: #1d3fac;
+  color: #fff;
+}
+
+.level-card__tab--spells.level-card__tab--active {
+  background: #7c3aed;
+}
+
+.level-card__tab--spells.level-card__tab--active:hover {
+  background: #6d28d9;
+}
+
+.level-card__tab--skills.level-card__tab--active {
+  background: #059669;
+}
+
+.level-card__tab--skills.level-card__tab--active:hover {
+  background: #047857;
 }
 
 /* Level Card Feats Section */
