@@ -16,7 +16,6 @@ import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { SpellSlotsPanel } from './components/SpellSlotsPanel';
 import { SpellsSummary } from './components/SpellsSummary';
-import { StickyBar } from './components/StickyBar';
 import { type Tab, TabNav } from './components/TabNav';
 import { TaintPanel } from './components/TaintPanel';
 import { useCharacter } from './hooks/useCharacter';
@@ -115,17 +114,7 @@ export function App() {
           <h1 className="app-title">D&amp;D 3.5e Character Sheet</h1>
         </header>
 
-        <StickyBar
-          name={name}
-          mods={mods}
-          combatStats={combatStats}
-          levels={levels}
-          saveBonuses={saveBonuses}
-          mode={mode}
-          onModeToggle={toggleMode}
-        />
-
-        <TabNav active={tab} onSelect={setTab} mode={mode} />
+        <TabNav active={tab} onSelect={setTab} mode={mode} onModeToggle={toggleMode} />
 
         <main className="app-main">
           {/* ── CHARACTER ────────────────────────────── */}
@@ -145,6 +134,7 @@ export function App() {
                 statusEffects={statusEffects}
                 abilityDamage={abilityDamage}
                 equipment={equipment}
+                notes={notes}
                 updateCombatStat={updateCombatStat}
                 addCustomResource={addCustomResource}
                 removeCustomResource={removeCustomResource}
@@ -159,6 +149,7 @@ export function App() {
                 removeEquipment={removeEquipment}
                 toggleEquipped={toggleEquipped}
                 setEquipmentNotes={setEquipmentNotes}
+                setNotes={setNotes}
                 onBlur={persistLocal}
               />
             </div>

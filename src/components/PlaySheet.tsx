@@ -12,6 +12,7 @@ import type { Level } from '../types/level';
 import { AbilityDamagePanel } from './AbilityDamagePanel';
 import { EquipmentPanel } from './EquipmentPanel';
 import { HPTracker } from './HPTracker';
+import { NotesPanel } from './NotesPanel';
 import { ResourceTracker } from './ResourceTracker';
 import { StatusEffectsPanel } from './StatusEffectsPanel';
 
@@ -43,6 +44,8 @@ type PlaySheetProps = {
   removeEquipment: (index: number) => void;
   toggleEquipped: (index: number) => void;
   setEquipmentNotes: (index: number, notes: string) => void;
+  notes: string;
+  setNotes: (v: string) => void;
   onBlur: () => void;
 };
 
@@ -74,6 +77,8 @@ export function PlaySheet({
   removeEquipment,
   toggleEquipped,
   setEquipmentNotes,
+  notes,
+  setNotes,
   onBlur,
 }: PlaySheetProps) {
   const alignmentLabel = alignment
@@ -263,6 +268,12 @@ export function PlaySheet({
           onSetNotes={setEquipmentNotes}
           onBlur={onBlur}
         />
+      </div>
+
+      {/* Notes */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Notes</div>
+        <NotesPanel notes={notes} setNotes={setNotes} onBlur={onBlur} />
       </div>
     </div>
   );
