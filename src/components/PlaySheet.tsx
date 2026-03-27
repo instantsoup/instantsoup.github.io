@@ -1,6 +1,12 @@
 import { alignments } from '../data/alignments';
 import { calculateTotalBAB, calculateTotalSave } from '../lib/progressions';
-import type { AbilityDamage, CombatStats, CustomResource, EquipmentItem, StatusEffect } from '../schema/schema';
+import type {
+  AbilityDamage,
+  CombatStats,
+  CustomResource,
+  EquipmentItem,
+  StatusEffect,
+} from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 import { AbilityDamagePanel } from './AbilityDamagePanel';

@@ -50,14 +50,14 @@ Mode toggle always lands on `'character'` in both directions.
 
 `useCharacter` composes these domain hooks:
 
-| Hook | Owns |
-|---|---|
-| `useCharacterIdentity` | name, race, alignment, flaws, languages |
-| `useCharacterScores` | ability scores, modifiers |
-| `useCharacterLevels` | levels, feats, spells, skill ranks |
-| `useCharacterCombat` | HP, AC components, saves, spell slots |
-| `useCharacterExtras` | taint, custom resources, notes |
-| `useCharacterPersistence` | localStorage, JSON import/export |
+| Hook                      | Owns                                    |
+| ------------------------- | --------------------------------------- |
+| `useCharacterIdentity`    | name, race, alignment, flaws, languages |
+| `useCharacterScores`      | ability scores, modifiers               |
+| `useCharacterLevels`      | levels, feats, spells, skill ranks      |
+| `useCharacterCombat`      | HP, AC components, saves, spell slots   |
+| `useCharacterExtras`      | taint, custom resources, notes          |
+| `useCharacterPersistence` | localStorage, JSON import/export        |
 
 ### Data-Driven Pattern
 
@@ -98,28 +98,30 @@ calculateCumulativeSkillRanks(levels)  → Record<skillName, ranks>
 // Build tooltip from CalculationBreakdown
 const result = calculateTotalSave(levels, 'fortitude');
 const tooltip = [
-  ...result.components.map(c => `${c.label}: +${c.value}`),
+  ...result.components.map((c) => `${c.label}: +${c.value}`),
   `CON: ${mods.con >= 0 ? '+' : ''}${mods.con}`,
   miscBonus !== 0 ? `Bonus: +${miscBonus}` : null,
-].filter(Boolean).join('\n');
+]
+  .filter(Boolean)
+  .join('\n');
 
 // Render as stat card
 <div className="play-sheet__stat" title={tooltip}>
   <span className="play-sheet__stat-label">Fort</span>
   <span className="play-sheet__stat-value">+5</span>
-</div>
+</div>;
 ```
 
 Standard tooltip content per value:
 
-| Value | Sources |
-|---|---|
-| BAB | `calculateTotalBAB(levels).components` |
+| Value         | Sources                                              |
+| ------------- | ---------------------------------------------------- |
+| BAB           | `calculateTotalBAB(levels).components`               |
 | Fort/Ref/Will | `calculateTotalSave` components + ability mod + misc |
-| AC | `10 base`, DEX mod, armor, shield, misc |
-| Init | DEX mod + misc bonus |
-| HP | `calculateMaxHP` components |
-| Skill total | `N ranks\n+M ABILITY` |
+| AC            | `10 base`, DEX mod, armor, shield, misc              |
+| Init          | DEX mod + misc bonus                                 |
+| HP            | `calculateMaxHP` components                          |
+| Skill total   | `N ranks\n+M ABILITY`                                |
 
 Add `cursor: help` on the container when a tooltip is present.
 
@@ -127,8 +129,8 @@ Add `cursor: help` on the container when a tooltip is present.
 
 ```tsx
 <div className="play-sheet__stat" title={tooltip}>
-  <span className="play-sheet__stat-label">LABEL</span>   // small, uppercase, muted
-  <span className="play-sheet__stat-value">+5</span>       // large, bold, tabular-nums
+  <span className="play-sheet__stat-label">LABEL</span> // small, uppercase, muted
+  <span className="play-sheet__stat-value">+5</span> // large, bold, tabular-nums
 </div>
 ```
 
@@ -137,6 +139,7 @@ Add `cursor: help` on the container when a tooltip is present.
 ### `readOnly` Prop
 
 Components that appear in both build and play modes accept `readOnly?: boolean`:
+
 - Inputs → static spans
 - Add/remove/edit controls hidden
 - The accordion/PanelSection wrapper is NOT aware of readOnly — only the leaf component
@@ -171,15 +174,15 @@ New fields: use `.optional().default(value)` for backward compatibility. Existin
 
 ## Key Files
 
-| File | Purpose |
-|---|---|
-| `src/App.tsx` | Mode/tab routing, all prop wiring |
-| `src/components/PlaySheet.tsx` | Compact play mode character tab |
-| `src/components/StickyBar.tsx` | Always-visible stat bar + mode toggle |
-| `src/components/SkillsPanel.tsx` | Skills list (build + play, readOnly) |
-| `src/lib/progressions.ts` | BAB, saves, HP, skill rank calculations |
-| `src/schema/schema.ts` | CharacterSchema (Zod) |
-| `src/hooks/useCharacter.ts` | Composed character state |
-| `src/styles/play.css` | Stat cards, play sheet layout |
-| `src/styles/skills.css` | Skill list layout and badges |
-| `readme.md` | Full feature docs and UI pattern reference |
+| File                             | Purpose                                    |
+| -------------------------------- | ------------------------------------------ |
+| `src/App.tsx`                    | Mode/tab routing, all prop wiring          |
+| `src/components/PlaySheet.tsx`   | Compact play mode character tab            |
+| `src/components/StickyBar.tsx`   | Always-visible stat bar + mode toggle      |
+| `src/components/SkillsPanel.tsx` | Skills list (build + play, readOnly)       |
+| `src/lib/progressions.ts`        | BAB, saves, HP, skill rank calculations    |
+| `src/schema/schema.ts`           | CharacterSchema (Zod)                      |
+| `src/hooks/useCharacter.ts`      | Composed character state                   |
+| `src/styles/play.css`            | Stat cards, play sheet layout              |
+| `src/styles/skills.css`          | Skill list layout and badges               |
+| `readme.md`                      | Full feature docs and UI pattern reference |

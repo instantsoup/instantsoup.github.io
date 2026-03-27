@@ -38,7 +38,10 @@ export function AbilityDamagePanel({
         const effective = effectiveScores[key];
         const damaged = dmg > 0;
         return (
-          <div key={key} className={`ability-damage__row${damaged ? ' ability-damage__row--damaged' : ''}`}>
+          <div
+            key={key}
+            className={`ability-damage__row${damaged ? ' ability-damage__row--damaged' : ''}`}
+          >
             <span className="ability-damage__ability">{label}</span>
             <span className="ability-damage__base">{scores[key]}</span>
             <input
@@ -53,7 +56,9 @@ export function AbilityDamagePanel({
               placeholder="0"
               min="0"
             />
-            <span className={`ability-damage__effective${damaged ? ' ability-damage__effective--reduced' : ''}`}>
+            <span
+              className={`ability-damage__effective${damaged ? ' ability-damage__effective--reduced' : ''}`}
+            >
               {effective}
             </span>
           </div>

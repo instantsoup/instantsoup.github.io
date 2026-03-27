@@ -14,11 +14,13 @@ No server or persistence beyond localStorage and JSON download/upload will ever 
 Used when leveling up, starting a character, or making changes to the character's permanent record.
 
 **Character tab** — identity panels (all editable):
+
 - Name, Race (7 core PHB races), Alignment (9-option grid)
 - Flaws, Languages, Taint/Corruption tracker
 - Notes
 
 **Build tab** — mechanical progression:
+
 - Ability scores (STR/DEX/CON/INT/WIS/CHA) with auto modifier
 - Levels (1–20): per-level class selection, feats, spell learning, skill allocation
   - Class skills: 1 point = 1 rank; cross-class: 1 point = 0.5 ranks
@@ -34,6 +36,7 @@ Used when leveling up, starting a character, or making changes to the character'
 Used at the table. Everything is read-only except session-state elements.
 
 **Character tab** — compact play sheet:
+
 - Identity line (name · race · alignment)
 - HP tracker (current/temp/max with damage input)
 - Stat cards: AC, Initiative, BAB, SR — each with hover tooltip showing breakdown
@@ -41,6 +44,7 @@ Used at the table. Everything is read-only except session-state elements.
 - Custom resources (tracked pools: spell slots, ki points, etc.)
 
 **Skills tab** — read-only skill list:
+
 - Alphabetical, flat list of all 43 D&D 3.5e skills
 - Default view: all usable skills (cross-class skills + trained-only skills with ranks)
 - "Show trained-only skills without ranks" checkbox to reveal hidden skills
@@ -48,6 +52,7 @@ Used at the table. Everything is read-only except session-state elements.
 - C badge = class skill, T badge = trained only, ACP badge = armor check penalty
 
 **Spells tab**:
+
 - Spell slot tracker (cast/recover/new day — max is read-only in play)
 - Known spells summary
 
@@ -68,35 +73,39 @@ Always visible at the top: name, ability mods, HP, AC, saves, BAB, mode toggle b
 <div className="play-sheet__stat" title={tooltip}>
   <span className="play-sheet__stat-label">Fort</span>
   <span className="play-sheet__stat-value">+5</span>
-</div>
+</div>;
 
 // tooltip string assembled from CalculationBreakdown.components:
 const result = calculateTotalSave(levels, 'fortitude');
 const tooltip = [
-  ...result.components.map(c => `${c.label}: +${c.value}`),
+  ...result.components.map((c) => `${c.label}: +${c.value}`),
   `CON: ${mods.con >= 0 ? '+' : ''}${mods.con}`,
-].filter(Boolean).join('\n');
+]
+  .filter(Boolean)
+  .join('\n');
 ```
 
 `CalculationBreakdown` is defined in `src/lib/progressions.ts`:
+
 ```ts
 interface CalculationBreakdown {
   total: number;
   components: Array<{ label: string; value: number }>;
 }
 ```
+
 Used by: `calculateTotalBAB`, `calculateTotalSave`, `calculateMaxHP`.
 
 ### Hover-Revealed Breakdown Sources
 
-| Value | Tooltip content |
-|---|---|
-| BAB | `Fighter 3: +3\nRogue 2: +1` (from `calculateTotalBAB`) |
-| Fort/Ref/Will | class components + ability mod + misc bonus |
-| AC | `10 base\nDEX: +2\nArmor: +4\nShield: +2` |
-| Init | `DEX: +2\nMisc: +1` |
-| HP | hit die per level + CON mod (from `calculateMaxHP`) |
-| Skill total | `3 ranks\n+2 DEX` |
+| Value         | Tooltip content                                         |
+| ------------- | ------------------------------------------------------- |
+| BAB           | `Fighter 3: +3\nRogue 2: +1` (from `calculateTotalBAB`) |
+| Fort/Ref/Will | class components + ability mod + misc bonus             |
+| AC            | `10 base\nDEX: +2\nArmor: +4\nShield: +2`               |
+| Init          | `DEX: +2\nMisc: +1`                                     |
+| HP            | hit die per level + CON mod (from `calculateMaxHP`)     |
+| Skill total   | `3 ranks\n+2 DEX`                                       |
 
 ### Compact Stat Cards
 
@@ -113,6 +122,7 @@ Used in `PlaySheet` and `StickyBar`. CSS class `.play-sheet__stat` / `.sticky-st
 ### `readOnly` Prop Pattern
 
 Components that appear in both build and play modes accept `readOnly?: boolean`. When true:
+
 - Inputs become static spans or display values
 - Add/remove/edit controls are hidden
 - The component is safe to render in play mode
@@ -148,13 +158,13 @@ Mode toggle always routes to `'character'` in both directions.
 
 `useCharacter` composes domain-specific hooks:
 
-| Hook | Owns |
-|---|---|
-| `useCharacterIdentity` | name, race, alignment, flaws, languages |
-| `useCharacterScores` | ability scores, modifiers |
-| `useCharacterLevels` | levels array, feats, spells, skill ranks |
-| `useCharacterCombat` | HP, AC components, saves, spell slots |
-| `useCharacterExtras` | taint, custom resources, notes |
+| Hook                      | Owns                                       |
+| ------------------------- | ------------------------------------------ |
+| `useCharacterIdentity`    | name, race, alignment, flaws, languages    |
+| `useCharacterScores`      | ability scores, modifiers                  |
+| `useCharacterLevels`      | levels array, feats, spells, skill ranks   |
+| `useCharacterCombat`      | HP, AC components, saves, spell slots      |
+| `useCharacterExtras`      | taint, custom resources, notes             |
 | `useCharacterPersistence` | localStorage save/load, JSON import/export |
 
 ### Calculations Library (`src/lib/progressions.ts`)
@@ -299,12 +309,12 @@ npm run test:coverage     # coverage report
 
 ## Code Conventions
 
-| Type | Export |
-|---|---|
+| Type       | Export                        |
+| ---------- | ----------------------------- |
 | Components | Named (`export function Foo`) |
-| Hooks | Named |
-| Utilities | Named |
-| `App.tsx` | Default |
+| Hooks      | Named                         |
+| Utilities  | Named                         |
+| `App.tsx`  | Default                       |
 
 - Pre-commit: Prettier format → ESLint fix → inline style guard → Vitest run
 - All deps pinned to exact versions (no `^`/`~`)

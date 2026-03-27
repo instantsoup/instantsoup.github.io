@@ -124,7 +124,9 @@
   font-size: 0.85rem;
   font-weight: 500;
   color: #475569;
-  transition: background 0.1s, color 0.1s;
+  transition:
+    background 0.1s,
+    color 0.1s;
 }
 
 .level-card__tab:last-child {

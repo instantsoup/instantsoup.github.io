@@ -35,7 +35,10 @@ export function EquipmentPanel({
       {equipment.length > 0 && (
         <div className="equipment__list">
           {equipment.map((item, i) => (
-            <div key={i} className={`equipment-item${item.equipped ? ' equipment-item--equipped' : ''}`}>
+            <div
+              key={i}
+              className={`equipment-item${item.equipped ? ' equipment-item--equipped' : ''}`}
+            >
               <div className="equipment-item__row">
                 <label className="equipment-item__equipped-label" title="Equipped">
                   <input
