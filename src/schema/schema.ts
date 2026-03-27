@@ -89,6 +89,7 @@ export type AbilityDamage = z.infer<typeof AbilityDamageSchema>;
 export const EquipmentItemSchema = z.object({
   name: z.string().min(1),
   equipped: z.boolean().default(false),
+  weight: z.number().min(0).default(0),
   notes: z.string().optional(),
 });
 

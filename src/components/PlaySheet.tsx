@@ -32,6 +32,7 @@ type PlaySheetProps = {
   conditionPenalties: ConditionPenalties;
   abilityDamage: AbilityDamage;
   equipment: EquipmentItem[];
+  str: number;
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
   addCustomResource: (resource: CustomResource) => void;
   removeCustomResource: (index: number) => void;
@@ -46,6 +47,7 @@ type PlaySheetProps = {
   removeEquipment: (index: number) => void;
   toggleEquipped: (index: number) => void;
   setEquipmentNotes: (index: number, notes: string) => void;
+  setEquipmentWeight: (index: number, weight: number) => void;
   notes: string;
   setNotes: (v: string) => void;
   onBlur: () => void;
@@ -66,6 +68,7 @@ export function PlaySheet({
   conditionPenalties,
   abilityDamage,
   equipment,
+  str,
   updateCombatStat,
   addCustomResource,
   removeCustomResource,
@@ -80,6 +83,7 @@ export function PlaySheet({
   removeEquipment,
   toggleEquipped,
   setEquipmentNotes,
+  setEquipmentWeight,
   notes,
   setNotes,
   onBlur,
@@ -276,10 +280,12 @@ export function PlaySheet({
         <div className="play-sheet__section-label">Equipment</div>
         <EquipmentPanel
           equipment={equipment}
+          str={str}
           onAdd={addEquipment}
           onRemove={removeEquipment}
           onToggleEquipped={toggleEquipped}
           onSetNotes={setEquipmentNotes}
+          onSetWeight={setEquipmentWeight}
           onBlur={onBlur}
         />
       </div>

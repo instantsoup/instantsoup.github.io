@@ -133,6 +133,7 @@ export function useCharacter() {
     removeEquipment: extras.removeEquipment,
     toggleEquipped: extras.toggleEquipped,
     setEquipmentNotes: extras.setEquipmentNotes,
+    setEquipmentWeight: extras.setEquipmentWeight,
 
     // Persistence
     error: persistence.error,

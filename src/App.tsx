@@ -81,6 +81,7 @@ export function App() {
     removeEquipment,
     toggleEquipped,
     setEquipmentNotes,
+    setEquipmentWeight,
     onNum,
     persistLocal,
     exportJson,
@@ -151,6 +152,8 @@ export function App() {
                 removeEquipment={removeEquipment}
                 toggleEquipped={toggleEquipped}
                 setEquipmentNotes={setEquipmentNotes}
+                setEquipmentWeight={setEquipmentWeight}
+                str={scores.str}
                 setNotes={setNotes}
                 onBlur={persistLocal}
               />

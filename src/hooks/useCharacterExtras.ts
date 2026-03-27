@@ -104,6 +104,11 @@ export function useCharacterExtras(initial: Character) {
       prev.map((item, i) => (i === index ? { ...item, notes: notes || undefined } : item)),
     );
 
+  const setEquipmentWeight = (index: number, weight: number) =>
+    setEquipment((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, weight: Math.max(0, weight) } : item)),
+    );
+
   const loadFrom = (char: Character) => {
     setFlaws(char.flaws ?? []);
     setLanguages(char.languages ?? []);
@@ -156,6 +161,7 @@ export function useCharacterExtras(initial: Character) {
     removeEquipment,
     toggleEquipped,
     setEquipmentNotes,
+    setEquipmentWeight,
     loadFrom,
     reset,
   };

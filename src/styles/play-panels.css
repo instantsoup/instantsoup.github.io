@@ -285,6 +285,76 @@
   font-size: 14px;
 }
 
+.equipment__add-weight {
+  width: 56px;
+  padding: 6px 4px;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 6px;
+  font: inherit;
+  font-size: 14px;
+  text-align: right;
+}
+
+.equipment-item__weight {
+  width: 52px;
+  padding: 2px 4px;
+  border: 1px solid var(--clr-border);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+  text-align: right;
+  background: transparent;
+}
+
+.equipment-item__weight-unit {
+  font-size: 12px;
+  color: var(--clr-text-muted, #888);
+  margin-right: 4px;
+}
+
+.equipment__load {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 4px 2px;
+  font-size: 13px;
+  flex-wrap: wrap;
+}
+
+.equipment__load-total {
+  font-weight: 600;
+}
+
+.equipment__load-status {
+  font-size: 12px;
+  padding: 1px 6px;
+  border-radius: 10px;
+  background: #dcfce7;
+  color: #15803d;
+  font-weight: 600;
+}
+
+.equipment__load--medium .equipment__load-status {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+.equipment__load--heavy .equipment__load-status {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.equipment__load--overloaded .equipment__load-status {
+  background: #7f1d1d;
+  color: #fff;
+}
+
+.equipment__load-limits {
+  font-size: 12px;
+  color: var(--clr-text-muted, #888);
+  margin-left: auto;
+}
+
 /* ================================
    Utility button variants
 =================================== */
