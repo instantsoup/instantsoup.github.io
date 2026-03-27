@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+
+import { computeConditionPenalties } from '../lib/conditions';
 import { type Character, VERSION } from '../schema/schema';
 import { loadLocal } from '../store/local';
 import { useCharacterCombat } from './useCharacterCombat';
@@ -15,9 +18,13 @@ export function useCharacter() {
   const initial = loadLocal();
 
   const identity = useCharacterIdentity(initial);
-  // extras must be initialized before scoring so abilityDamage can flow into mods
+  // extras must be initialized before scoring so abilityDamage/conditionPenalties can flow into mods
   const extras = useCharacterExtras(initial);
-  const scoring = useCharacterScores(initial, extras.abilityDamage);
+  const conditionPenalties = useMemo(
+    () => computeConditionPenalties(extras.statusEffects),
+    [extras.statusEffects],
+  );
+  const scoring = useCharacterScores(initial, extras.abilityDamage, conditionPenalties);
   const leveling = useCharacterLevels(initial, scoring.mods.int);
   const combat = useCharacterCombat(initial);
 
@@ -118,6 +125,7 @@ export function useCharacter() {
     toggleStatusEffect: extras.toggleStatusEffect,
     setStatusEffectRounds: extras.setStatusEffectRounds,
     clearAllStatusEffects: extras.clearAllStatusEffects,
+    conditionPenalties,
     abilityDamage: extras.abilityDamage,
     setAbilityDamage: extras.setAbilityDamage,
     equipment: extras.equipment,

@@ -73,6 +73,7 @@ export function App() {
     toggleStatusEffect,
     setStatusEffectRounds,
     clearAllStatusEffects,
+    conditionPenalties,
     abilityDamage,
     setAbilityDamage,
     equipment,
@@ -132,6 +133,7 @@ export function App() {
                 saveBonuses={saveBonuses}
                 customResources={customResources}
                 statusEffects={statusEffects}
+                conditionPenalties={conditionPenalties}
                 abilityDamage={abilityDamage}
                 equipment={equipment}
                 notes={notes}
