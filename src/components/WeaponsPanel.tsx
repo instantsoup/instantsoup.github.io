@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import type { Scores } from '../types';
 import type { Weapon } from '../schema/schema';
+import type { Scores } from '../types';
 
 type WeaponsPanelProps = {
   weapons: Weapon[];
@@ -206,7 +206,10 @@ function WeaponCard({
         )}
       </div>
       <div className="weapon-card__stats">
-        <span className="weapon-card__attack-line" title={`BAB ${bab >= 0 ? '+' : ''}${bab}, ability ${abilityMod >= 0 ? '+' : ''}${abilityMod}, bonus ${weapon.attackBonus >= 0 ? '+' : ''}${weapon.attackBonus}${conditionAttackPenalty !== 0 ? `, conditions ${conditionAttackPenalty}` : ''}`}>
+        <span
+          className="weapon-card__attack-line"
+          title={`BAB ${bab >= 0 ? '+' : ''}${bab}, ability ${abilityMod >= 0 ? '+' : ''}${abilityMod}, bonus ${weapon.attackBonus >= 0 ? '+' : ''}${weapon.attackBonus}${conditionAttackPenalty !== 0 ? `, conditions ${conditionAttackPenalty}` : ''}`}
+        >
           {formatAttacks(attacks)}
         </span>
         <span className="weapon-card__damage">
@@ -257,9 +260,7 @@ export function WeaponsPanel({
 
   return (
     <div className="weapons">
-      {weapons.length === 0 && !adding && (
-        <p className="weapons__empty">No weapons added.</p>
-      )}
+      {weapons.length === 0 && !adding && <p className="weapons__empty">No weapons added.</p>}
       {weapons.map((w, i) => (
         <WeaponCard
           key={i}

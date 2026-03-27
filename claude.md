@@ -44,20 +44,22 @@ tab==='skills'                       →  SkillsPanel readOnly
 tab==='spells'                       →  SpellSlotsPanel readOnly + SpellsSummary
 ```
 
-Mode toggle always lands on `'character'` in both directions.
+Mode toggle button is in `TabNav` (right-aligned pill). Always lands on `'character'` in both directions.
 
 ### Hook Composition
 
 `useCharacter` composes these domain hooks:
 
-| Hook                      | Owns                                    |
-| ------------------------- | --------------------------------------- |
-| `useCharacterIdentity`    | name, race, alignment, flaws, languages |
-| `useCharacterScores`      | ability scores, modifiers               |
-| `useCharacterLevels`      | levels, feats, spells, skill ranks      |
-| `useCharacterCombat`      | HP, AC components, saves, spell slots   |
-| `useCharacterExtras`      | taint, custom resources, notes          |
-| `useCharacterPersistence` | localStorage, JSON import/export        |
+| Hook                      | Owns                                                            |
+| ------------------------- | --------------------------------------------------------------- |
+| `useCharacterIdentity`    | name, race, alignment, flaws, languages                        |
+| `useCharacterScores`      | ability scores, effective scores (−abilityDamage −condPen), mods |
+| `useCharacterLevels`      | levels, feats, spells, skill ranks                              |
+| `useCharacterCombat`      | HP, AC components, saves, spell slots, weapons                  |
+| `useCharacterExtras`      | taint, custom resources, notes, status effects, ability damage, equipment |
+| `useCharacterPersistence` | localStorage, JSON import/export                                |
+
+`conditionPenalties` is computed via `useMemo` in `useCharacter` from `extras.statusEffects` using `computeConditionPenalties()` in `src/lib/conditions.ts`, then passed into `useCharacterScores` so STR/DEX penalties propagate automatically into all derived stats.
 
 ### Data-Driven Pattern
 
@@ -86,6 +88,14 @@ calculateMaxHP(levels, conMod)         → CalculationBreakdown
 calculateCumulativeSkillRanks(levels)  → Record<skillName, ranks>
 ```
 
+`src/lib/encumbrance.ts` — PHB Table 9-1 helpers:
+
+```ts
+getHeavyLoad(str)                            → number (lbs)
+getLightLoad(str) / getMediumLoad(str)       → number
+getLoadCategory(totalWeight, str)            → 'light' | 'medium' | 'heavy' | 'overloaded'
+```
+
 ---
 
 ## UI Patterns
@@ -101,6 +111,7 @@ const tooltip = [
   ...result.components.map((c) => `${c.label}: +${c.value}`),
   `CON: ${mods.con >= 0 ? '+' : ''}${mods.con}`,
   miscBonus !== 0 ? `Bonus: +${miscBonus}` : null,
+  condSave !== 0 ? `Conditions: ${condSave}` : null,
 ]
   .filter(Boolean)
   .join('\n');
@@ -114,14 +125,15 @@ const tooltip = [
 
 Standard tooltip content per value:
 
-| Value         | Sources                                              |
-| ------------- | ---------------------------------------------------- |
-| BAB           | `calculateTotalBAB(levels).components`               |
-| Fort/Ref/Will | `calculateTotalSave` components + ability mod + misc |
-| AC            | `10 base`, DEX mod, armor, shield, misc              |
-| Init          | DEX mod + misc bonus                                 |
-| HP            | `calculateMaxHP` components                          |
-| Skill total   | `N ranks\n+M ABILITY`                                |
+| Value         | Sources                                                     |
+| ------------- | ----------------------------------------------------------- |
+| BAB           | `calculateTotalBAB(levels).components`                      |
+| Fort/Ref/Will | `calculateTotalSave` components + ability mod + misc + cond |
+| AC            | `10 base`, DEX mod (0 if loseDexToAC), armor, shield, misc, cond |
+| Init          | DEX mod + misc bonus + cond                                 |
+| HP            | `calculateMaxHP` components                                 |
+| Skill total   | `N ranks\n+M ABILITY`                                       |
+| Weapon attack | `BAB ±N, ability ±N, bonus ±N, conditions ±N`              |
 
 Add `cursor: help` on the container when a tooltip is present.
 
@@ -134,7 +146,13 @@ Add `cursor: help` on the container when a tooltip is present.
 </div>
 ```
 
-`sticky-stat` in `StickyBar.tsx` uses the same visual pattern at a smaller size.
+### Condition Penalties Flow
+
+`ConditionPenalties` (from `src/data/conditions.ts`) has fields: `str`, `dex`, `attack`, `save`, `ac`, `initiative`, `loseDexToAC`.
+
+- `str`/`dex` subtract from `effectiveScores` inside `useCharacterScores` → all downstream (saves, AC, skills) update automatically
+- `attack`, `save`, `ac`, `initiative` are flat values applied in `PlaySheet` display and `WeaponsPanel`
+- `loseDexToAC` zeroes the DEX-to-AC contribution in `PlaySheet`
 
 ### `readOnly` Prop
 
@@ -144,7 +162,7 @@ Components that appear in both build and play modes accept `readOnly?: boolean`:
 - Add/remove/edit controls hidden
 - The accordion/PanelSection wrapper is NOT aware of readOnly — only the leaf component
 
-Components with readOnly support: `CombatStatsPanel`, `SavesPanel`, `SpellSlotsPanel`, `SkillsPanel`, `FlawsPanel`, `LanguagesPanel`, `TaintPanel`, `NotesPanel`.
+Components with readOnly support: `CombatStatsPanel`, `SavesPanel`, `SpellSlotsPanel`, `SkillsPanel`, `FlawsPanel`, `LanguagesPanel`, `TaintPanel`, `NotesPanel`, `WeaponsPanel`.
 
 ### Schema Changes
 
@@ -174,15 +192,22 @@ New fields: use `.optional().default(value)` for backward compatibility. Existin
 
 ## Key Files
 
-| File                             | Purpose                                    |
-| -------------------------------- | ------------------------------------------ |
-| `src/App.tsx`                    | Mode/tab routing, all prop wiring          |
-| `src/components/PlaySheet.tsx`   | Compact play mode character tab            |
-| `src/components/StickyBar.tsx`   | Always-visible stat bar + mode toggle      |
-| `src/components/SkillsPanel.tsx` | Skills list (build + play, readOnly)       |
-| `src/lib/progressions.ts`        | BAB, saves, HP, skill rank calculations    |
-| `src/schema/schema.ts`           | CharacterSchema (Zod)                      |
-| `src/hooks/useCharacter.ts`      | Composed character state                   |
-| `src/styles/play.css`            | Stat cards, play sheet layout              |
-| `src/styles/skills.css`          | Skill list layout and badges               |
-| `readme.md`                      | Full feature docs and UI pattern reference |
+| File                               | Purpose                                       |
+| ---------------------------------- | --------------------------------------------- |
+| `src/App.tsx`                      | Mode/tab routing, all prop wiring             |
+| `src/components/PlaySheet.tsx`     | Compact play mode character tab               |
+| `src/components/WeaponsPanel.tsx`  | Weapon CRUD (build) and attack cards (play)   |
+| `src/components/EquipmentPanel.tsx`| Equipment list with weight/encumbrance        |
+| `src/components/SkillsPanel.tsx`   | Skills list (build + play, readOnly)          |
+| `src/components/TabNav.tsx`        | Mode-aware tab nav with mode toggle button    |
+| `src/lib/progressions.ts`          | BAB, saves, HP, skill rank calculations       |
+| `src/lib/encumbrance.ts`           | PHB Table 9-1 load limits by STR              |
+| `src/lib/conditions.ts`            | `computeConditionPenalties()` aggregator      |
+| `src/data/conditions.ts`           | Condition list with penalty definitions       |
+| `src/schema/schema.ts`             | CharacterSchema (Zod)                         |
+| `src/hooks/useCharacter.ts`        | Composed character state                      |
+| `src/styles/play.css`              | Stat cards, play sheet layout                 |
+| `src/styles/play-panels.css`       | Equipment, weapons, resources, status panels  |
+| `src/styles/skills.css`            | Skill list layout and badges                  |
+| `src/styles/tabs.css`              | Tab nav + `.sticky-bar*` CSS (kept, unused)   |
+| `readme.md`                        | Full feature docs and UI pattern reference    |

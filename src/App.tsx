@@ -18,8 +18,8 @@ import { SpellSlotsPanel } from './components/SpellSlotsPanel';
 import { SpellsSummary } from './components/SpellsSummary';
 import { type Tab, TabNav } from './components/TabNav';
 import { TaintPanel } from './components/TaintPanel';
-import { useCharacter } from './hooks/useCharacter';
 import { WeaponsPanel } from './components/WeaponsPanel';
+import { useCharacter } from './hooks/useCharacter';
 import { calculateTotalBAB } from './lib/progressions';
 
 export function App() {

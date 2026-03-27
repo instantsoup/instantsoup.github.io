@@ -13,11 +13,11 @@ import type { Scores } from '../types';
 import type { Level } from '../types/level';
 import { AbilityDamagePanel } from './AbilityDamagePanel';
 import { EquipmentPanel } from './EquipmentPanel';
-import { WeaponsPanel } from './WeaponsPanel';
 import { HPTracker } from './HPTracker';
 import { NotesPanel } from './NotesPanel';
 import { ResourceTracker } from './ResourceTracker';
 import { StatusEffectsPanel } from './StatusEffectsPanel';
+import { WeaponsPanel } from './WeaponsPanel';
 
 type PlaySheetProps = {
   name: string;

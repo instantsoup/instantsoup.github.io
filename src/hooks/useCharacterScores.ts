@@ -14,14 +14,8 @@ export function useCharacterScores(
 
   const effectiveScores = useMemo(
     () => ({
-      str: Math.max(
-        1,
-        scores.str - (abilityDamage?.str ?? 0) - (conditionPenalties?.str ?? 0),
-      ),
-      dex: Math.max(
-        1,
-        scores.dex - (abilityDamage?.dex ?? 0) - (conditionPenalties?.dex ?? 0),
-      ),
+      str: Math.max(1, scores.str - (abilityDamage?.str ?? 0) - (conditionPenalties?.str ?? 0)),
+      dex: Math.max(1, scores.dex - (abilityDamage?.dex ?? 0) - (conditionPenalties?.dex ?? 0)),
       con: Math.max(1, scores.con - (abilityDamage?.con ?? 0)),
       int: Math.max(1, scores.int - (abilityDamage?.int ?? 0)),
       wis: Math.max(1, scores.wis - (abilityDamage?.wis ?? 0)),
