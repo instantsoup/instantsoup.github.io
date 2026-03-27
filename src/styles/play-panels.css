@@ -356,6 +356,148 @@
 }
 
 /* ================================
+   Weapons Panel
+=================================== */
+
+.weapons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.weapons__empty {
+  font-size: 13px;
+  color: var(--clr-text-muted, #888);
+  margin: 0;
+}
+
+.weapons__add-area {
+  margin-top: 4px;
+}
+
+.weapon-card {
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+
+.weapon-card__header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.weapon-card__name {
+  font-weight: 600;
+  font-size: 14px;
+  flex: 1;
+}
+
+.weapon-card__type {
+  font-size: 11px;
+  color: var(--clr-text-muted, #888);
+  text-transform: capitalize;
+  padding: 1px 5px;
+  border: 1px solid var(--clr-border);
+  border-radius: 8px;
+}
+
+.weapon-card__actions {
+  display: flex;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.weapon-card__stats {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.weapon-card__attack-line {
+  font-weight: 700;
+  font-size: 15px;
+  font-family: var(--font-mono, monospace);
+  cursor: help;
+}
+
+.weapon-card__damage {
+  color: #1e3a5f;
+}
+
+.weapon-card__crit {
+  font-size: 12px;
+  color: var(--clr-text-muted, #888);
+  margin-left: auto;
+}
+
+.weapon-card--editing {
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.weapon-card__edit-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.weapon-card__edit-label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: var(--clr-text-muted, #888);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.weapon-card__edit-input {
+  padding: 4px 6px;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.weapon-card__edit-name {
+  flex: 1;
+  min-width: 120px;
+}
+
+.weapon-card__edit-damage {
+  width: 64px;
+}
+
+.weapon-card__edit-num {
+  width: 52px;
+  text-align: right;
+}
+
+.weapon-card__edit-dmgtype {
+  width: 100px;
+}
+
+.weapon-card__edit-select {
+  padding: 4px 6px;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+}
+
+.weapon-card__edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ================================
    Utility button variants
 =================================== */
 

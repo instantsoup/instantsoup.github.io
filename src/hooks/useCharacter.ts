@@ -45,6 +45,7 @@ export function useCharacter() {
     statusEffects: extras.statusEffects,
     abilityDamage: extras.abilityDamage,
     equipment: extras.equipment,
+    weapons: combat.weapons,
   });
 
   const loadAll = (char: Character) => {
@@ -134,6 +135,10 @@ export function useCharacter() {
     toggleEquipped: extras.toggleEquipped,
     setEquipmentNotes: extras.setEquipmentNotes,
     setEquipmentWeight: extras.setEquipmentWeight,
+    weapons: combat.weapons,
+    addWeapon: combat.addWeapon,
+    removeWeapon: combat.removeWeapon,
+    updateWeapon: combat.updateWeapon,
 
     // Persistence
     error: persistence.error,

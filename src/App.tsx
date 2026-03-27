@@ -19,6 +19,8 @@ import { SpellsSummary } from './components/SpellsSummary';
 import { type Tab, TabNav } from './components/TabNav';
 import { TaintPanel } from './components/TaintPanel';
 import { useCharacter } from './hooks/useCharacter';
+import { WeaponsPanel } from './components/WeaponsPanel';
+import { calculateTotalBAB } from './lib/progressions';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
@@ -82,6 +84,10 @@ export function App() {
     toggleEquipped,
     setEquipmentNotes,
     setEquipmentWeight,
+    weapons,
+    addWeapon,
+    removeWeapon,
+    updateWeapon,
     onNum,
     persistLocal,
     exportJson,
@@ -154,6 +160,10 @@ export function App() {
                 setEquipmentNotes={setEquipmentNotes}
                 setEquipmentWeight={setEquipmentWeight}
                 str={scores.str}
+                weapons={weapons}
+                addWeapon={addWeapon}
+                removeWeapon={removeWeapon}
+                updateWeapon={updateWeapon}
                 setNotes={setNotes}
                 onBlur={persistLocal}
               />
@@ -280,6 +290,19 @@ export function App() {
 
               <PanelSection title="Known Spells" defaultOpen={false}>
                 <SpellsSummary levels={levels} />
+              </PanelSection>
+
+              <PanelSection title="Weapons" defaultOpen={false}>
+                <WeaponsPanel
+                  weapons={weapons}
+                  mods={mods}
+                  bab={calculateTotalBAB(levels).total}
+                  conditionAttackPenalty={conditionPenalties.attack ?? 0}
+                  onAdd={addWeapon}
+                  onRemove={removeWeapon}
+                  onUpdate={updateWeapon}
+                  onBlur={persistLocal}
+                />
               </PanelSection>
             </div>
           )}

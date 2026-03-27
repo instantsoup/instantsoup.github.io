@@ -95,6 +95,19 @@ export const EquipmentItemSchema = z.object({
 
 export type EquipmentItem = z.infer<typeof EquipmentItemSchema>;
 
+export const WeaponSchema = z.object({
+  name: z.string().min(1),
+  damage: z.string().default('1d6'),
+  critRange: z.number().int().min(1).max(20).default(20),
+  critMult: z.number().int().min(2).max(4).default(2),
+  attackType: z.enum(['melee', 'ranged', 'touch']).default('melee'),
+  attackBonus: z.number().int().default(0),
+  damageBonus: z.number().int().default(0),
+  damageType: z.string().optional(),
+});
+
+export type Weapon = z.infer<typeof WeaponSchema>;
+
 export const CharacterSchema = z.object({
   version: z.literal(2),
   name: z.string().min(0),
@@ -112,6 +125,7 @@ export const CharacterSchema = z.object({
   statusEffects: z.record(z.string(), StatusEffectSchema).optional().default({}),
   abilityDamage: AbilityDamageSchema.optional().default({}),
   equipment: z.array(EquipmentItemSchema).optional().default([]),
+  weapons: z.array(WeaponSchema).optional().default([]),
 });
 
 export type Character = z.infer<typeof CharacterSchema>;

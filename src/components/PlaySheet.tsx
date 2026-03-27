@@ -7,11 +7,13 @@ import type {
   CustomResource,
   EquipmentItem,
   StatusEffect,
+  Weapon,
 } from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 import { AbilityDamagePanel } from './AbilityDamagePanel';
 import { EquipmentPanel } from './EquipmentPanel';
+import { WeaponsPanel } from './WeaponsPanel';
 import { HPTracker } from './HPTracker';
 import { NotesPanel } from './NotesPanel';
 import { ResourceTracker } from './ResourceTracker';
@@ -48,6 +50,10 @@ type PlaySheetProps = {
   toggleEquipped: (index: number) => void;
   setEquipmentNotes: (index: number, notes: string) => void;
   setEquipmentWeight: (index: number, weight: number) => void;
+  weapons: Weapon[];
+  addWeapon: (w: Weapon) => void;
+  removeWeapon: (index: number) => void;
+  updateWeapon: (index: number, w: Weapon) => void;
   notes: string;
   setNotes: (v: string) => void;
   onBlur: () => void;
@@ -84,6 +90,10 @@ export function PlaySheet({
   toggleEquipped,
   setEquipmentNotes,
   setEquipmentWeight,
+  weapons,
+  addWeapon,
+  removeWeapon,
+  updateWeapon,
   notes,
   setNotes,
   onBlur,
@@ -272,6 +282,22 @@ export function PlaySheet({
           onReset={resetCustomResource}
           onResetAll={resetAllCustomResources}
           onBlur={onBlur}
+        />
+      </div>
+
+      {/* Weapons */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Weapons</div>
+        <WeaponsPanel
+          weapons={weapons}
+          mods={mods}
+          bab={bab}
+          conditionAttackPenalty={conditionPenalties.attack ?? 0}
+          onAdd={addWeapon}
+          onRemove={removeWeapon}
+          onUpdate={updateWeapon}
+          onBlur={onBlur}
+          readOnly
         />
       </div>
 
