@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import type { ConditionPenalties } from '../data/conditions';
-import { getRacialMods } from '../lib/progressions';
 import { computeMods } from '../lib/mods';
+import { getRacialMods } from '../lib/progressions';
 import type { AbilityDamage, Character } from '../schema/schema';
 import { emptyScores, type Scores } from '../types';
 
@@ -17,8 +17,14 @@ export function useCharacterScores(
   const effectiveScores = useMemo(() => {
     const rm = getRacialMods(race);
     return {
-      str: Math.max(1, scores.str + (rm['str'] ?? 0) - (abilityDamage?.str ?? 0) - (conditionPenalties?.str ?? 0)),
-      dex: Math.max(1, scores.dex + (rm['dex'] ?? 0) - (abilityDamage?.dex ?? 0) - (conditionPenalties?.dex ?? 0)),
+      str: Math.max(
+        1,
+        scores.str + (rm['str'] ?? 0) - (abilityDamage?.str ?? 0) - (conditionPenalties?.str ?? 0),
+      ),
+      dex: Math.max(
+        1,
+        scores.dex + (rm['dex'] ?? 0) - (abilityDamage?.dex ?? 0) - (conditionPenalties?.dex ?? 0),
+      ),
       con: Math.max(1, scores.con + (rm['con'] ?? 0) - (abilityDamage?.con ?? 0)),
       int: Math.max(1, scores.int + (rm['int'] ?? 0) - (abilityDamage?.int ?? 0)),
       wis: Math.max(1, scores.wis + (rm['wis'] ?? 0) - (abilityDamage?.wis ?? 0)),

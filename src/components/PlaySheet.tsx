@@ -131,7 +131,8 @@ export function PlaySheet({
   const miscACBonus = combatStats.miscACBonus ?? 0;
   const rawDexToAC = loseDex ? 0 : Math.min(mods.dex, encMaxDex);
   const dexToAC = rawDexToAC;
-  const totalAC = 10 + dexToAC + armorBonus + shieldBonus + naturalArmorBonus + miscACBonus + condAC;
+  const totalAC =
+    10 + dexToAC + armorBonus + shieldBonus + naturalArmorBonus + miscACBonus + condAC;
   const acTooltip = [
     '10 base',
     loseDex

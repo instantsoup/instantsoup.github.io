@@ -24,7 +24,12 @@ export function useCharacter() {
     () => computeConditionPenalties(extras.statusEffects),
     [extras.statusEffects],
   );
-  const scoring = useCharacterScores(initial, extras.abilityDamage, conditionPenalties, identity.race);
+  const scoring = useCharacterScores(
+    initial,
+    extras.abilityDamage,
+    conditionPenalties,
+    identity.race,
+  );
   const leveling = useCharacterLevels(initial, scoring.mods.int);
   const combat = useCharacterCombat(initial);
 

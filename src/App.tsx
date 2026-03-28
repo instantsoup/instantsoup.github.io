@@ -239,7 +239,12 @@ export function App() {
           {tab === 'build' && (
             <div className="tab-content">
               <PanelSection title="Abilities" defaultOpen>
-                <AbilityGrid scores={scores} mods={mods} onNum={onNum} racialMods={getRacialMods(race)} />
+                <AbilityGrid
+                  scores={scores}
+                  mods={mods}
+                  onNum={onNum}
+                  racialMods={getRacialMods(race)}
+                />
               </PanelSection>
 
               <PanelSection title="Levels" defaultOpen>
