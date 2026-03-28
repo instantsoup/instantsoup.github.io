@@ -1,11 +1,6 @@
 import { alignments } from '../data/alignments';
 import type { ConditionPenalties } from '../data/conditions';
-import {
-  getEncumbranceACP,
-  getEncumbranceMaxDex,
-  getEncumbranceSpeed,
-  getLoadCategory,
-} from '../lib/encumbrance';
+import { getEncumbranceSummary } from '../lib/encumbrance';
 import { calculateTotalBAB, calculateTotalSave } from '../lib/progressions';
 import type {
   AbilityDamage,
@@ -121,13 +116,13 @@ export function PlaySheet({
   const loseDex = conditionPenalties.loseDexToAC ?? false;
 
   // Encumbrance
-  const totalWeight = equipment.reduce((s, i) => s + (i.weight ?? 0), 0);
-  const loadCategory = getLoadCategory(totalWeight, effectiveScores.str);
-  const encMaxDex = getEncumbranceMaxDex(loadCategory);
-  const encACP = getEncumbranceACP(loadCategory);
-  const totalACP = (combatStats.armorCheckPenalty ?? 0) + encACP;
   const baseSpeed = combatStats.movementSpeed ?? 30;
-  const effectiveSpeed = getEncumbranceSpeed(baseSpeed, loadCategory);
+  const { loadCategory, totalACP, encMaxDex, effectiveSpeed } = getEncumbranceSummary(
+    equipment,
+    effectiveScores.str,
+    combatStats.armorCheckPenalty ?? 0,
+    baseSpeed,
+  );
   const speedEncumbered = loadCategory !== 'light' && loadCategory !== 'overloaded';
 
   const armorBonus = combatStats.armorBonus ?? 0;

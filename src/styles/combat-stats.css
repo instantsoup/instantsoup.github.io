@@ -39,7 +39,7 @@
 .combat-stat-card__label {
   font-size: 14px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--clr-text-muted);
   text-transform: uppercase;
   letter-spacing: 0.025em;
 }
@@ -133,7 +133,7 @@
   font-size: 32px;
   font-weight: 700;
   text-align: center;
-  color: #0f172a;
+  color: var(--clr-text-primary);
   padding: var(--space-2);
   background: var(--clr-bg);
   border-radius: 6px;
@@ -185,7 +185,7 @@
 .combat-stat-breakdown__value {
   font-size: 14px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--clr-text-primary);
   text-align: right;
   min-width: 32px;
 }

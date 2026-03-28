@@ -32,7 +32,7 @@
   border-radius: 50%;
   border: none;
   background: transparent;
-  color: #64748b;
+  color: var(--clr-text-muted);
   cursor: pointer;
   font-size: 16px;
   line-height: 1;
@@ -72,7 +72,7 @@
   text-align: center;
   border: 2px solid var(--clr-border-strong);
   border-radius: 8px;
-  background: #f8fafc;
+  background: var(--clr-bg-light);
   cursor: pointer;
   padding: 4px 8px;
   line-height: 1.1;
@@ -97,7 +97,7 @@
 
 .hp-display__separator {
   font-size: 28px;
-  color: #94a3b8;
+  color: var(--clr-text-subtle);
   font-weight: 300;
 }
 
@@ -186,7 +186,7 @@
 
 .hp-tracker__meta-label {
   font-size: 13px;
-  color: #64748b;
+  color: var(--clr-text-muted);
   min-width: 60px;
 }
 
@@ -210,7 +210,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.4px;
-  color: #64748b;
+  color: var(--clr-text-muted);
   border-bottom: 1px solid var(--clr-border);
 }
 
@@ -228,7 +228,7 @@
 }
 
 .spell-slots__row:hover {
-  background: #f1f5f9;
+  background: var(--clr-bg);
 }
 
 .spell-slots__row--exhausted {
@@ -285,7 +285,7 @@
   padding: 8px;
   border: 1px solid var(--clr-border-strong);
   border-radius: 6px;
-  background: #f8fafc;
+  background: var(--clr-bg-light);
 }
 
 .resource-row--exhausted {
@@ -308,7 +308,7 @@
 .resource-row__count {
   font-size: 13px;
   font-variant-numeric: tabular-nums;
-  color: #64748b;
+  color: var(--clr-text-muted);
 }
 
 .resource-row__pips {
@@ -391,7 +391,7 @@
   padding: 10px;
   border: 1px solid var(--clr-border-strong);
   border-radius: 6px;
-  background: #f8fafc;
+  background: var(--clr-bg-light);
 }
 
 .taint-tracker__header {
@@ -430,7 +430,7 @@
 
 .taint-tracker__effect-label {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--clr-text-primary);
 }
 
 /* ================================
@@ -464,7 +464,7 @@
   padding: 8px 10px;
   border: 1px solid var(--clr-border);
   border-radius: 6px;
-  background: #f8fafc;
+  background: var(--clr-bg-light);
   font-size: 14px;
   line-height: 1.6;
   white-space: pre-wrap;
@@ -510,7 +510,7 @@
 .play-sheet__name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--clr-text-primary);
 }
 
 .play-sheet__identity-detail {
@@ -530,7 +530,7 @@
   flex-direction: column;
   align-items: center;
   padding: var(--space-2) var(--space-3);
-  background: #f8fafc;
+  background: var(--clr-bg-light);
   border: 1px solid var(--clr-border-strong);
   border-radius: 8px;
   min-width: 4.5rem;
@@ -554,7 +554,7 @@
   font-size: 1.4rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  color: #0f172a;
+  color: var(--clr-text-primary);
   line-height: 1.2;
 }
 

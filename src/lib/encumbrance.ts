@@ -78,3 +78,26 @@ export function getEncumbranceSpeed(baseSpeed: number, cat: LoadCategory): numbe
   if (cat === 'light' || cat === 'overloaded') return baseSpeed;
   return Math.floor((baseSpeed * 3) / 4 / 5) * 5;
 }
+
+export interface EncumbranceSummary {
+  loadCategory: LoadCategory;
+  totalACP: number;
+  encMaxDex: number;
+  effectiveSpeed: number;
+}
+
+export function getEncumbranceSummary(
+  equipment: Array<{ weight?: number }>,
+  strScore: number,
+  armorCheckPenalty: number,
+  baseSpeed: number,
+): EncumbranceSummary {
+  const totalWeight = equipment.reduce((s, i) => s + (i.weight ?? 0), 0);
+  const loadCategory = getLoadCategory(totalWeight, strScore);
+  return {
+    loadCategory,
+    totalACP: armorCheckPenalty + getEncumbranceACP(loadCategory),
+    encMaxDex: getEncumbranceMaxDex(loadCategory),
+    effectiveSpeed: getEncumbranceSpeed(baseSpeed, loadCategory),
+  };
+}

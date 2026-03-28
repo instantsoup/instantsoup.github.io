@@ -134,8 +134,8 @@
 }
 
 .level-card__tab:hover {
-  background: #f1f5f9;
-  color: #0f172a;
+  background: var(--clr-bg);
+  color: var(--clr-text-primary);
 }
 
 .level-card__tab--active {

@@ -18,13 +18,13 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 18px;
-  background: #f8fafc;
-  color: #0f172a;
+  background: var(--clr-bg-light);
+  color: var(--clr-text-primary);
   transition: background 0.2s;
 }
 
 .character-info-panel__header:hover {
-  background: #f1f5f9;
+  background: var(--clr-bg);
 }
 
 .character-info-panel__header--open {
@@ -65,6 +65,6 @@
 }
 
 .selector-input::placeholder {
-  color: #94a3b8;
+  color: var(--clr-text-subtle);
   font-weight: 400;
 }

@@ -228,7 +228,7 @@
 .skill-item__total {
   font-size: 1rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--clr-text-primary);
   font-variant-numeric: tabular-nums;
   min-width: 2.75rem;
   text-align: right;

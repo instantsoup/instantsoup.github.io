@@ -4,6 +4,7 @@ import {
   getEncumbranceACP,
   getEncumbranceMaxDex,
   getEncumbranceSpeed,
+  getEncumbranceSummary,
   getHeavyLoad,
   getLightLoad,
   getLoadCategory,
@@ -130,5 +131,39 @@ describe('getEncumbranceSpeed', () => {
   it('applies same reduction for heavy load', () => {
     expect(getEncumbranceSpeed(30, 'heavy')).toBe(20);
     expect(getEncumbranceSpeed(20, 'heavy')).toBe(15);
+  });
+});
+
+describe('getEncumbranceSummary', () => {
+  // STR 10: light ≤33, medium ≤66, heavy ≤100
+  it('returns light summary with no penalties for light load', () => {
+    const result = getEncumbranceSummary([{ weight: 10 }], 10, 0, 30);
+    expect(result.loadCategory).toBe('light');
+    expect(result.totalACP).toBe(0);
+    expect(result.encMaxDex).toBe(Infinity);
+    expect(result.effectiveSpeed).toBe(30);
+  });
+
+  it('stacks armor ACP with encumbrance ACP for medium load', () => {
+    // 34 lb = medium for STR 10; armorCheckPenalty=4 → totalACP = 4+3 = 7
+    const result = getEncumbranceSummary([{ weight: 34 }], 10, 4, 30);
+    expect(result.loadCategory).toBe('medium');
+    expect(result.totalACP).toBe(7);
+    expect(result.encMaxDex).toBe(3);
+    expect(result.effectiveSpeed).toBe(20);
+  });
+
+  it('sums equipment weights correctly', () => {
+    // 3 items × 25 lb = 75 lb → heavy for STR 10
+    const items = [{ weight: 25 }, { weight: 25 }, { weight: 25 }];
+    const result = getEncumbranceSummary(items, 10, 0, 30);
+    expect(result.loadCategory).toBe('heavy');
+    expect(result.totalACP).toBe(6);
+    expect(result.encMaxDex).toBe(1);
+  });
+
+  it('treats missing weight as 0', () => {
+    const result = getEncumbranceSummary([{}], 10, 0, 30);
+    expect(result.loadCategory).toBe('light');
   });
 });

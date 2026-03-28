@@ -42,6 +42,12 @@
 
   --clr-danger-border: #ef4444; /* red-500 */
   --clr-danger-bg: #fee2e2; /* red-100 */
+
+  --clr-text-primary: #0f172a; /* slate-900 */
+  --clr-text-secondary: #1e293b; /* slate-800 */
+  --clr-text-muted: #64748b; /* slate-500 */
+  --clr-text-subtle: #94a3b8; /* slate-400 */
+  --clr-bg-light: #f8fafc; /* slate-50 */
 }
 
 *,
@@ -67,7 +73,7 @@ body {
     Arial,
     'Apple Color Emoji',
     'Segoe UI Emoji';
-  color: #0f172a; /* slate-900 */
+  color: var(--clr-text-primary);
   background: #ffffff;
 }
 
@@ -192,7 +198,7 @@ body {
 .btn--secondary {
   padding: 8px 12px;
   border: 1px solid var(--clr-border-strong);
-  background: #f1f5f9;
+  background: var(--clr-bg);
   font-weight: 500;
 }
 
@@ -212,11 +218,11 @@ body {
   padding: 8px 12px;
   border: 1px solid transparent;
   background: transparent;
-  color: #64748b;
+  color: var(--clr-text-muted);
 }
 
 .btn--ghost:hover {
-  background: #f1f5f9;
+  background: var(--clr-bg);
 }
 
 .btn--sm {
@@ -277,5 +283,5 @@ body {
   margin: 0 0 var(--space-3);
   font-size: 20px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--clr-text-primary);
 }

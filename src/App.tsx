@@ -20,6 +20,7 @@ import { type Tab, TabNav } from './components/TabNav';
 import { TaintPanel } from './components/TaintPanel';
 import { WeaponsPanel } from './components/WeaponsPanel';
 import { useCharacter } from './hooks/useCharacter';
+import { getEncumbranceSummary } from './lib/encumbrance';
 import { calculateTotalBAB } from './lib/progressions';
 
 export function App() {
@@ -317,11 +318,14 @@ export function App() {
               <SkillsPanel
                 mods={mods}
                 levels={levels}
-                acp={(() => {
-                  const tw = equipment.reduce((s, i) => s + (i.weight ?? 0), 0);
-                  const cat = getLoadCategory(tw, scores.str);
-                  return (combatStats.armorCheckPenalty ?? 0) + getEncumbranceACP(cat);
-                })()}
+                acp={
+                  getEncumbranceSummary(
+                    equipment,
+                    scores.str,
+                    combatStats.armorCheckPenalty ?? 0,
+                    combatStats.movementSpeed ?? 30,
+                  ).totalACP
+                }
                 miscBonuses={skillMiscBonuses}
                 onSetMiscBonus={setSkillMiscBonus}
                 onBlur={persistLocal}

@@ -42,8 +42,8 @@
   align-items: center;
   gap: 6px;
   padding: 6px 16px;
-  background: #1e293b;
-  color: #f8fafc;
+  background: var(--clr-text-secondary);
+  color: var(--clr-bg-light);
   flex-shrink: 0;
   flex-wrap: wrap;
 }
@@ -100,7 +100,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #94a3b8;
+  color: var(--clr-text-subtle);
   line-height: 1;
 }
 
@@ -109,11 +109,11 @@
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
-  color: #f8fafc;
+  color: var(--clr-bg-light);
 }
 
 .sticky-stat__sep {
-  color: #64748b;
+  color: var(--clr-text-muted);
   font-weight: 400;
   padding: 0 1px;
 }
@@ -174,7 +174,7 @@
 
 .tab-nav__mode-btn:hover {
   background: #e2e8f0;
-  border-color: #94a3b8;
+  border-color: var(--clr-text-subtle);
 }
 
 .tab-nav__btn {
@@ -185,7 +185,7 @@
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: #64748b;
+  color: var(--clr-text-muted);
   cursor: pointer;
   white-space: nowrap;
   border-bottom: 2px solid transparent;
@@ -196,7 +196,7 @@
 }
 
 .tab-nav__btn:hover {
-  color: #0f172a;
+  color: var(--clr-text-primary);
   background: rgba(0, 0, 0, 0.03);
 }
 
