@@ -21,7 +21,7 @@ import { TaintPanel } from './components/TaintPanel';
 import { WeaponsPanel } from './components/WeaponsPanel';
 import { useCharacter } from './hooks/useCharacter';
 import { getEncumbranceSummary } from './lib/encumbrance';
-import { calculateTotalBAB } from './lib/progressions';
+import { calculateTotalBAB, getRacialMods } from './lib/progressions';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
@@ -239,7 +239,7 @@ export function App() {
           {tab === 'build' && (
             <div className="tab-content">
               <PanelSection title="Abilities" defaultOpen>
-                <AbilityGrid scores={scores} mods={mods} onNum={onNum} />
+                <AbilityGrid scores={scores} mods={mods} onNum={onNum} racialMods={getRacialMods(race)} />
               </PanelSection>
 
               <PanelSection title="Levels" defaultOpen>

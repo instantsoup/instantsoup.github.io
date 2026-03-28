@@ -1,8 +1,14 @@
 // src/lib/progressions.ts
+import { races } from '../data/races';
 import { findClassProgression } from '../data/class-progressions';
 import { classes } from '../data/classes';
 import type { BABProgression, SaveProgression } from '../types/class-progression';
 import type { Level } from '../types/level';
+
+export function getRacialMods(raceName: string | undefined): Record<string, number> {
+  if (!raceName) return {};
+  return races.find((r) => r.name === raceName)?.modifiers ?? {};
+}
 
 /**
  * Breakdown of how a value is calculated

@@ -11,9 +11,34 @@ describe('races data', () => {
     races.forEach((r) => {
       expect(r).toHaveProperty('name');
       expect(r).toHaveProperty('description');
+      expect(r).toHaveProperty('modifiers');
       expect(r.name.length).toBeGreaterThan(0);
-      expect(r.description.length).toBeGreaterThan(0);
+      expect(r.description!.length).toBeGreaterThan(0);
+      expect(typeof r.modifiers).toBe('object');
     });
+  });
+
+  it('has correct PHB ability modifiers', () => {
+    const dwarf = races.find((r) => r.name === 'Dwarf')!;
+    expect(dwarf.modifiers).toEqual({ con: 2, cha: -2 });
+
+    const elf = races.find((r) => r.name === 'Elf')!;
+    expect(elf.modifiers).toEqual({ dex: 2, con: -2 });
+
+    const gnome = races.find((r) => r.name === 'Gnome')!;
+    expect(gnome.modifiers).toEqual({ con: 2, str: -2 });
+
+    const halfOrc = races.find((r) => r.name === 'Half-Orc')!;
+    expect(halfOrc.modifiers).toEqual({ str: 2, int: -2, cha: -2 });
+
+    const halfling = races.find((r) => r.name === 'Halfling')!;
+    expect(halfling.modifiers).toEqual({ dex: 2, str: -2 });
+
+    const human = races.find((r) => r.name === 'Human')!;
+    expect(human.modifiers).toEqual({});
+
+    const halfElf = races.find((r) => r.name === 'Half-Elf')!;
+    expect(halfElf.modifiers).toEqual({});
   });
 
   it('includes all PHB core races', () => {

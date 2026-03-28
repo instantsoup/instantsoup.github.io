@@ -1,30 +1,37 @@
 [
   {
     "name": "Human",
-    "description": "Humans are the most adaptable of all the common races."
+    "description": "Humans are the most adaptable of all the common races.",
+    "modifiers": {}
   },
   {
     "name": "Dwarf",
-    "description": "Dwarves are known for their skill in warfare, their ability to withstand physical and magical punishment, their knowledge of the earth's secrets, and their hatred of orcs and goblinoids."
+    "description": "Dwarves are known for their skill in warfare, their ability to withstand physical and magical punishment, their knowledge of the earth's secrets, and their hatred of orcs and goblinoids.",
+    "modifiers": { "con": 2, "cha": -2 }
   },
   {
     "name": "Elf",
-    "description": "Elves are known for their poetry, song, and magical arts, but also for their skill with the bow."
+    "description": "Elves are known for their poetry, song, and magical arts, but also for their skill with the bow.",
+    "modifiers": { "dex": 2, "con": -2 }
   },
   {
     "name": "Gnome",
-    "description": "Gnomes are in wide demand as alchemists, inventors, and technicians, though most prefer to remain among their own kind in simple comfort."
+    "description": "Gnomes are in wide demand as alchemists, inventors, and technicians, though most prefer to remain among their own kind in simple comfort.",
+    "modifiers": { "con": 2, "str": -2 }
   },
   {
     "name": "Half-Elf",
-    "description": "Half-elves have no lands of their own, though they are welcome in human cities and elven forests."
+    "description": "Half-elves have no lands of their own, though they are welcome in human cities and elven forests.",
+    "modifiers": {}
   },
   {
     "name": "Half-Orc",
-    "description": "Half-orcs are often feared and mistrusted in civilized lands, but their strength and endurance makes them valuable allies."
+    "description": "Half-orcs are often feared and mistrusted in civilized lands, but their strength and endurance makes them valuable allies.",
+    "modifiers": { "str": 2, "int": -2, "cha": -2 }
   },
   {
     "name": "Halfling",
-    "description": "Halflings are clever, capable, and resourceful survivors. They are notoriously curious and show a daring that many larger people can't match."
+    "description": "Halflings are clever, capable, and resourceful survivors. They are notoriously curious and show a daring that many larger people can't match.",
+    "modifiers": { "dex": 2, "str": -2 }
   }
 ]

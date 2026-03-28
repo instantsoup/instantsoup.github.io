@@ -15,6 +15,7 @@ import {
   calculateTotalBAB,
   calculateTotalSave,
   calculateTotalSkillPoints,
+  getRacialMods,
   recalculateSkillPointsFromLevel,
   validateSkillRanksAtLevel,
 } from './progressions';
@@ -550,5 +551,27 @@ describe('recalculateSkillPointsFromLevel', () => {
   it('returns original array for invalid level index', () => {
     const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
     expect(() => recalculateSkillPointsFromLevel(-1, levels, 2)).toThrow();
+  });
+});
+
+describe('getRacialMods', () => {
+  it('returns empty object for undefined race', () => {
+    expect(getRacialMods(undefined)).toEqual({});
+  });
+
+  it('returns empty object for unknown race name', () => {
+    expect(getRacialMods('Tiefling')).toEqual({});
+  });
+
+  it('returns correct modifiers for Dwarf', () => {
+    expect(getRacialMods('Dwarf')).toEqual({ con: 2, cha: -2 });
+  });
+
+  it('returns correct modifiers for Half-Orc', () => {
+    expect(getRacialMods('Half-Orc')).toEqual({ str: 2, int: -2, cha: -2 });
+  });
+
+  it('returns empty object for Human (no modifiers)', () => {
+    expect(getRacialMods('Human')).toEqual({});
   });
 });
