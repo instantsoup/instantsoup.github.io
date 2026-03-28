@@ -122,9 +122,7 @@ export function CombatStatsPanel({
                 <span className="combat-stat-breakdown__label">ACP:</span>
                 {readOnly ? (
                   <span className="combat-stat-breakdown__value">
-                    {combatStats.armorCheckPenalty
-                      ? `−${combatStats.armorCheckPenalty}`
-                      : '0'}
+                    {combatStats.armorCheckPenalty ? `−${combatStats.armorCheckPenalty}` : '0'}
                   </span>
                 ) : (
                   <input

@@ -109,9 +109,7 @@ export function HPTracker({
           title="Max HP"
         />
         {isDead && <span className="hp-display__status hp-display__status--dead">DEAD</span>}
-        {isDying && !isStable && (
-          <span className="hp-display__status">DYING</span>
-        )}
+        {isDying && !isStable && <span className="hp-display__status">DYING</span>}
         {isDying && isStable && (
           <span className="hp-display__status hp-display__status--stable">STABLE</span>
         )}

@@ -131,9 +131,7 @@ export function SkillsPanel({
                       className="skill-item__misc"
                       type="number"
                       value={misc || ''}
-                      onChange={(e) =>
-                        onSetMiscBonus(skill.name, parseInt(e.target.value) || 0)
-                      }
+                      onChange={(e) => onSetMiscBonus(skill.name, parseInt(e.target.value) || 0)}
                       onBlur={onBlur}
                       placeholder="0"
                       title="Misc bonus"
