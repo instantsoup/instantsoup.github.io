@@ -11,6 +11,8 @@ import type { ClassName } from '../schema/schema';
 import type { Level } from '../types/level';
 import { SkillSpendingPanel } from './SkillSpendingPanel';
 
+type LevelTab = 'feats' | 'spells' | 'skills';
+
 type LevelsPanelProps = {
   levels: Level[];
   addLevel: () => void;
@@ -39,9 +41,7 @@ export function LevelsPanel({
   onBlur,
 }: LevelsPanelProps) {
   const canAddLevel = levels.length < 20;
-  const [expandedFeats, setExpandedFeats] = useState<number | null>(null);
-  const [expandedSpells, setExpandedSpells] = useState<number | null>(null);
-  const [expandedSkills, setExpandedSkills] = useState<number | null>(null);
+  const [activeLevelTab, setActiveLevelTab] = useState<Record<number, LevelTab | null>>({});
   const [featSearchTerms, setFeatSearchTerms] = useState<Record<number, string>>({});
   const [spellSearchTerms, setSpellSearchTerms] = useState<Record<number, string>>({});
 
@@ -80,16 +80,11 @@ export function LevelsPanel({
     onBlur?.();
   };
 
-  const toggleExpandedFeats = (levelNumber: number) => {
-    setExpandedFeats(expandedFeats === levelNumber ? null : levelNumber);
-  };
-
-  const toggleExpandedSpells = (levelNumber: number) => {
-    setExpandedSpells(expandedSpells === levelNumber ? null : levelNumber);
-  };
-
-  const toggleExpandedSkills = (levelNumber: number) => {
-    setExpandedSkills(expandedSkills === levelNumber ? null : levelNumber);
+  const toggleTab = (levelNumber: number, tab: LevelTab) => {
+    setActiveLevelTab((prev) => ({
+      ...prev,
+      [levelNumber]: prev[levelNumber] === tab ? null : tab,
+    }));
   };
 
   const getFeatSearchResults = (levelNumber: number) => {
@@ -119,9 +114,7 @@ export function LevelsPanel({
       {levels.length > 0 && (
         <div className="levels-list">
           {levels.map((lvl, levelIndex) => {
-            const isFeatsExpanded = expandedFeats === lvl.level;
-            const isSpellsExpanded = expandedSpells === lvl.level;
-            const isSkillsExpanded = expandedSkills === lvl.level;
+            const activeTab = activeLevelTab[lvl.level] ?? null;
             const levelFeats = lvl.feats ?? [];
             const levelSpells = lvl.spells ?? [];
             const featSearchResults = getFeatSearchResults(lvl.level);
@@ -163,33 +156,33 @@ export function LevelsPanel({
                       {available} / {remaining}
                     </span>
                   </div>
-                  <div className="level-card__buttons">
+                  <div className="level-card__tabs">
                     <button
                       type="button"
-                      onClick={() => toggleExpandedFeats(lvl.level)}
-                      className="level-card__toggle"
+                      onClick={() => toggleTab(lvl.level, 'feats')}
+                      className={`level-card__tab${activeTab === 'feats' ? ' level-card__tab--active' : ''}`}
                     >
-                      {isFeatsExpanded ? '▼ Feats' : '▶ Feats'}
+                      Feats
                     </button>
                     <button
                       type="button"
-                      onClick={() => toggleExpandedSpells(lvl.level)}
-                      className="level-card__toggle level-card__toggle--spells"
+                      onClick={() => toggleTab(lvl.level, 'spells')}
+                      className={`level-card__tab level-card__tab--spells${activeTab === 'spells' ? ' level-card__tab--active' : ''}`}
                     >
-                      {isSpellsExpanded ? '▼ Spells' : '▶ Spells'}
+                      Spells
                     </button>
                     <button
                       type="button"
-                      onClick={() => toggleExpandedSkills(lvl.level)}
-                      className="level-card__toggle level-card__toggle--skills"
+                      onClick={() => toggleTab(lvl.level, 'skills')}
+                      className={`level-card__tab level-card__tab--skills${activeTab === 'skills' ? ' level-card__tab--active' : ''}`}
                     >
-                      {isSkillsExpanded ? '▼ Skills' : '▶ Skills'}
+                      Skills
                     </button>
                   </div>
                 </div>
 
-                {/* Feats Section */}
-                {isFeatsExpanded && (
+                {/* Feats Tab */}
+                {activeTab === 'feats' && (
                   <div className="level-card__feats">
                     <div className="level-feats-search">
                       <input
@@ -272,8 +265,8 @@ export function LevelsPanel({
                   </div>
                 )}
 
-                {/* Spells Section */}
-                {isSpellsExpanded && (
+                {/* Spells Tab */}
+                {activeTab === 'spells' && (
                   <div className="level-card__spells">
                     <div className="level-spells-search">
                       <input
@@ -355,8 +348,8 @@ export function LevelsPanel({
                   </div>
                 )}
 
-                {/* Skills Section */}
-                {isSkillsExpanded && (
+                {/* Skills Tab */}
+                {activeTab === 'skills' && (
                   <div className="level-card__skills">
                     <SkillSpendingPanel
                       levelIndex={levelIndex}

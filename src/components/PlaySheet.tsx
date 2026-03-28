@@ -1,26 +1,61 @@
 import { alignments } from '../data/alignments';
+import type { ConditionPenalties } from '../data/conditions';
 import { calculateTotalBAB, calculateTotalSave } from '../lib/progressions';
-import type { CombatStats, CustomResource } from '../schema/schema';
+import type {
+  AbilityDamage,
+  CombatStats,
+  CustomResource,
+  EquipmentItem,
+  StatusEffect,
+  Weapon,
+} from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
+import { AbilityDamagePanel } from './AbilityDamagePanel';
+import { EquipmentPanel } from './EquipmentPanel';
 import { HPTracker } from './HPTracker';
+import { NotesPanel } from './NotesPanel';
 import { ResourceTracker } from './ResourceTracker';
+import { StatusEffectsPanel } from './StatusEffectsPanel';
+import { WeaponsPanel } from './WeaponsPanel';
 
 type PlaySheetProps = {
   name: string;
   race: string | undefined;
   alignment: string | undefined;
+  scores: Scores;
+  effectiveScores: Scores;
   mods: Scores;
   combatStats: CombatStats;
   levels: Level[];
   saveBonuses: Record<string, number>;
   customResources: CustomResource[];
+  statusEffects: Record<string, StatusEffect>;
+  conditionPenalties: ConditionPenalties;
+  abilityDamage: AbilityDamage;
+  equipment: EquipmentItem[];
+  str: number;
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
   addCustomResource: (resource: CustomResource) => void;
   removeCustomResource: (index: number) => void;
   updateCustomResourceUsed: (index: number, used: number) => void;
   resetCustomResource: (index: number) => void;
   resetAllCustomResources: () => void;
+  toggleStatusEffect: (name: string) => void;
+  setStatusEffectRounds: (name: string, rounds: number) => void;
+  clearAllStatusEffects: () => void;
+  setAbilityDamage: (key: keyof AbilityDamage, value: number) => void;
+  addEquipment: (item: EquipmentItem) => void;
+  removeEquipment: (index: number) => void;
+  toggleEquipped: (index: number) => void;
+  setEquipmentNotes: (index: number, notes: string) => void;
+  setEquipmentWeight: (index: number, weight: number) => void;
+  weapons: Weapon[];
+  addWeapon: (w: Weapon) => void;
+  removeWeapon: (index: number) => void;
+  updateWeapon: (index: number, w: Weapon) => void;
+  notes: string;
+  setNotes: (v: string) => void;
   onBlur: () => void;
 };
 
@@ -28,42 +63,74 @@ export function PlaySheet({
   name,
   race,
   alignment,
+  scores,
+  effectiveScores,
   mods,
   combatStats,
   levels,
   saveBonuses,
   customResources,
+  statusEffects,
+  conditionPenalties,
+  abilityDamage,
+  equipment,
+  str,
   updateCombatStat,
   addCustomResource,
   removeCustomResource,
   updateCustomResourceUsed,
   resetCustomResource,
   resetAllCustomResources,
+  toggleStatusEffect,
+  setStatusEffectRounds,
+  clearAllStatusEffects,
+  setAbilityDamage,
+  addEquipment,
+  removeEquipment,
+  toggleEquipped,
+  setEquipmentNotes,
+  setEquipmentWeight,
+  weapons,
+  addWeapon,
+  removeWeapon,
+  updateWeapon,
+  notes,
+  setNotes,
   onBlur,
 }: PlaySheetProps) {
   const alignmentLabel = alignment
     ? (alignments.find((a) => a.code === alignment)?.label ?? alignment)
     : undefined;
 
+  const fmt = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
+
+  const condAC = conditionPenalties.ac ?? 0;
+  const condInit = conditionPenalties.initiative ?? 0;
+  const condSave = conditionPenalties.save ?? 0;
+  const loseDex = conditionPenalties.loseDexToAC ?? false;
+
   const armorBonus = combatStats.armorBonus ?? 0;
   const shieldBonus = combatStats.shieldBonus ?? 0;
   const miscACBonus = combatStats.miscACBonus ?? 0;
-  const totalAC = 10 + mods.dex + armorBonus + shieldBonus + miscACBonus;
+  const dexToAC = loseDex ? 0 : mods.dex;
+  const totalAC = 10 + dexToAC + armorBonus + shieldBonus + miscACBonus + condAC;
   const acTooltip = [
     '10 base',
-    `DEX: ${mods.dex >= 0 ? '+' : ''}${mods.dex}`,
+    loseDex ? 'DEX: +0 (condition)' : `DEX: ${fmt(mods.dex)}`,
     armorBonus !== 0 ? `Armor: +${armorBonus}` : null,
     shieldBonus !== 0 ? `Shield: +${shieldBonus}` : null,
     miscACBonus !== 0 ? `Misc: +${miscACBonus}` : null,
+    condAC !== 0 ? `Conditions: ${condAC}` : null,
   ]
     .filter(Boolean)
     .join('\n');
 
   const initiativeBonus = combatStats.initiativeBonus ?? 0;
-  const initiative = mods.dex + initiativeBonus;
+  const initiative = mods.dex + initiativeBonus + condInit;
   const initTooltip = [
-    `DEX: ${mods.dex >= 0 ? '+' : ''}${mods.dex}`,
+    `DEX: ${fmt(mods.dex)}`,
     initiativeBonus !== 0 ? `Misc: +${initiativeBonus}` : null,
+    condInit !== 0 ? `Conditions: ${condInit}` : null,
   ]
     .filter(Boolean)
     .join('\n');
@@ -75,11 +142,12 @@ export function PlaySheet({
   const fortResult = calculateTotalSave(levels, 'fortitude');
   const fortBase = fortResult.total;
   const fortBonus = saveBonuses['Fortitude'] ?? 0;
-  const fort = fortBase + mods.con + fortBonus;
+  const fort = fortBase + mods.con + fortBonus + condSave;
   const fortTooltip = [
     ...fortResult.components.map((c) => `${c.label}: +${c.value}`),
-    `CON: ${mods.con >= 0 ? '+' : ''}${mods.con}`,
+    `CON: ${fmt(mods.con)}`,
     fortBonus !== 0 ? `Bonus: +${fortBonus}` : null,
+    condSave !== 0 ? `Conditions: ${condSave}` : null,
   ]
     .filter(Boolean)
     .join('\n');
@@ -87,11 +155,12 @@ export function PlaySheet({
   const refResult = calculateTotalSave(levels, 'reflex');
   const refBase = refResult.total;
   const refBonus = saveBonuses['Reflex'] ?? 0;
-  const ref = refBase + mods.dex + refBonus;
+  const ref = refBase + mods.dex + refBonus + condSave;
   const refTooltip = [
     ...refResult.components.map((c) => `${c.label}: +${c.value}`),
-    `DEX: ${mods.dex >= 0 ? '+' : ''}${mods.dex}`,
+    `DEX: ${fmt(mods.dex)}`,
     refBonus !== 0 ? `Bonus: +${refBonus}` : null,
+    condSave !== 0 ? `Conditions: ${condSave}` : null,
   ]
     .filter(Boolean)
     .join('\n');
@@ -99,16 +168,17 @@ export function PlaySheet({
   const willResult = calculateTotalSave(levels, 'will');
   const willBase = willResult.total;
   const willBonus = saveBonuses['Will'] ?? 0;
-  const will = willBase + mods.wis + willBonus;
+  const will = willBase + mods.wis + willBonus + condSave;
   const willTooltip = [
     ...willResult.components.map((c) => `${c.label}: +${c.value}`),
-    `WIS: ${mods.wis >= 0 ? '+' : ''}${mods.wis}`,
+    `WIS: ${fmt(mods.wis)}`,
     willBonus !== 0 ? `Bonus: +${willBonus}` : null,
+    condSave !== 0 ? `Conditions: ${condSave}` : null,
   ]
     .filter(Boolean)
     .join('\n');
 
-  const fmt = (n: number) => (n >= 0 ? `+${n}` : `${n}`);
+  const activeConditionCount = Object.values(statusEffects).filter((e) => e.active).length;
 
   return (
     <div className="play-sheet">
@@ -150,6 +220,13 @@ export function PlaySheet({
             <span className="play-sheet__stat-value">{combatStats.spellResistance}</span>
           </div>
         )}
+        <div className="play-sheet__stat play-sheet__stat--wide">
+          <span className="play-sheet__stat-label">Move</span>
+          <span className="play-sheet__stat-value play-sheet__stat-value--movement">
+            {combatStats.movementSpeed ?? 30} ft.
+            {combatStats.movementType ? ` (${combatStats.movementType})` : ''}
+          </span>
+        </div>
       </div>
 
       {/* Saves Row */}
@@ -168,21 +245,82 @@ export function PlaySheet({
         </div>
       </div>
 
-      {/* Resources */}
-      {customResources.length > 0 && (
-        <div className="play-sheet__section">
-          <div className="play-sheet__section-label">Resources</div>
-          <ResourceTracker
-            resources={customResources}
-            onAdd={addCustomResource}
-            onRemove={removeCustomResource}
-            onUse={updateCustomResourceUsed}
-            onReset={resetCustomResource}
-            onResetAll={resetAllCustomResources}
-            onBlur={onBlur}
-          />
+      {/* Conditions */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">
+          Conditions{activeConditionCount > 0 ? ` (${activeConditionCount} active)` : ''}
         </div>
-      )}
+        <StatusEffectsPanel
+          statusEffects={statusEffects}
+          onToggle={toggleStatusEffect}
+          onSetRounds={setStatusEffectRounds}
+          onClearAll={clearAllStatusEffects}
+          onBlur={onBlur}
+        />
+      </div>
+
+      {/* Ability Damage */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Ability Score Damage</div>
+        <AbilityDamagePanel
+          scores={scores}
+          effectiveScores={effectiveScores}
+          abilityDamage={abilityDamage}
+          onSetDamage={setAbilityDamage}
+          onBlur={onBlur}
+        />
+      </div>
+
+      {/* Resources */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Resources</div>
+        <ResourceTracker
+          resources={customResources}
+          onAdd={addCustomResource}
+          onRemove={removeCustomResource}
+          onUse={updateCustomResourceUsed}
+          onReset={resetCustomResource}
+          onResetAll={resetAllCustomResources}
+          onBlur={onBlur}
+        />
+      </div>
+
+      {/* Weapons */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Weapons</div>
+        <WeaponsPanel
+          weapons={weapons}
+          mods={mods}
+          bab={bab}
+          conditionAttackPenalty={conditionPenalties.attack ?? 0}
+          onAdd={addWeapon}
+          onRemove={removeWeapon}
+          onUpdate={updateWeapon}
+          onBlur={onBlur}
+          readOnly
+        />
+      </div>
+
+      {/* Equipment */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Equipment</div>
+        <EquipmentPanel
+          equipment={equipment}
+          str={str}
+          onAdd={addEquipment}
+          onRemove={removeEquipment}
+          onToggleEquipped={toggleEquipped}
+          onSetNotes={setEquipmentNotes}
+          onSetWeight={setEquipmentWeight}
+          onBlur={onBlur}
+        />
+      </div>
+
+      {/* Notes */}
+      <div className="play-sheet__section">
+        <div className="play-sheet__section-label">Notes</div>
+        <NotesPanel notes={notes} setNotes={setNotes} onBlur={onBlur} />
+      </div>
     </div>
   );
 }

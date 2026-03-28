@@ -47,6 +47,8 @@ export const CombatStatsSchema = z.object({
   baseAttackBonus: z.number().int().optional(),
   spellSlotsMax: z.record(z.string(), z.number().int().min(0)).optional().default({}),
   spellSlotsUsed: z.record(z.string(), z.number().int().min(0)).optional().default({}),
+  movementSpeed: z.number().int().min(0).optional(),
+  movementType: z.string().optional(),
 });
 
 export type CombatStats = z.infer<typeof CombatStatsSchema>;
@@ -66,6 +68,46 @@ export const CustomResourceSchema = z.object({
 
 export type CustomResource = z.infer<typeof CustomResourceSchema>;
 
+export const StatusEffectSchema = z.object({
+  active: z.boolean(),
+  rounds: z.number().int().min(0).optional(),
+});
+
+export type StatusEffect = z.infer<typeof StatusEffectSchema>;
+
+export const AbilityDamageSchema = z.object({
+  str: z.number().int().min(0).optional().default(0),
+  dex: z.number().int().min(0).optional().default(0),
+  con: z.number().int().min(0).optional().default(0),
+  int: z.number().int().min(0).optional().default(0),
+  wis: z.number().int().min(0).optional().default(0),
+  cha: z.number().int().min(0).optional().default(0),
+});
+
+export type AbilityDamage = z.infer<typeof AbilityDamageSchema>;
+
+export const EquipmentItemSchema = z.object({
+  name: z.string().min(1),
+  equipped: z.boolean().default(false),
+  weight: z.number().min(0).default(0),
+  notes: z.string().optional(),
+});
+
+export type EquipmentItem = z.infer<typeof EquipmentItemSchema>;
+
+export const WeaponSchema = z.object({
+  name: z.string().min(1),
+  damage: z.string().default('1d6'),
+  critRange: z.number().int().min(1).max(20).default(20),
+  critMult: z.number().int().min(2).max(4).default(2),
+  attackType: z.enum(['melee', 'ranged', 'touch']).default('melee'),
+  attackBonus: z.number().int().default(0),
+  damageBonus: z.number().int().default(0),
+  damageType: z.string().optional(),
+});
+
+export type Weapon = z.infer<typeof WeaponSchema>;
+
 export const CharacterSchema = z.object({
   version: z.literal(2),
   name: z.string().min(0),
@@ -80,6 +122,10 @@ export const CharacterSchema = z.object({
   taint: TaintSchema.optional(),
   customResources: z.array(CustomResourceSchema).optional().default([]),
   notes: z.string().optional(),
+  statusEffects: z.record(z.string(), StatusEffectSchema).optional().default({}),
+  abilityDamage: AbilityDamageSchema.optional().default({}),
+  equipment: z.array(EquipmentItemSchema).optional().default([]),
+  weapons: z.array(WeaponSchema).optional().default([]),
 });
 
 export type Character = z.infer<typeof CharacterSchema>;

@@ -16,10 +16,11 @@ import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { SpellSlotsPanel } from './components/SpellSlotsPanel';
 import { SpellsSummary } from './components/SpellsSummary';
-import { StickyBar } from './components/StickyBar';
 import { type Tab, TabNav } from './components/TabNav';
 import { TaintPanel } from './components/TaintPanel';
+import { WeaponsPanel } from './components/WeaponsPanel';
 import { useCharacter } from './hooks/useCharacter';
+import { calculateTotalBAB } from './lib/progressions';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
@@ -30,6 +31,7 @@ export function App() {
     setName,
     scores,
     mods,
+    effectiveScores,
     race,
     setRace,
     levels,
@@ -50,6 +52,7 @@ export function App() {
     updateSpellSlotsMax,
     updateSpellSlotsUsed,
     resetSpellSlots,
+    setMovementType,
     flaws,
     addFlaw,
     removeFlaw,
@@ -68,6 +71,23 @@ export function App() {
     resetAllCustomResources,
     notes,
     setNotes,
+    statusEffects,
+    toggleStatusEffect,
+    setStatusEffectRounds,
+    clearAllStatusEffects,
+    conditionPenalties,
+    abilityDamage,
+    setAbilityDamage,
+    equipment,
+    addEquipment,
+    removeEquipment,
+    toggleEquipped,
+    setEquipmentNotes,
+    setEquipmentWeight,
+    weapons,
+    addWeapon,
+    removeWeapon,
+    updateWeapon,
     onNum,
     persistLocal,
     exportJson,
@@ -102,17 +122,7 @@ export function App() {
           <h1 className="app-title">D&amp;D 3.5e Character Sheet</h1>
         </header>
 
-        <StickyBar
-          name={name}
-          mods={mods}
-          combatStats={combatStats}
-          levels={levels}
-          saveBonuses={saveBonuses}
-          mode={mode}
-          onModeToggle={toggleMode}
-        />
-
-        <TabNav active={tab} onSelect={setTab} mode={mode} />
+        <TabNav active={tab} onSelect={setTab} mode={mode} onModeToggle={toggleMode} />
 
         <main className="app-main">
           {/* ── CHARACTER ────────────────────────────── */}
@@ -122,17 +132,39 @@ export function App() {
                 name={name}
                 race={race}
                 alignment={alignment}
+                scores={scores}
+                effectiveScores={effectiveScores}
                 mods={mods}
                 combatStats={combatStats}
                 levels={levels}
                 saveBonuses={saveBonuses}
                 customResources={customResources}
+                statusEffects={statusEffects}
+                conditionPenalties={conditionPenalties}
+                abilityDamage={abilityDamage}
+                equipment={equipment}
+                notes={notes}
                 updateCombatStat={updateCombatStat}
                 addCustomResource={addCustomResource}
                 removeCustomResource={removeCustomResource}
                 updateCustomResourceUsed={updateCustomResourceUsed}
                 resetCustomResource={resetCustomResource}
                 resetAllCustomResources={resetAllCustomResources}
+                toggleStatusEffect={toggleStatusEffect}
+                setStatusEffectRounds={setStatusEffectRounds}
+                clearAllStatusEffects={clearAllStatusEffects}
+                setAbilityDamage={setAbilityDamage}
+                addEquipment={addEquipment}
+                removeEquipment={removeEquipment}
+                toggleEquipped={toggleEquipped}
+                setEquipmentNotes={setEquipmentNotes}
+                setEquipmentWeight={setEquipmentWeight}
+                str={scores.str}
+                weapons={weapons}
+                addWeapon={addWeapon}
+                removeWeapon={removeWeapon}
+                updateWeapon={updateWeapon}
+                setNotes={setNotes}
                 onBlur={persistLocal}
               />
             </div>
@@ -227,6 +259,7 @@ export function App() {
                   combatStats={combatStats}
                   levels={levels}
                   updateCombatStat={updateCombatStat}
+                  setMovementType={setMovementType}
                   onBlur={persistLocal}
                 />
               </PanelSection>
@@ -257,6 +290,19 @@ export function App() {
 
               <PanelSection title="Known Spells" defaultOpen={false}>
                 <SpellsSummary levels={levels} />
+              </PanelSection>
+
+              <PanelSection title="Weapons" defaultOpen={false}>
+                <WeaponsPanel
+                  weapons={weapons}
+                  mods={mods}
+                  bab={calculateTotalBAB(levels).total}
+                  conditionAttackPenalty={conditionPenalties.attack ?? 0}
+                  onAdd={addWeapon}
+                  onRemove={removeWeapon}
+                  onUpdate={updateWeapon}
+                  onBlur={persistLocal}
+                />
               </PanelSection>
             </div>
           )}

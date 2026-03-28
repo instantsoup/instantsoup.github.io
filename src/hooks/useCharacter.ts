@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+
+import { computeConditionPenalties } from '../lib/conditions';
 import { type Character, VERSION } from '../schema/schema';
 import { loadLocal } from '../store/local';
 import { useCharacterCombat } from './useCharacterCombat';
@@ -15,10 +18,15 @@ export function useCharacter() {
   const initial = loadLocal();
 
   const identity = useCharacterIdentity(initial);
-  const scoring = useCharacterScores(initial);
+  // extras must be initialized before scoring so abilityDamage/conditionPenalties can flow into mods
+  const extras = useCharacterExtras(initial);
+  const conditionPenalties = useMemo(
+    () => computeConditionPenalties(extras.statusEffects),
+    [extras.statusEffects],
+  );
+  const scoring = useCharacterScores(initial, extras.abilityDamage, conditionPenalties);
   const leveling = useCharacterLevels(initial, scoring.mods.int);
   const combat = useCharacterCombat(initial);
-  const extras = useCharacterExtras(initial);
 
   const getCurrent = (): Character => ({
     version: VERSION,
@@ -34,6 +42,10 @@ export function useCharacter() {
     taint: extras.taint,
     customResources: extras.customResources,
     notes: extras.notes || undefined,
+    statusEffects: extras.statusEffects,
+    abilityDamage: extras.abilityDamage,
+    equipment: extras.equipment,
+    weapons: combat.weapons,
   });
 
   const loadAll = (char: Character) => {
@@ -67,6 +79,7 @@ export function useCharacter() {
     scores: scoring.scores,
     setScores: scoring.setScores,
     mods: scoring.mods,
+    effectiveScores: scoring.effectiveScores,
     onNum: scoring.onNum,
 
     // Levels
@@ -86,6 +99,7 @@ export function useCharacter() {
     updateSpellSlotsMax: combat.updateSpellSlotsMax,
     updateSpellSlotsUsed: combat.updateSpellSlotsUsed,
     resetSpellSlots: combat.resetSpellSlots,
+    setMovementType: combat.setMovementType,
     saveBonuses: combat.saveBonuses,
     setSaveBonus: combat.setSaveBonus,
 
@@ -108,6 +122,23 @@ export function useCharacter() {
     resetAllCustomResources: extras.resetAllCustomResources,
     notes: extras.notes,
     setNotes: extras.setNotes,
+    statusEffects: extras.statusEffects,
+    toggleStatusEffect: extras.toggleStatusEffect,
+    setStatusEffectRounds: extras.setStatusEffectRounds,
+    clearAllStatusEffects: extras.clearAllStatusEffects,
+    conditionPenalties,
+    abilityDamage: extras.abilityDamage,
+    setAbilityDamage: extras.setAbilityDamage,
+    equipment: extras.equipment,
+    addEquipment: extras.addEquipment,
+    removeEquipment: extras.removeEquipment,
+    toggleEquipped: extras.toggleEquipped,
+    setEquipmentNotes: extras.setEquipmentNotes,
+    setEquipmentWeight: extras.setEquipmentWeight,
+    weapons: combat.weapons,
+    addWeapon: combat.addWeapon,
+    removeWeapon: combat.removeWeapon,
+    updateWeapon: combat.updateWeapon,
 
     // Persistence
     error: persistence.error,
