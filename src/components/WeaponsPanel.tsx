@@ -56,7 +56,8 @@ function WeaponCard({
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<Weapon>(weapon);
 
-  const abilityMod = weapon.attackType === 'ranged' ? mods.dex : mods.str;
+  const abilityMod =
+    weapon.attackType === 'ranged' || weapon.attackType === 'ranged touch' ? mods.dex : mods.str;
   const damageMod = weapon.attackType === 'melee' ? mods.str : 0;
   const totalAttack = bab + abilityMod + weapon.attackBonus + conditionAttackPenalty;
   const attacks = getIterativeAttacks(totalAttack, bab);
@@ -88,6 +89,7 @@ function WeaponCard({
             <option value="melee">Melee</option>
             <option value="ranged">Ranged</option>
             <option value="touch">Touch</option>
+            <option value="ranged touch">Ranged Touch</option>
           </select>
         </div>
         <div className="weapon-card__edit-row">
@@ -151,7 +153,7 @@ function WeaponCard({
               placeholder="e.g. slashing"
             />
           </label>
-          {draft.attackType === 'ranged' && (
+          {(draft.attackType === 'ranged' || draft.attackType === 'ranged touch') && (
             <label className="weapon-card__edit-label">
               Range (ft)
               <input
@@ -377,7 +379,7 @@ export function WeaponsPanel({
                     placeholder="e.g. slashing"
                   />
                 </label>
-                {draft.attackType === 'ranged' && (
+                {(draft.attackType === 'ranged' || draft.attackType === 'ranged touch') && (
                   <label className="weapon-card__edit-label">
                     Range (ft)
                     <input

@@ -127,10 +127,11 @@ export function PlaySheet({
 
   const armorBonus = combatStats.armorBonus ?? 0;
   const shieldBonus = combatStats.shieldBonus ?? 0;
+  const naturalArmorBonus = combatStats.naturalArmorBonus ?? 0;
   const miscACBonus = combatStats.miscACBonus ?? 0;
   const rawDexToAC = loseDex ? 0 : Math.min(mods.dex, encMaxDex);
   const dexToAC = rawDexToAC;
-  const totalAC = 10 + dexToAC + armorBonus + shieldBonus + miscACBonus + condAC;
+  const totalAC = 10 + dexToAC + armorBonus + shieldBonus + naturalArmorBonus + miscACBonus + condAC;
   const acTooltip = [
     '10 base',
     loseDex
@@ -140,8 +141,37 @@ export function PlaySheet({
         : `DEX: ${fmt(mods.dex)}`,
     armorBonus !== 0 ? `Armor: +${armorBonus}` : null,
     shieldBonus !== 0 ? `Shield: +${shieldBonus}` : null,
+    naturalArmorBonus !== 0 ? `Natural: +${naturalArmorBonus}` : null,
     miscACBonus !== 0 ? `Misc: +${miscACBonus}` : null,
     condAC !== 0 ? `Conditions: ${condAC}` : null,
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const touchAC = 10 + dexToAC + miscACBonus + condAC;
+  const touchACTooltip = [
+    '10 base',
+    loseDex
+      ? 'DEX: +0 (condition)'
+      : encMaxDex < mods.dex
+        ? `DEX: +${encMaxDex} (enc. cap ${encMaxDex})`
+        : `DEX: ${fmt(mods.dex)}`,
+    miscACBonus !== 0 ? `Misc: +${miscACBonus}` : null,
+    condAC !== 0 ? `Conditions: ${condAC}` : null,
+    '(no armor/shield/natural)',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  const flatFootedAC = 10 + armorBonus + shieldBonus + naturalArmorBonus + miscACBonus + condAC;
+  const flatFootedACTooltip = [
+    '10 base',
+    armorBonus !== 0 ? `Armor: +${armorBonus}` : null,
+    shieldBonus !== 0 ? `Shield: +${shieldBonus}` : null,
+    naturalArmorBonus !== 0 ? `Natural: +${naturalArmorBonus}` : null,
+    miscACBonus !== 0 ? `Misc: +${miscACBonus}` : null,
+    condAC !== 0 ? `Conditions: ${condAC}` : null,
+    '(no DEX)',
   ]
     .filter(Boolean)
     .join('\n');
@@ -227,6 +257,14 @@ export function PlaySheet({
         <div className="play-sheet__stat" title={acTooltip}>
           <span className="play-sheet__stat-label">AC</span>
           <span className="play-sheet__stat-value">{totalAC}</span>
+        </div>
+        <div className="play-sheet__stat" title={touchACTooltip}>
+          <span className="play-sheet__stat-label">Touch</span>
+          <span className="play-sheet__stat-value">{touchAC}</span>
+        </div>
+        <div className="play-sheet__stat" title={flatFootedACTooltip}>
+          <span className="play-sheet__stat-label">FF AC</span>
+          <span className="play-sheet__stat-value">{flatFootedAC}</span>
         </div>
         <div className="play-sheet__stat" title={initTooltip}>
           <span className="play-sheet__stat-label">Init</span>

@@ -38,12 +38,13 @@ export function CombatStatsPanel({
   const babCalculation = calculateTotalBAB(levels);
   const calculatedBAB = babCalculation.total;
 
-  // Calculate total AC: 10 + DEX mod + armor bonus + shield bonus + misc
+  // Calculate total AC: 10 + DEX mod + armor bonus + shield bonus + natural armor + misc
   const totalAC =
     10 +
     mods.dex +
     (combatStats.armorBonus ?? 0) +
     (combatStats.shieldBonus ?? 0) +
+    (combatStats.naturalArmorBonus ?? 0) +
     (combatStats.miscACBonus ?? 0);
 
   // Calculate total Initiative: DEX mod + bonus
@@ -91,6 +92,24 @@ export function CombatStatsPanel({
                     onChange={handleNumInput('shieldBonus')}
                     onBlur={onBlur}
                     placeholder="0"
+                  />
+                )}
+              </div>
+              <div className="combat-stat-breakdown__row">
+                <span className="combat-stat-breakdown__label">Natural:</span>
+                {readOnly ? (
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.naturalArmorBonus ?? 0}
+                  </span>
+                ) : (
+                  <input
+                    type="number"
+                    className="combat-stat-input combat-stat-input--small"
+                    value={combatStats.naturalArmorBonus ?? ''}
+                    onChange={handleNumInput('naturalArmorBonus')}
+                    onBlur={onBlur}
+                    placeholder="0"
+                    min="0"
                   />
                 )}
               </div>

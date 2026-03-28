@@ -50,6 +50,7 @@ export const CombatStatsSchema = z.object({
   movementSpeed: z.number().int().min(0).optional(),
   movementType: z.string().optional(),
   armorCheckPenalty: z.number().int().min(0).optional().default(0),
+  naturalArmorBonus: z.number().int().min(0).optional().default(0),
   stable: z.boolean().optional().default(false),
 });
 
@@ -102,7 +103,7 @@ export const WeaponSchema = z.object({
   damage: z.string().default('1d6'),
   critRange: z.number().int().min(1).max(20).default(20),
   critMult: z.number().int().min(2).max(4).default(2),
-  attackType: z.enum(['melee', 'ranged', 'touch']).default('melee'),
+  attackType: z.enum(['melee', 'ranged', 'touch', 'ranged touch']).default('melee'),
   attackBonus: z.number().int().default(0),
   damageBonus: z.number().int().default(0),
   damageType: z.string().optional(),
