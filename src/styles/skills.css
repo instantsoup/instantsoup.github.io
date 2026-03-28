@@ -267,3 +267,16 @@
     font-size: 0.7rem;
   }
 }
+
+.skill-item__misc {
+  width: 44px;
+  padding: 2px 4px;
+  border: 1px solid var(--clr-border);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 12px;
+  text-align: right;
+  background: transparent;
+  margin-left: 6px;
+  flex-shrink: 0;
+}

@@ -9,10 +9,22 @@ import type { Level } from '../types/level';
 interface SkillsPanelProps {
   mods: Scores;
   levels: Level[];
+  acp?: number;
+  miscBonuses?: Record<string, number>;
+  onSetMiscBonus?: (name: string, bonus: number) => void;
   readOnly?: boolean;
+  onBlur?: () => void;
 }
 
-export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
+export function SkillsPanel({
+  mods,
+  levels,
+  acp = 0,
+  miscBonuses = {},
+  onSetMiscBonus,
+  readOnly,
+  onBlur,
+}: SkillsPanelProps) {
   const [showUntrained, setShowUntrained] = useState(false);
 
   const cumulativeRanks = useMemo(() => calculateCumulativeSkillRanks(levels), [levels]);
@@ -62,14 +74,20 @@ export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
               const rawRanks = cumulativeRanks[skill.name] || 0;
               const ranks = Math.floor(rawRanks);
               const abilityMod = mods[skill.ability as keyof Scores] || 0;
-              const total = ranks + abilityMod;
+              const acpPenalty = skill.armorCheckPenalty ? acp : 0;
+              const misc = miscBonuses[skill.name] ?? 0;
+              const total = ranks + abilityMod - acpPenalty + misc;
               const totalDisplay = total >= 0 ? `+${total}` : `${total}`;
               const isClassSkill = classSkillsSet.has(skill.name);
               const ranksLabel = rawRanks !== ranks ? rawRanks.toFixed(1) : String(rawRanks);
               const tooltip = [
                 `${ranksLabel} ranks`,
                 `${abilityMod >= 0 ? '+' : ''}${abilityMod} ${skill.ability.toUpperCase()}`,
-              ].join('\n');
+                acpPenalty > 0 ? `ACP: −${acpPenalty}` : null,
+                misc !== 0 ? `Misc: ${misc >= 0 ? '+' : ''}${misc}` : null,
+              ]
+                .filter(Boolean)
+                .join('\n');
 
               return (
                 <div
@@ -108,6 +126,19 @@ export function SkillsPanel({ mods, levels, readOnly }: SkillsPanelProps) {
                       )}
                     </span>
                   </div>
+                  {onSetMiscBonus && (
+                    <input
+                      className="skill-item__misc"
+                      type="number"
+                      value={misc || ''}
+                      onChange={(e) =>
+                        onSetMiscBonus(skill.name, parseInt(e.target.value) || 0)
+                      }
+                      onBlur={onBlur}
+                      placeholder="0"
+                      title="Misc bonus"
+                    />
+                  )}
                 </div>
               );
             })}

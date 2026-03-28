@@ -58,3 +58,23 @@ export function getLoadCategory(totalWeight: number, str: number): LoadCategory 
   if (totalWeight <= heavy) return 'heavy';
   return 'overloaded';
 }
+
+// PHB: medium → max DEX +3, heavy/overloaded → max DEX +1, light → no cap
+export function getEncumbranceMaxDex(cat: LoadCategory): number {
+  if (cat === 'medium') return 3;
+  if (cat === 'heavy' || cat === 'overloaded') return 1;
+  return Infinity;
+}
+
+// PHB: medium → ACP 3, heavy/overloaded → ACP 6, light → 0 (positive magnitude)
+export function getEncumbranceACP(cat: LoadCategory): number {
+  if (cat === 'medium') return 3;
+  if (cat === 'heavy' || cat === 'overloaded') return 6;
+  return 0;
+}
+
+// PHB: medium/heavy → floor(base * 3/4 / 5) * 5, light/overloaded unchanged
+export function getEncumbranceSpeed(baseSpeed: number, cat: LoadCategory): number {
+  if (cat === 'light' || cat === 'overloaded') return baseSpeed;
+  return Math.floor((baseSpeed * 3) / 4 / 5) * 5;
+}

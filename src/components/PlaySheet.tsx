@@ -1,5 +1,11 @@
 import { alignments } from '../data/alignments';
 import type { ConditionPenalties } from '../data/conditions';
+import {
+  getEncumbranceACP,
+  getEncumbranceMaxDex,
+  getEncumbranceSpeed,
+  getLoadCategory,
+} from '../lib/encumbrance';
 import { calculateTotalBAB, calculateTotalSave } from '../lib/progressions';
 import type {
   AbilityDamage,
@@ -16,6 +22,7 @@ import { EquipmentPanel } from './EquipmentPanel';
 import { HPTracker } from './HPTracker';
 import { NotesPanel } from './NotesPanel';
 import { ResourceTracker } from './ResourceTracker';
+import { SkillsPanel } from './SkillsPanel';
 import { StatusEffectsPanel } from './StatusEffectsPanel';
 import { WeaponsPanel } from './WeaponsPanel';
 
@@ -54,6 +61,8 @@ type PlaySheetProps = {
   addWeapon: (w: Weapon) => void;
   removeWeapon: (index: number) => void;
   updateWeapon: (index: number, w: Weapon) => void;
+  skillMiscBonuses: Record<string, number>;
+  setSkillMiscBonus: (name: string, bonus: number) => void;
   notes: string;
   setNotes: (v: string) => void;
   onBlur: () => void;
@@ -94,6 +103,8 @@ export function PlaySheet({
   addWeapon,
   removeWeapon,
   updateWeapon,
+  skillMiscBonuses,
+  setSkillMiscBonus,
   notes,
   setNotes,
   onBlur,
@@ -109,14 +120,29 @@ export function PlaySheet({
   const condSave = conditionPenalties.save ?? 0;
   const loseDex = conditionPenalties.loseDexToAC ?? false;
 
+  // Encumbrance
+  const totalWeight = equipment.reduce((s, i) => s + (i.weight ?? 0), 0);
+  const loadCategory = getLoadCategory(totalWeight, effectiveScores.str);
+  const encMaxDex = getEncumbranceMaxDex(loadCategory);
+  const encACP = getEncumbranceACP(loadCategory);
+  const totalACP = (combatStats.armorCheckPenalty ?? 0) + encACP;
+  const baseSpeed = combatStats.movementSpeed ?? 30;
+  const effectiveSpeed = getEncumbranceSpeed(baseSpeed, loadCategory);
+  const speedEncumbered = loadCategory !== 'light' && loadCategory !== 'overloaded';
+
   const armorBonus = combatStats.armorBonus ?? 0;
   const shieldBonus = combatStats.shieldBonus ?? 0;
   const miscACBonus = combatStats.miscACBonus ?? 0;
-  const dexToAC = loseDex ? 0 : mods.dex;
+  const rawDexToAC = loseDex ? 0 : Math.min(mods.dex, encMaxDex);
+  const dexToAC = rawDexToAC;
   const totalAC = 10 + dexToAC + armorBonus + shieldBonus + miscACBonus + condAC;
   const acTooltip = [
     '10 base',
-    loseDex ? 'DEX: +0 (condition)' : `DEX: ${fmt(mods.dex)}`,
+    loseDex
+      ? 'DEX: +0 (condition)'
+      : encMaxDex < mods.dex
+        ? `DEX: +${encMaxDex} (enc. cap ${encMaxDex})`
+        : `DEX: ${fmt(mods.dex)}`,
     armorBonus !== 0 ? `Armor: +${armorBonus}` : null,
     shieldBonus !== 0 ? `Shield: +${shieldBonus}` : null,
     miscACBonus !== 0 ? `Misc: +${miscACBonus}` : null,
@@ -195,6 +221,7 @@ export function PlaySheet({
           mods={mods}
           combatStats={combatStats}
           levels={levels}
+          conScore={effectiveScores.con}
           updateCombatStat={updateCombatStat}
           onBlur={onBlur}
         />
@@ -220,11 +247,15 @@ export function PlaySheet({
             <span className="play-sheet__stat-value">{combatStats.spellResistance}</span>
           </div>
         )}
-        <div className="play-sheet__stat play-sheet__stat--wide">
+        <div
+          className="play-sheet__stat play-sheet__stat--wide"
+          title={speedEncumbered ? `Base: ${baseSpeed} ft. (enc. reduced)` : undefined}
+        >
           <span className="play-sheet__stat-label">Move</span>
           <span className="play-sheet__stat-value play-sheet__stat-value--movement">
-            {combatStats.movementSpeed ?? 30} ft.
+            {speedEncumbered ? effectiveSpeed : baseSpeed} ft.
             {combatStats.movementType ? ` (${combatStats.movementType})` : ''}
+            {speedEncumbered ? ' *' : ''}
           </span>
         </div>
       </div>
@@ -315,6 +346,22 @@ export function PlaySheet({
           onBlur={onBlur}
         />
       </div>
+
+      {/* Skills */}
+      {levels.length > 0 && (
+        <div className="play-sheet__section">
+          <div className="play-sheet__section-label">Skills</div>
+          <SkillsPanel
+            mods={mods}
+            levels={levels}
+            acp={totalACP}
+            miscBonuses={skillMiscBonuses}
+            onSetMiscBonus={setSkillMiscBonus}
+            onBlur={onBlur}
+            readOnly
+          />
+        </div>
+      )}
 
       {/* Notes */}
       <div className="play-sheet__section">

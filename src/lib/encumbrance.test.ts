@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  getEncumbranceACP,
+  getEncumbranceMaxDex,
+  getEncumbranceSpeed,
   getHeavyLoad,
   getLightLoad,
   getLoadCategory,
@@ -68,5 +71,64 @@ describe('getLoadCategory', () => {
   it('returns overloaded when weight > heavy limit', () => {
     expect(getLoadCategory(101, 10)).toBe('overloaded');
     expect(getLoadCategory(9999, 10)).toBe('overloaded');
+  });
+});
+
+describe('getEncumbranceMaxDex', () => {
+  it('returns Infinity for light load', () => {
+    expect(getEncumbranceMaxDex('light')).toBe(Infinity);
+  });
+
+  it('returns 3 for medium load', () => {
+    expect(getEncumbranceMaxDex('medium')).toBe(3);
+  });
+
+  it('returns 1 for heavy load', () => {
+    expect(getEncumbranceMaxDex('heavy')).toBe(1);
+  });
+
+  it('returns 1 for overloaded', () => {
+    expect(getEncumbranceMaxDex('overloaded')).toBe(1);
+  });
+});
+
+describe('getEncumbranceACP', () => {
+  it('returns 0 for light load', () => {
+    expect(getEncumbranceACP('light')).toBe(0);
+  });
+
+  it('returns 3 for medium load', () => {
+    expect(getEncumbranceACP('medium')).toBe(3);
+  });
+
+  it('returns 6 for heavy load', () => {
+    expect(getEncumbranceACP('heavy')).toBe(6);
+  });
+
+  it('returns 6 for overloaded', () => {
+    expect(getEncumbranceACP('overloaded')).toBe(6);
+  });
+});
+
+describe('getEncumbranceSpeed', () => {
+  it('returns base speed unchanged for light load', () => {
+    expect(getEncumbranceSpeed(30, 'light')).toBe(30);
+  });
+
+  it('returns base speed unchanged for overloaded (can barely move)', () => {
+    expect(getEncumbranceSpeed(30, 'overloaded')).toBe(30);
+  });
+
+  it('returns floor(30 * 3/4 / 5) * 5 = 20 for medium load with base 30', () => {
+    expect(getEncumbranceSpeed(30, 'medium')).toBe(20);
+  });
+
+  it('returns floor(20 * 3/4 / 5) * 5 = 15 for medium load with base 20', () => {
+    expect(getEncumbranceSpeed(20, 'medium')).toBe(15);
+  });
+
+  it('applies same reduction for heavy load', () => {
+    expect(getEncumbranceSpeed(30, 'heavy')).toBe(20);
+    expect(getEncumbranceSpeed(20, 'heavy')).toBe(15);
   });
 });

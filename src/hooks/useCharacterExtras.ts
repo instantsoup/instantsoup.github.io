@@ -9,6 +9,8 @@ import type {
   Taint,
 } from '../schema/schema';
 
+type SkillMiscBonuses = Record<string, number>;
+
 export function useCharacterExtras(initial: Character) {
   const [flaws, setFlaws] = useState<string[]>(initial.flaws ?? []);
   const [languages, setLanguages] = useState<string[]>(initial.languages ?? []);
@@ -24,6 +26,9 @@ export function useCharacterExtras(initial: Character) {
     initial.abilityDamage ?? {},
   );
   const [equipment, setEquipment] = useState<EquipmentItem[]>(initial.equipment ?? []);
+  const [skillMiscBonuses, setSkillMiscBonusesState] = useState<SkillMiscBonuses>(
+    initial.skillMiscBonuses ?? {},
+  );
 
   // Flaws
   const addFlaw = (flawName: string) =>
@@ -109,6 +114,13 @@ export function useCharacterExtras(initial: Character) {
       prev.map((item, i) => (i === index ? { ...item, weight: Math.max(0, weight) } : item)),
     );
 
+  const setSkillMiscBonus = (name: string, bonus: number) =>
+    setSkillMiscBonusesState((prev) =>
+      bonus === 0
+        ? Object.fromEntries(Object.entries(prev).filter(([k]) => k !== name))
+        : { ...prev, [name]: bonus },
+    );
+
   const loadFrom = (char: Character) => {
     setFlaws(char.flaws ?? []);
     setLanguages(char.languages ?? []);
@@ -118,6 +130,7 @@ export function useCharacterExtras(initial: Character) {
     setStatusEffects(char.statusEffects ?? {});
     setAbilityDamageState(char.abilityDamage ?? {});
     setEquipment(char.equipment ?? []);
+    setSkillMiscBonusesState(char.skillMiscBonuses ?? {});
   };
 
   const reset = () => {
@@ -129,6 +142,7 @@ export function useCharacterExtras(initial: Character) {
     setStatusEffects({});
     setAbilityDamageState({});
     setEquipment([]);
+    setSkillMiscBonusesState({});
   };
 
   return {
@@ -162,6 +176,8 @@ export function useCharacterExtras(initial: Character) {
     toggleEquipped,
     setEquipmentNotes,
     setEquipmentWeight,
+    skillMiscBonuses,
+    setSkillMiscBonus,
     loadFrom,
     reset,
   };

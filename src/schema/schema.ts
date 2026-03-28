@@ -49,6 +49,8 @@ export const CombatStatsSchema = z.object({
   spellSlotsUsed: z.record(z.string(), z.number().int().min(0)).optional().default({}),
   movementSpeed: z.number().int().min(0).optional(),
   movementType: z.string().optional(),
+  armorCheckPenalty: z.number().int().min(0).optional().default(0),
+  stable: z.boolean().optional().default(false),
 });
 
 export type CombatStats = z.infer<typeof CombatStatsSchema>;
@@ -104,6 +106,7 @@ export const WeaponSchema = z.object({
   attackBonus: z.number().int().default(0),
   damageBonus: z.number().int().default(0),
   damageType: z.string().optional(),
+  rangeIncrement: z.number().int().min(5).optional(),
 });
 
 export type Weapon = z.infer<typeof WeaponSchema>;
@@ -126,6 +129,7 @@ export const CharacterSchema = z.object({
   abilityDamage: AbilityDamageSchema.optional().default({}),
   equipment: z.array(EquipmentItemSchema).optional().default([]),
   weapons: z.array(WeaponSchema).optional().default([]),
+  skillMiscBonuses: z.record(z.string(), z.number().int()).optional().default({}),
 });
 
 export type Character = z.infer<typeof CharacterSchema>;

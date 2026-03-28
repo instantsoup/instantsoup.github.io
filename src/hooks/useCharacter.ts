@@ -46,6 +46,7 @@ export function useCharacter() {
     abilityDamage: extras.abilityDamage,
     equipment: extras.equipment,
     weapons: combat.weapons,
+    skillMiscBonuses: extras.skillMiscBonuses,
   });
 
   const loadAll = (char: Character) => {
@@ -135,6 +136,8 @@ export function useCharacter() {
     toggleEquipped: extras.toggleEquipped,
     setEquipmentNotes: extras.setEquipmentNotes,
     setEquipmentWeight: extras.setEquipmentWeight,
+    skillMiscBonuses: extras.skillMiscBonuses,
+    setSkillMiscBonus: extras.setSkillMiscBonus,
     weapons: combat.weapons,
     addWeapon: combat.addWeapon,
     removeWeapon: combat.removeWeapon,

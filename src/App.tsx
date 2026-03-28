@@ -84,6 +84,8 @@ export function App() {
     toggleEquipped,
     setEquipmentNotes,
     setEquipmentWeight,
+    skillMiscBonuses,
+    setSkillMiscBonus,
     weapons,
     addWeapon,
     removeWeapon,
@@ -160,6 +162,8 @@ export function App() {
                 setEquipmentNotes={setEquipmentNotes}
                 setEquipmentWeight={setEquipmentWeight}
                 str={scores.str}
+                skillMiscBonuses={skillMiscBonuses}
+                setSkillMiscBonus={setSkillMiscBonus}
                 weapons={weapons}
                 addWeapon={addWeapon}
                 removeWeapon={removeWeapon}
@@ -310,7 +314,19 @@ export function App() {
           {/* ── SKILLS (play mode only) ──────────────── */}
           {tab === 'skills' && (
             <div className="tab-content">
-              <SkillsPanel mods={mods} levels={levels} readOnly={true} />
+              <SkillsPanel
+                mods={mods}
+                levels={levels}
+                acp={(() => {
+                  const tw = equipment.reduce((s, i) => s + (i.weight ?? 0), 0);
+                  const cat = getLoadCategory(tw, scores.str);
+                  return (combatStats.armorCheckPenalty ?? 0) + getEncumbranceACP(cat);
+                })()}
+                miscBonuses={skillMiscBonuses}
+                onSetMiscBonus={setSkillMiscBonus}
+                onBlur={persistLocal}
+                readOnly
+              />
             </div>
           )}
 

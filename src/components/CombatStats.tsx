@@ -118,6 +118,27 @@ export function CombatStatsPanel({
                   />
                 )}
               </div>
+              <div className="combat-stat-breakdown__row">
+                <span className="combat-stat-breakdown__label">ACP:</span>
+                {readOnly ? (
+                  <span className="combat-stat-breakdown__value">
+                    {combatStats.armorCheckPenalty
+                      ? `−${combatStats.armorCheckPenalty}`
+                      : '0'}
+                  </span>
+                ) : (
+                  <input
+                    type="number"
+                    className="combat-stat-input combat-stat-input--small"
+                    value={combatStats.armorCheckPenalty ?? ''}
+                    onChange={handleNumInput('armorCheckPenalty')}
+                    onBlur={onBlur}
+                    placeholder="0"
+                    min="0"
+                    title="Armor check penalty from armor and shield"
+                  />
+                )}
+              </div>
             </div>
           </div>
         </div>

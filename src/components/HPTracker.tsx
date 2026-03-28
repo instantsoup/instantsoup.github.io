@@ -9,22 +9,32 @@ type HPTrackerProps = {
   mods: Scores;
   combatStats: CombatStats;
   levels: Level[];
+  conScore: number;
   updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
   onBlur: () => void;
 };
 
-export function HPTracker({ mods, combatStats, levels, updateCombatStat, onBlur }: HPTrackerProps) {
+export function HPTracker({
+  mods,
+  combatStats,
+  levels,
+  conScore,
+  updateCombatStat,
+  onBlur,
+}: HPTrackerProps) {
   const [delta, setDelta] = useState('');
 
   const currentHP = combatStats.currentHP ?? 0;
   const maxHP = combatStats.maxHP ?? 0;
   const tempHP = combatStats.tempHP ?? 0;
+  const isStable = combatStats.stable ?? false;
 
   const maxHPCalc = calculateMaxHP(levels, mods.con);
   const calculatedMax = maxHPCalc.total;
 
-  const isBloodied = maxHP > 0 && currentHP <= Math.floor(maxHP / 2);
-  const isDying = currentHP <= 0;
+  const isBloodied = maxHP > 0 && currentHP <= Math.floor(maxHP / 2) && currentHP > 0;
+  const isDead = maxHP > 0 && currentHP < -conScore;
+  const isDying = !isDead && currentHP <= 0;
 
   const applyDamage = () => {
     const amount = parseInt(delta, 10);
@@ -37,7 +47,11 @@ export function HPTracker({ mods, combatStats, levels, updateCombatStat, onBlur 
   const applyHeal = () => {
     const amount = parseInt(delta, 10);
     if (!Number.isFinite(amount) || amount <= 0) return;
-    updateCombatStat('currentHP', Math.min(currentHP + amount, maxHP));
+    const newHP = Math.min(currentHP + amount, maxHP);
+    updateCombatStat('currentHP', newHP);
+    if (newHP > 0 && isStable) {
+      updateCombatStat('stable', false as unknown as number);
+    }
     onBlur();
     setDelta('');
   };
@@ -56,11 +70,13 @@ export function HPTracker({ mods, combatStats, levels, updateCombatStat, onBlur 
     if (e.key === 'Enter') action();
   };
 
-  const hpClass = isDying
-    ? 'hp-display hp-display--dying'
-    : isBloodied
-      ? 'hp-display hp-display--bloodied'
-      : 'hp-display';
+  const hpClass = isDead
+    ? 'hp-display hp-display--dead'
+    : isDying
+      ? 'hp-display hp-display--dying'
+      : isBloodied
+        ? 'hp-display hp-display--bloodied'
+        : 'hp-display';
 
   return (
     <div className="hp-tracker">
@@ -92,9 +108,41 @@ export function HPTracker({ mods, combatStats, levels, updateCombatStat, onBlur 
           min={0}
           title="Max HP"
         />
-        {isDying && <span className="hp-display__status">DYING</span>}
-        {isBloodied && !isDying && <span className="hp-display__status">BLOODIED</span>}
+        {isDead && <span className="hp-display__status hp-display__status--dead">DEAD</span>}
+        {isDying && !isStable && (
+          <span className="hp-display__status">DYING</span>
+        )}
+        {isDying && isStable && (
+          <span className="hp-display__status hp-display__status--stable">STABLE</span>
+        )}
+        {isBloodied && <span className="hp-display__status">BLOODIED</span>}
       </div>
+
+      {isDying && !isDead && (
+        <div className="hp-tracker__stable-row">
+          {isStable ? (
+            <button
+              className="btn btn--xs btn--ghost"
+              onClick={() => {
+                updateCombatStat('stable', false as unknown as number);
+                onBlur();
+              }}
+            >
+              Unstabilize
+            </button>
+          ) : (
+            <button
+              className="btn btn--xs btn--success"
+              onClick={() => {
+                updateCombatStat('stable', true as unknown as number);
+                onBlur();
+              }}
+            >
+              Stabilize
+            </button>
+          )}
+        </div>
+      )}
 
       {tempHP > 0 && <div className="hp-tracker__temp">+{tempHP} temp HP</div>}
 
@@ -107,11 +155,12 @@ export function HPTracker({ mods, combatStats, levels, updateCombatStat, onBlur 
           onKeyDown={(e) => handleKeyDown(e, applyDamage)}
           placeholder="Amount"
           min={1}
+          disabled={isDead}
         />
-        <button className="btn btn--sm btn--danger" onClick={applyDamage}>
+        <button className="btn btn--sm btn--danger" onClick={applyDamage} disabled={isDead}>
           Damage
         </button>
-        <button className="btn btn--sm btn--success" onClick={applyHeal}>
+        <button className="btn btn--sm btn--success" onClick={applyHeal} disabled={isDead}>
           Heal
         </button>
       </div>
