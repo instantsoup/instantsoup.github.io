@@ -30,7 +30,8 @@ Used when leveling up, starting a character, or making changes to the character'
 - Saving throws: base bonus inputs (auto-calculated from class progressions)
 - Spell slot maximums per level
 - Feats summary, Known spells summary
-- Weapons: add/edit/remove weapons (name, damage die, crit range/mult, attack type, bonuses, damage type)
+- Weapons: add/edit/remove weapons (name, damage die, crit range/mult, attack type, bonuses, damage type, range increment for ranged weapons)
+- Armor Check Penalty: ACP input stacks with encumbrance ACP and applies to flagged skills
 
 ### Play Mode
 
@@ -39,7 +40,9 @@ Used at the table. Everything is read-only except session-state elements.
 **Character tab** — compact play sheet:
 
 - Identity line (name · race · alignment)
-- HP tracker (current/temp/max with damage input)
+- HP tracker (current/temp/max with damage/heal input)
+  - BLOODIED at ≤½ max HP; DYING at ≤0; DEAD at < −CON score
+  - Stabilize/Unstabilize toggle when dying; stable flag auto-clears on heal above 0
 - Stat cards: AC, Initiative, BAB, SR, Movement — each with hover tooltip showing breakdown
 - Save cards: Fort, Ref, Will — each with hover tooltip showing breakdown
 - Conditions (status effects): toggle active conditions; penalties flow into all derived stats automatically
@@ -52,10 +55,13 @@ Used at the table. Everything is read-only except session-state elements.
   - STR mod on melee attack and damage; DEX mod on ranged attack
   - Condition attack penalty applied automatically
   - Crit string (`19–20/×2`, `20/×3`, etc.)
-  - Hover tooltip shows BAB + ability mod + weapon bonus + condition penalty breakdown
+  - Range increment displayed for ranged weapons (e.g. `30 ft.`)
+  - Hover tooltip shows BAB + ability mod + weapon bonus + condition penalty + range breakdown
 - Equipment: item list with equipped checkbox, weight input, and notes
   - Total carried weight displayed with PHB Table 9-1 load category badge (Light/Medium/Heavy/Overloaded)
   - Light/Medium/Heavy load limits shown, calculated from effective STR score
+  - Medium/heavy load reduces max DEX to AC (+3/+1) and movement speed (×3/4 rounded to 5 ft.)
+  - Encumbrance ACP (3 for medium, 6 for heavy) stacks with armor ACP and applies to flagged skills
 - Custom resources: tracked pools (spell slots, ki points, lay on hands, etc.)
 - Notes (editable in both modes)
 
@@ -64,8 +70,10 @@ Used at the table. Everything is read-only except session-state elements.
 - Alphabetical, flat list of all 43 D&D 3.5e skills
 - Default view: all usable skills (cross-class skills + trained-only skills with ranks)
 - "Show trained-only skills without ranks" checkbox to reveal hidden skills
-- Each skill shows total modifier with hover tooltip: `3 ranks\n+2 DEX`
+- Each skill shows total modifier with hover tooltip: `3 ranks\n+2 DEX\nACP: −3\nMisc: +2`
+- Per-skill misc bonus input (always editable, not gated by readOnly)
 - C badge = class skill, T badge = trained only, ACP badge = armor check penalty
+- ACP applies to flagged skills: total = ranks + ability mod − ACP + misc
 
 **Spells tab**:
 
@@ -111,15 +119,15 @@ Used by: `calculateTotalBAB`, `calculateTotalSave`, `calculateMaxHP`.
 
 ### Hover-Revealed Breakdown Sources
 
-| Value         | Tooltip content                                                          |
-| ------------- | ------------------------------------------------------------------------ |
-| BAB           | `Fighter 3: +3\nRogue 2: +1` (from `calculateTotalBAB`)                 |
-| Fort/Ref/Will | class components + ability mod + misc bonus + conditions                 |
-| AC            | `10 base\nDEX: +2\nArmor: +4\nShield: +2\nConditions: −2`              |
-| Init          | `DEX: +2\nMisc: +1\nConditions: −4`                                     |
-| HP            | hit die per level + CON mod (from `calculateMaxHP`)                      |
-| Skill total   | `3 ranks\n+2 DEX`                                                        |
-| Weapon attack | `BAB +5, ability +3, bonus +1, conditions −2`                            |
+| Value         | Tooltip content                                           |
+| ------------- | --------------------------------------------------------- |
+| BAB           | `Fighter 3: +3\nRogue 2: +1` (from `calculateTotalBAB`)   |
+| Fort/Ref/Will | class components + ability mod + misc bonus + conditions  |
+| AC            | `10 base\nDEX: +2\nArmor: +4\nShield: +2\nConditions: −2` |
+| Init          | `DEX: +2\nMisc: +1\nConditions: −4`                       |
+| HP            | hit die per level + CON mod (from `calculateMaxHP`)       |
+| Skill total   | `3 ranks\n+2 DEX`                                         |
+| Weapon attack | `BAB +5, ability +3, bonus +1, conditions −2`             |
 
 ### Condition Penalties Flow
 
@@ -181,14 +189,14 @@ Mode toggle button lives in `TabNav` (right-aligned pill). Always routes to `'ch
 
 `useCharacter` composes domain-specific hooks:
 
-| Hook                      | Owns                                                                       |
-| ------------------------- | -------------------------------------------------------------------------- |
-| `useCharacterIdentity`    | name, race, alignment, flaws, languages                                    |
-| `useCharacterScores`      | ability scores, effective scores (−abilityDamage −condPen), mods           |
-| `useCharacterLevels`      | levels array, feats, spells, skill ranks                                   |
-| `useCharacterCombat`      | HP, AC components, saves, spell slots, weapons                             |
-| `useCharacterExtras`      | taint, custom resources, notes, status effects, ability damage, equipment  |
-| `useCharacterPersistence` | localStorage save/load, JSON import/export                                 |
+| Hook                      | Owns                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------- |
+| `useCharacterIdentity`    | name, race, alignment, flaws, languages                                                     |
+| `useCharacterScores`      | ability scores, effective scores (−abilityDamage −condPen), mods                            |
+| `useCharacterLevels`      | levels array, feats, spells, skill ranks                                                    |
+| `useCharacterCombat`      | HP, AC components, saves, spell slots, weapons                                              |
+| `useCharacterExtras`      | taint, custom resources, notes, status effects, ability damage, equipment, skillMiscBonuses |
+| `useCharacterPersistence` | localStorage save/load, JSON import/export                                                  |
 
 `conditionPenalties` is computed via `useMemo` in `useCharacter.ts` from `extras.statusEffects` using `computeConditionPenalties()`, then passed into `useCharacterScores`.
 
@@ -206,6 +214,9 @@ getHeavyLoad(str)                      → number (lbs)
 getLightLoad(str)                      → number
 getMediumLoad(str)                     → number
 getLoadCategory(weight, str)           → 'light' | 'medium' | 'heavy' | 'overloaded'
+getEncumbranceMaxDex(cat)              → Infinity | 3 | 1
+getEncumbranceACP(cat)                 → 0 | 3 | 6
+getEncumbranceSpeed(baseSpeed, cat)    → number (PHB ×3/4 rounded to 5 ft)
 
 // conditions.ts
 computeConditionPenalties(statusEffects) → ConditionPenalties
@@ -325,7 +336,7 @@ src/
 ## Testing
 
 - **Vitest** with v8 coverage
-- **206 tests**, all passing
+- **247 tests**, all passing
 - Tests co-located with source: `foo.ts` → `foo.test.ts`
 - All `src/data/*.ts` modules have test coverage
 - Coverage: ~97% statements, ~94% branches on covered files

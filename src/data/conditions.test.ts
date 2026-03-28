@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { CONDITIONS } from './conditions';
 import type { Condition } from './conditions';
+import { CONDITIONS } from './conditions';
 
 describe('CONDITIONS', () => {
   it('exports a non-empty array', () => {
@@ -22,7 +22,12 @@ describe('CONDITIONS', () => {
 
   it('penalty values are negative numbers when present', () => {
     const numericFields: Array<keyof Omit<Condition['penalties'] & object, 'loseDexToAC'>> = [
-      'str', 'dex', 'attack', 'save', 'ac', 'initiative',
+      'str',
+      'dex',
+      'attack',
+      'save',
+      'ac',
+      'initiative',
     ];
     for (const c of CONDITIONS) {
       if (!c.penalties) continue;
@@ -39,8 +44,16 @@ describe('CONDITIONS', () => {
   it('known conditions are present', () => {
     const names = CONDITIONS.map((c) => c.name);
     for (const expected of [
-      'Blinded', 'Exhausted', 'Fatigued', 'Shaken', 'Stunned',
-      'Deafened', 'Entangled', 'Grappled', 'Prone', 'Frightened',
+      'Blinded',
+      'Exhausted',
+      'Fatigued',
+      'Shaken',
+      'Stunned',
+      'Deafened',
+      'Entangled',
+      'Grappled',
+      'Prone',
+      'Frightened',
     ]) {
       expect(names, `missing condition: ${expected}`).toContain(expected);
     }

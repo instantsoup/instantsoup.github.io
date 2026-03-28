@@ -151,6 +151,20 @@ function WeaponCard({
               placeholder="e.g. slashing"
             />
           </label>
+          {draft.attackType === 'ranged' && (
+            <label className="weapon-card__edit-label">
+              Range (ft)
+              <input
+                className="weapon-card__edit-input weapon-card__edit-num"
+                type="number"
+                min="5"
+                step="5"
+                value={draft.rangeIncrement ?? ''}
+                onChange={(e) => set('rangeIncrement', parseInt(e.target.value) || undefined)}
+                placeholder="—"
+              />
+            </label>
+          )}
         </div>
         <div className="weapon-card__edit-actions">
           <button
@@ -208,7 +222,7 @@ function WeaponCard({
       <div className="weapon-card__stats">
         <span
           className="weapon-card__attack-line"
-          title={`BAB ${bab >= 0 ? '+' : ''}${bab}, ability ${abilityMod >= 0 ? '+' : ''}${abilityMod}, bonus ${weapon.attackBonus >= 0 ? '+' : ''}${weapon.attackBonus}${conditionAttackPenalty !== 0 ? `, conditions ${conditionAttackPenalty}` : ''}`}
+          title={`BAB ${bab >= 0 ? '+' : ''}${bab}, ability ${abilityMod >= 0 ? '+' : ''}${abilityMod}, bonus ${weapon.attackBonus >= 0 ? '+' : ''}${weapon.attackBonus}${conditionAttackPenalty !== 0 ? `, conditions ${conditionAttackPenalty}` : ''}${weapon.rangeIncrement ? `\nRange: ${weapon.rangeIncrement} ft. per increment` : ''}`}
         >
           {formatAttacks(attacks)}
         </span>
@@ -218,6 +232,9 @@ function WeaponCard({
           {weapon.damageType ? ` ${weapon.damageType}` : ''}
         </span>
         <span className="weapon-card__crit">{formatCrit(weapon.critRange, weapon.critMult)}</span>
+        {weapon.rangeIncrement && (
+          <span className="weapon-card__range">{weapon.rangeIncrement} ft.</span>
+        )}
       </div>
     </div>
   );
@@ -360,6 +377,20 @@ export function WeaponsPanel({
                     placeholder="e.g. slashing"
                   />
                 </label>
+                {draft.attackType === 'ranged' && (
+                  <label className="weapon-card__edit-label">
+                    Range (ft)
+                    <input
+                      className="weapon-card__edit-input weapon-card__edit-num"
+                      type="number"
+                      min="5"
+                      step="5"
+                      value={draft.rangeIncrement ?? ''}
+                      onChange={(e) => set('rangeIncrement', parseInt(e.target.value) || undefined)}
+                      placeholder="—"
+                    />
+                  </label>
+                )}
               </div>
               <div className="weapon-card__edit-actions">
                 <button

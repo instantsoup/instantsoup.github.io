@@ -16,7 +16,7 @@ Persistence: localStorage (`v0-char` key) + JSON import/export only.
 ```bash
 npm run dev                # dev server
 npm run build              # production build → /dist
-npm run test               # run all tests (206 tests, all passing)
+npm run test               # run all tests (247 tests, all passing)
 npm run test:watch         # watch mode
 npm run test:coverage      # v8 coverage report
 npm run lint               # ESLint check
@@ -50,14 +50,14 @@ Mode toggle button is in `TabNav` (right-aligned pill). Always lands on `'charac
 
 `useCharacter` composes these domain hooks:
 
-| Hook                      | Owns                                                            |
-| ------------------------- | --------------------------------------------------------------- |
-| `useCharacterIdentity`    | name, race, alignment, flaws, languages                        |
-| `useCharacterScores`      | ability scores, effective scores (−abilityDamage −condPen), mods |
-| `useCharacterLevels`      | levels, feats, spells, skill ranks                              |
-| `useCharacterCombat`      | HP, AC components, saves, spell slots, weapons                  |
-| `useCharacterExtras`      | taint, custom resources, notes, status effects, ability damage, equipment |
-| `useCharacterPersistence` | localStorage, JSON import/export                                |
+| Hook                      | Owns                                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------------- |
+| `useCharacterIdentity`    | name, race, alignment, flaws, languages                                                     |
+| `useCharacterScores`      | ability scores, effective scores (−abilityDamage −condPen), mods                            |
+| `useCharacterLevels`      | levels, feats, spells, skill ranks                                                          |
+| `useCharacterCombat`      | HP, AC components, saves, spell slots, weapons                                              |
+| `useCharacterExtras`      | taint, custom resources, notes, status effects, ability damage, equipment, skillMiscBonuses |
+| `useCharacterPersistence` | localStorage, JSON import/export                                                            |
 
 `conditionPenalties` is computed via `useMemo` in `useCharacter` from `extras.statusEffects` using `computeConditionPenalties()` in `src/lib/conditions.ts`, then passed into `useCharacterScores` so STR/DEX penalties propagate automatically into all derived stats.
 
@@ -94,6 +94,9 @@ calculateCumulativeSkillRanks(levels)  → Record<skillName, ranks>
 getHeavyLoad(str)                            → number (lbs)
 getLightLoad(str) / getMediumLoad(str)       → number
 getLoadCategory(totalWeight, str)            → 'light' | 'medium' | 'heavy' | 'overloaded'
+getEncumbranceMaxDex(cat)                    → Infinity | 3 | 1  (DEX cap for AC)
+getEncumbranceACP(cat)                       → 0 | 3 | 6         (extra ACP from load)
+getEncumbranceSpeed(baseSpeed, cat)          → reduced speed (PHB ×3/4, rounded to 5 ft)
 ```
 
 ---
@@ -125,15 +128,15 @@ const tooltip = [
 
 Standard tooltip content per value:
 
-| Value         | Sources                                                     |
-| ------------- | ----------------------------------------------------------- |
-| BAB           | `calculateTotalBAB(levels).components`                      |
-| Fort/Ref/Will | `calculateTotalSave` components + ability mod + misc + cond |
+| Value         | Sources                                                          |
+| ------------- | ---------------------------------------------------------------- |
+| BAB           | `calculateTotalBAB(levels).components`                           |
+| Fort/Ref/Will | `calculateTotalSave` components + ability mod + misc + cond      |
 | AC            | `10 base`, DEX mod (0 if loseDexToAC), armor, shield, misc, cond |
-| Init          | DEX mod + misc bonus + cond                                 |
-| HP            | `calculateMaxHP` components                                 |
-| Skill total   | `N ranks\n+M ABILITY`                                       |
-| Weapon attack | `BAB ±N, ability ±N, bonus ±N, conditions ±N`              |
+| Init          | DEX mod + misc bonus + cond                                      |
+| HP            | `calculateMaxHP` components                                      |
+| Skill total   | `N ranks\n+M ABILITY`                                            |
+| Weapon attack | `BAB ±N, ability ±N, bonus ±N, conditions ±N`                    |
 
 Add `cursor: help` on the container when a tooltip is present.
 
@@ -192,22 +195,22 @@ New fields: use `.optional().default(value)` for backward compatibility. Existin
 
 ## Key Files
 
-| File                               | Purpose                                       |
-| ---------------------------------- | --------------------------------------------- |
-| `src/App.tsx`                      | Mode/tab routing, all prop wiring             |
-| `src/components/PlaySheet.tsx`     | Compact play mode character tab               |
-| `src/components/WeaponsPanel.tsx`  | Weapon CRUD (build) and attack cards (play)   |
-| `src/components/EquipmentPanel.tsx`| Equipment list with weight/encumbrance        |
-| `src/components/SkillsPanel.tsx`   | Skills list (build + play, readOnly)          |
-| `src/components/TabNav.tsx`        | Mode-aware tab nav with mode toggle button    |
-| `src/lib/progressions.ts`          | BAB, saves, HP, skill rank calculations       |
-| `src/lib/encumbrance.ts`           | PHB Table 9-1 load limits by STR              |
-| `src/lib/conditions.ts`            | `computeConditionPenalties()` aggregator      |
-| `src/data/conditions.ts`           | Condition list with penalty definitions       |
-| `src/schema/schema.ts`             | CharacterSchema (Zod)                         |
-| `src/hooks/useCharacter.ts`        | Composed character state                      |
-| `src/styles/play.css`              | Stat cards, play sheet layout                 |
-| `src/styles/play-panels.css`       | Equipment, weapons, resources, status panels  |
-| `src/styles/skills.css`            | Skill list layout and badges                  |
-| `src/styles/tabs.css`              | Tab nav + `.sticky-bar*` CSS (kept, unused)   |
-| `readme.md`                        | Full feature docs and UI pattern reference    |
+| File                                | Purpose                                      |
+| ----------------------------------- | -------------------------------------------- |
+| `src/App.tsx`                       | Mode/tab routing, all prop wiring            |
+| `src/components/PlaySheet.tsx`      | Compact play mode character tab              |
+| `src/components/WeaponsPanel.tsx`   | Weapon CRUD (build) and attack cards (play)  |
+| `src/components/EquipmentPanel.tsx` | Equipment list with weight/encumbrance       |
+| `src/components/SkillsPanel.tsx`    | Skills list (build + play, readOnly)         |
+| `src/components/TabNav.tsx`         | Mode-aware tab nav with mode toggle button   |
+| `src/lib/progressions.ts`           | BAB, saves, HP, skill rank calculations      |
+| `src/lib/encumbrance.ts`            | PHB Table 9-1 load limits by STR             |
+| `src/lib/conditions.ts`             | `computeConditionPenalties()` aggregator     |
+| `src/data/conditions.ts`            | Condition list with penalty definitions      |
+| `src/schema/schema.ts`              | CharacterSchema (Zod)                        |
+| `src/hooks/useCharacter.ts`         | Composed character state                     |
+| `src/styles/play.css`               | Stat cards, play sheet layout                |
+| `src/styles/play-panels.css`        | Equipment, weapons, resources, status panels |
+| `src/styles/skills.css`             | Skill list layout and badges                 |
+| `src/styles/tabs.css`               | Tab nav + `.sticky-bar*` CSS (kept, unused)  |
+| `readme.md`                         | Full feature docs and UI pattern reference   |

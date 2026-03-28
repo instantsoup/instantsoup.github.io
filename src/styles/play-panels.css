@@ -433,6 +433,11 @@
   margin-left: auto;
 }
 
+.weapon-card__range {
+  font-size: 12px;
+  color: var(--clr-text-muted, #888);
+}
+
 .weapon-card--editing {
   background: #f8f9fa;
   display: flex;

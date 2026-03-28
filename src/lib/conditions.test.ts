@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { computeConditionPenalties } from './conditions';
 import type { StatusEffect } from '../schema/schema';
+import { computeConditionPenalties } from './conditions';
 
 function active(): StatusEffect {
   return { active: true };
@@ -60,8 +60,8 @@ describe('computeConditionPenalties', () => {
   it('stacks multiple conditions additively', () => {
     const result = computeConditionPenalties({
       Exhausted: active(), // str -6, dex -6
-      Shaken: active(),    // attack -2, save -2
-      Deafened: active(),  // initiative -4
+      Shaken: active(), // attack -2, save -2
+      Deafened: active(), // initiative -4
     });
     expect(result.str).toBe(-6);
     expect(result.dex).toBe(-6);
