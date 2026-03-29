@@ -28,14 +28,14 @@
 }
 
 .character-info-panel__header--open {
-  background: #e0f2fe;
-  color: #0369a1;
+  background: var(--clr-accent-sky-bg);
+  color: var(--clr-accent-sky-text);
   border-bottom: 2px solid var(--clr-border-strong);
 }
 
 .character-info-panel__content {
   padding: var(--space-4);
-  background: #ffffff;
+  background: var(--clr-panel-content-bg);
 }
 
 /* ================================
@@ -48,7 +48,7 @@
   padding: var(--space-3) var(--space-4);
   border: 2px solid var(--clr-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--clr-panel-content-bg);
   font: inherit;
   font-size: 16px;
   font-weight: 500;

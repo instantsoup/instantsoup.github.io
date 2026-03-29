@@ -29,19 +29,19 @@
 }
 
 .status-effect-row--active {
-  background: #fef3c7;
-  border-color: #f59e0b;
+  background: var(--clr-accent-amber-bg);
+  border-color: var(--clr-accent-amber-border);
 }
 
 .status-effect-row--active:hover {
-  background: #fde68a;
+  background: var(--clr-accent-amber-bg);
+  filter: brightness(0.95);
 }
 
 .status-effect-row__label {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex: 1;
   cursor: pointer;
 }
 
@@ -49,7 +49,7 @@
   width: 15px;
   height: 15px;
   cursor: pointer;
-  accent-color: #f59e0b;
+  accent-color: var(--clr-accent-amber);
 }
 
 .status-effect-row__name {
@@ -59,7 +59,7 @@
 
 .status-effect-row--active .status-effect-row__name {
   font-weight: 700;
-  color: #92400e;
+  color: var(--clr-accent-amber-text);
 }
 
 .status-effect-row__rounds {
@@ -71,12 +71,12 @@
 .status-effect-row__rounds-input {
   width: 44px;
   padding: 2px 4px;
-  border: 1px solid #f59e0b;
+  border: 1px solid var(--clr-accent-amber-border);
   border-radius: 4px;
   font: inherit;
   font-size: 13px;
   text-align: center;
-  background: #fffbeb;
+  background: var(--clr-accent-amber-bg);
 }
 
 .status-effect-row__rounds-input::-webkit-outer-spin-button,
@@ -91,7 +91,7 @@
 
 .status-effect-row__rounds-label {
   font-size: 11px;
-  color: #92400e;
+  color: var(--clr-accent-amber-text);
   font-weight: 600;
 }
 
@@ -141,24 +141,24 @@
 }
 
 .ability-damage__row--damaged {
-  background: #fff7ed;
+  background: rgba(249, 115, 22, 0.15);
 }
 
 .ability-damage__row--damaged:hover {
-  background: #ffedd5;
+  background: rgba(249, 115, 22, 0.22);
 }
 
 .ability-damage__ability {
   font-size: 13px;
   font-weight: 700;
-  color: #374151;
+  color: var(--clr-text-primary);
 }
 
 .ability-damage__base {
   font-size: 14px;
   text-align: center;
   font-variant-numeric: tabular-nums;
-  color: var(--clr-text-muted);
+  color: var(--clr-text-primary);
 }
 
 .ability-damage__input {
@@ -169,7 +169,7 @@
   font: inherit;
   font-size: 14px;
   text-align: center;
-  background: #fff;
+  background: var(--clr-bg-light);
 }
 
 .ability-damage__input::-webkit-outer-spin-button,
@@ -191,7 +191,7 @@
 }
 
 .ability-damage__effective--reduced {
-  color: #c2410c;
+  color: var(--clr-hp-bloodied-text);
 }
 
 /* ================================
@@ -218,8 +218,8 @@
 }
 
 .equipment-item--equipped {
-  background: #f0fdf4;
-  border-color: #86efac;
+  background: var(--clr-accent-green-bg);
+  border-color: var(--clr-accent-green-border);
 }
 
 .equipment-item__row {
@@ -238,7 +238,7 @@
 .equipment-item__equipped-label input[type='checkbox'] {
   width: 15px;
   height: 15px;
-  accent-color: #16a34a;
+  accent-color: var(--clr-accent-green);
   cursor: pointer;
 }
 
@@ -251,7 +251,7 @@
 
 .equipment-item--equipped .equipment-item__name {
   font-weight: 600;
-  color: #15803d;
+  color: var(--clr-accent-green-text);
 }
 
 .equipment-item__notes {
@@ -267,7 +267,7 @@
 
 .equipment-item__notes:focus {
   outline: none;
-  background: #fff;
+  background: var(--clr-bg-light);
 }
 
 .equipment__add {
@@ -329,24 +329,24 @@
   font-size: 12px;
   padding: 1px 6px;
   border-radius: 10px;
-  background: #dcfce7;
-  color: #15803d;
+  background: var(--clr-accent-green-bg);
+  color: var(--clr-accent-green-text);
   font-weight: 600;
 }
 
 .equipment__load--medium .equipment__load-status {
-  background: #fef9c3;
-  color: #854d0e;
+  background: var(--clr-accent-amber-bg);
+  color: var(--clr-accent-amber-text);
 }
 
 .equipment__load--heavy .equipment__load-status {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--clr-danger-bg);
+  color: var(--clr-danger-border);
 }
 
 .equipment__load--overloaded .equipment__load-status {
-  background: #7f1d1d;
-  color: #fff;
+  background: var(--clr-load-overloaded-bg);
+  color: var(--clr-panel-open-fg);
 }
 
 .equipment__load-limits {
@@ -424,7 +424,7 @@
 }
 
 .weapon-card__damage {
-  color: #1e3a5f;
+  color: var(--clr-text-primary);
 }
 
 .weapon-card__crit {
@@ -439,7 +439,7 @@
 }
 
 .weapon-card--editing {
-  background: #f8f9fa;
+  background: var(--clr-panel-content-bg);
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -518,14 +518,14 @@
 }
 
 .btn--ghost:hover {
-  background: #e2e8f0;
+  background: var(--clr-panel-closed-bg);
   border-color: var(--clr-border-strong);
 }
 
 .btn--danger-ghost {
   background: transparent;
   border: 1px solid transparent;
-  color: #ef4444;
+  color: var(--clr-danger-border);
 }
 
 .btn--danger-ghost:hover {

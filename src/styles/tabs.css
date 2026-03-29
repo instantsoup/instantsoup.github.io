@@ -18,8 +18,7 @@
 .app-header__row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  gap: 12px;
   margin-bottom: 10px;
 }
 
@@ -105,7 +104,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-right: 4px;
-  color: #e2e8f0;
+  color: var(--clr-panel-open-fg);
 }
 
 .sticky-stat {
@@ -125,7 +124,7 @@
 
 .sticky-stat--bloodied {
   background: rgba(249, 115, 22, 0.2);
-  border: 1px solid #f97316;
+  border: 1px solid var(--clr-hp-bloodied-border);
 }
 
 .sticky-stat--dying {
@@ -171,9 +170,9 @@
   margin-left: auto;
   padding: 4px 12px;
   border-radius: 6px;
-  border: 1px solid #475569;
+  border: 1px solid var(--clr-border-strong);
   background: transparent;
-  color: #e2e8f0;
+  color: var(--clr-panel-open-fg);
   font: inherit;
   font-size: 12px;
   font-weight: 700;
@@ -189,7 +188,7 @@
 .sticky-bar__mode-btn--active {
   background: var(--clr-primary-border);
   border-color: var(--clr-primary-border);
-  color: #fff;
+  color: var(--clr-panel-open-fg);
 }
 
 /* ================================
@@ -228,8 +227,8 @@
 }
 
 .tab-nav__btn--active {
-  color: #0ea5e9;
-  border-bottom-color: #0ea5e9;
+  color: var(--clr-primary-border);
+  border-bottom-color: var(--clr-primary-border);
 }
 
 /* ================================

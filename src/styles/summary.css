@@ -64,21 +64,21 @@
   font-size: 11px;
   padding: 2px 8px;
   border-radius: 12px;
-  background: #e0f2fe;
-  color: #0369a1;
+  background: var(--clr-accent-sky-bg);
+  color: var(--clr-accent-sky-text);
   white-space: nowrap;
   flex-shrink: 0;
 }
 
 .summary-item__meta {
   font-size: 12px;
-  color: #7c3aed;
+  color: var(--clr-accent-purple-text);
   margin-bottom: var(--space-1);
 }
 
 .summary-item__description {
   font-size: 13px;
-  color: #475569;
+  color: var(--clr-text-muted);
   line-height: 1.5;
   margin-bottom: var(--space-1);
 }
@@ -101,7 +101,7 @@
 .skills-summary__group-header {
   font-weight: 600;
   font-size: 13px;
-  color: #334155;
+  color: var(--clr-text-secondary);
   padding: var(--space-2);
   background: var(--clr-bg);
   border-radius: 4px 4px 0 0;

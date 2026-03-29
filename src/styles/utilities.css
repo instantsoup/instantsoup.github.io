@@ -138,10 +138,10 @@
 }
 
 .text-muted {
-  color: #666;
+  color: var(--clr-text-muted);
 }
 .text-subtle {
-  color: #999;
+  color: var(--clr-text-subtle);
 }
 
 .text-right {
@@ -156,10 +156,10 @@
 =================================== */
 
 .border {
-  border: 1px solid #ddd;
+  border: 1px solid var(--clr-border);
 }
 .border-dashed {
-  border: 1px dashed #bbb;
+  border: 1px dashed var(--clr-border);
 }
 
 .rounded-12 {
@@ -170,7 +170,7 @@
 }
 
 .bg-faint {
-  background: #fafafa;
+  background: var(--clr-bg-light);
 }
 
 /* ================================
@@ -178,7 +178,7 @@
 =================================== */
 
 .card {
-  border: 1px solid #ddd;
+  border: 1px solid var(--clr-border);
   border-radius: 12px;
   padding: 12px;
 }
@@ -191,13 +191,13 @@
 }
 
 .btn-outline {
-  border: 1px solid #ccc;
-  background: #f8f8f8;
+  border: 1px solid var(--clr-border-strong);
+  background: var(--clr-bg-light);
 }
 
 .arrow-sep {
   text-align: center;
-  color: #999;
+  color: var(--clr-text-muted);
 }
 
 .col-span-3 {
@@ -208,7 +208,7 @@
   width: 100%;
   padding: 8px;
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--clr-border-strong);
 }
 
 .ability-grid__racial {
@@ -259,7 +259,7 @@
   display: inline-block;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--clr-border);
   font-size: 13px;
   line-height: 1;
   letter-spacing: 0.2px;
@@ -273,19 +273,19 @@
 }
 
 .badge-core {
-  background: #e6f4ea;
-  border-color: #a7d7b7;
-  color: #106b21;
+  background: var(--clr-accent-green-bg);
+  border-color: var(--clr-accent-green-border);
+  color: var(--clr-accent-green-text);
 }
 
 .badge-supplement {
-  background: #eef2ff;
-  border-color: #c7d2fe;
-  color: #3730a3;
+  background: var(--clr-accent-indigo-bg);
+  border-color: var(--clr-accent-indigo-border);
+  color: var(--clr-accent-indigo-text);
 }
 
 .badge-checkgm {
-  background: #fff7ed;
-  border-color: #fed7aa;
-  color: #9a3412;
+  background: var(--clr-accent-amber-bg);
+  border-color: var(--clr-accent-amber-border);
+  color: var(--clr-accent-amber-text);
 }

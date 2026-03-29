@@ -48,9 +48,59 @@
   --clr-text-muted: #64748b; /* slate-500 */
   --clr-text-subtle: #94a3b8; /* slate-400 */
   --clr-bg-light: #f8fafc; /* slate-50 */
+
+  /* Accent: Sky (info badges, character-info header, save total) */
+  --clr-accent-sky: #0ea5e9;
+  --clr-accent-sky-bg: #e0f2fe;
+  --clr-accent-sky-text: #0369a1;
+
+  /* Accent: Green (success, equipped, class skills, stable HP, calculated) */
+  --clr-accent-green: #22c55e;
+  --clr-accent-green-bg: #dcfce7;
+  --clr-accent-green-text: #15803d;
+  --clr-accent-green-border: #86efac;
+
+  /* Accent: Amber (status effects, warnings, trained skills) */
+  --clr-accent-amber: #f59e0b;
+  --clr-accent-amber-bg: #fef3c7;
+  --clr-accent-amber-text: #92400e;
+  --clr-accent-amber-border: #fbbf24;
+
+  /* Accent: Purple (spells, spell browser) */
+  --clr-accent-purple: #7c3aed;
+  --clr-accent-purple-bg: #f3e8ff;
+  --clr-accent-purple-text: #7c3aed;
+
+  /* Accent: Indigo (cross-class skills, supplements, temp HP) */
+  --clr-accent-indigo: #6366f1;
+  --clr-accent-indigo-bg: #e0e7ff;
+  --clr-accent-indigo-text: #3730a3;
+  --clr-accent-indigo-border: #818cf8;
+
+  /* Calculated/success display (green) */
+  --clr-calc-bg: #d1fae5;
+  --clr-calc-text: #047857;
+  --clr-calc-border: #059669;
+
+  /* HP states */
+  --clr-hp-bloodied-text: #c2410c;
+  --clr-hp-bloodied-border: #f97316;
+  --clr-hp-dead-bg: #fef2f2;
+  --clr-hp-dead-text: #7f1d1d;
+  --clr-hp-dead-border: #7f1d1d;
+  --clr-hp-temp: #6366f1;
+
+  /* Load overloaded */
+  --clr-load-overloaded-bg: #7f1d1d;
+
+  /* Level card tab active colors */
+  --clr-tab-feat: #1e40af;
+  --clr-tab-spell: #7c3aed;
+  --clr-tab-skill: #059669;
 }
 
 [data-theme='dark'] {
+  color-scheme: dark;
   --clr-bg: #0f172a; /* slate-900 */
   --clr-border: #1e293b; /* slate-800 */
   --clr-border-strong: #334155; /* slate-700 */
@@ -75,6 +125,47 @@
   --clr-text-muted: #94a3b8; /* slate-400 */
   --clr-text-subtle: #64748b; /* slate-500 */
   --clr-bg-light: #1e293b; /* slate-800 */
+
+  /* Accent overrides for dark mode */
+  --clr-accent-sky: #38bdf8;
+  --clr-accent-sky-bg: #0c4a6e;
+  --clr-accent-sky-text: #38bdf8;
+
+  --clr-accent-green: #4ade80;
+  --clr-accent-green-bg: rgba(22, 163, 74, 0.15);
+  --clr-accent-green-text: #4ade80;
+  --clr-accent-green-border: rgba(22, 163, 74, 0.4);
+
+  --clr-accent-amber: #fbbf24;
+  --clr-accent-amber-bg: rgba(245, 158, 11, 0.15);
+  --clr-accent-amber-text: #fbbf24;
+  --clr-accent-amber-border: rgba(245, 158, 11, 0.4);
+
+  --clr-accent-purple: #a78bfa;
+  --clr-accent-purple-bg: rgba(124, 58, 237, 0.15);
+  --clr-accent-purple-text: #a78bfa;
+
+  --clr-accent-indigo: #818cf8;
+  --clr-accent-indigo-bg: rgba(99, 102, 241, 0.15);
+  --clr-accent-indigo-text: #818cf8;
+  --clr-accent-indigo-border: rgba(99, 102, 241, 0.35);
+
+  --clr-calc-bg: rgba(5, 150, 105, 0.15);
+  --clr-calc-text: #34d399;
+  --clr-calc-border: #059669;
+
+  --clr-hp-bloodied-text: #fb923c;
+  --clr-hp-bloodied-border: #f97316;
+  --clr-hp-dead-bg: rgba(127, 29, 29, 0.25);
+  --clr-hp-dead-text: #f87171;
+  --clr-hp-dead-border: #991b1b;
+  --clr-hp-temp: #818cf8;
+
+  --clr-load-overloaded-bg: #450a0a;
+
+  --clr-tab-feat: #3b82f6;
+  --clr-tab-spell: #a78bfa;
+  --clr-tab-skill: #34d399;
 }
 
 /* ================================
@@ -247,10 +338,10 @@ body {
 
 .btn--success {
   padding: 8px 12px;
-  border: 1px solid #22c55e;
-  background: #dcfce7;
+  border: 1px solid var(--clr-accent-green);
+  background: var(--clr-accent-green-bg);
   font-weight: 600;
-  color: #15803d;
+  color: var(--clr-accent-green-text);
 }
 
 .btn--ghost {
@@ -285,7 +376,7 @@ body {
 }
 
 .text-error {
-  color: #b91c1c;
+  color: var(--clr-danger-border);
 }
 
 /* ================================
