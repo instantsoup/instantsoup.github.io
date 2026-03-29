@@ -228,9 +228,7 @@ export function App() {
                     type="number"
                     className="selector-input"
                     value={age ?? ''}
-                    onChange={(e) =>
-                      setAge(e.target.value ? parseInt(e.target.value) : undefined)
-                    }
+                    onChange={(e) => setAge(e.target.value ? parseInt(e.target.value) : undefined)}
                     onBlur={persistLocal}
                     placeholder="e.g. 34"
                     min="0"
@@ -244,7 +242,7 @@ export function App() {
                     value={height}
                     onChange={(e) => setHeight(e.target.value)}
                     onBlur={persistLocal}
-                    placeholder='e.g. 5&apos;8"'
+                    placeholder="e.g. 5'8&quot;"
                   />
                 </div>
                 <div className="selector">
@@ -338,9 +336,7 @@ export function App() {
                           type="number"
                           className="currency-inputs__input"
                           value={currency[coin]}
-                          onChange={(e) =>
-                            setCurrencyField(coin, parseInt(e.target.value) || 0)
-                          }
+                          onChange={(e) => setCurrencyField(coin, parseInt(e.target.value) || 0)}
                           onBlur={persistLocal}
                           min="0"
                         />

@@ -446,10 +446,8 @@ describe('getIterativeAttacks', () => {
     expect(getIterativeAttacks(12, 12)).toEqual([12, 7, 2]));
   it('returns four attacks for BAB 16+', () =>
     expect(getIterativeAttacks(16, 17)).toEqual([16, 11, 6, 1]));
-  it('works at exactly BAB 6 threshold', () =>
-    expect(getIterativeAttacks(6, 6)).toEqual([6, 1]));
-  it('works with negative total attack', () =>
-    expect(getIterativeAttacks(-1, 3)).toEqual([-1]));
+  it('works at exactly BAB 6 threshold', () => expect(getIterativeAttacks(6, 6)).toEqual([6, 1]));
+  it('works with negative total attack', () => expect(getIterativeAttacks(-1, 3)).toEqual([-1]));
 });
 
 describe('formatAttacks', () => {
@@ -477,7 +475,14 @@ describe('getPrimarySpellcastingAbility', () => {
   it('returns null for Fighter', () =>
     expect(getPrimarySpellcastingAbility(mkLevels([['Fighter', 10]]))).toBe(null));
   it('returns ability of class with most levels when multiclassing', () =>
-    expect(getPrimarySpellcastingAbility(mkLevels([['Wizard', 3], ['Cleric', 5]]))).toBe('wis'));
+    expect(
+      getPrimarySpellcastingAbility(
+        mkLevels([
+          ['Wizard', 3],
+          ['Cleric', 5],
+        ]),
+      ),
+    ).toBe('wis'));
   it('returns null for empty level array', () =>
     expect(getPrimarySpellcastingAbility([])).toBe(null));
 });
