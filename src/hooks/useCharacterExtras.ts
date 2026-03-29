@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type {
   AbilityDamage,
   Character,
+  Currency,
   CustomResource,
   EquipmentItem,
   StatusEffect,
@@ -28,6 +29,10 @@ export function useCharacterExtras(initial: Character) {
   const [equipment, setEquipment] = useState<EquipmentItem[]>(initial.equipment ?? []);
   const [skillMiscBonuses, setSkillMiscBonusesState] = useState<SkillMiscBonuses>(
     initial.skillMiscBonuses ?? {},
+  );
+  const [xp, setXPState] = useState<number>(initial.xp ?? 0);
+  const [currency, setCurrencyState] = useState<Currency>(
+    initial.currency ?? { pp: 0, gp: 0, sp: 0, cp: 0 },
   );
 
   // Flaws
@@ -114,6 +119,11 @@ export function useCharacterExtras(initial: Character) {
       prev.map((item, i) => (i === index ? { ...item, weight: Math.max(0, weight) } : item)),
     );
 
+  const setXP = (value: number) => setXPState(Math.max(0, value));
+
+  const setCurrencyField = (field: keyof Currency, value: number) =>
+    setCurrencyState((prev) => ({ ...prev, [field]: Math.max(0, value) }));
+
   const setSkillMiscBonus = (name: string, bonus: number) =>
     setSkillMiscBonusesState((prev) =>
       bonus === 0
@@ -131,6 +141,8 @@ export function useCharacterExtras(initial: Character) {
     setAbilityDamageState(char.abilityDamage ?? {});
     setEquipment(char.equipment ?? []);
     setSkillMiscBonusesState(char.skillMiscBonuses ?? {});
+    setXPState(char.xp ?? 0);
+    setCurrencyState(char.currency ?? { pp: 0, gp: 0, sp: 0, cp: 0 });
   };
 
   const reset = () => {
@@ -143,6 +155,8 @@ export function useCharacterExtras(initial: Character) {
     setAbilityDamageState({});
     setEquipment([]);
     setSkillMiscBonusesState({});
+    setXPState(0);
+    setCurrencyState({ pp: 0, gp: 0, sp: 0, cp: 0 });
   };
 
   return {
@@ -178,6 +192,10 @@ export function useCharacterExtras(initial: Character) {
     setEquipmentWeight,
     skillMiscBonuses,
     setSkillMiscBonus,
+    xp,
+    setXP,
+    currency,
+    setCurrencyField,
     loadFrom,
     reset,
   };

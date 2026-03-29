@@ -52,6 +52,13 @@ export function useCharacter() {
     equipment: extras.equipment,
     weapons: combat.weapons,
     skillMiscBonuses: extras.skillMiscBonuses,
+    age: identity.age,
+    height: identity.height || undefined,
+    weight: identity.weight || undefined,
+    deity: identity.deity || undefined,
+    homeland: identity.homeland || undefined,
+    xp: extras.xp,
+    currency: extras.currency,
   });
 
   const loadAll = (char: Character) => {
@@ -80,6 +87,16 @@ export function useCharacter() {
     setRace: identity.setRace,
     alignment: identity.alignment,
     setAlignment: identity.setAlignment,
+    age: identity.age,
+    setAge: identity.setAge,
+    height: identity.height,
+    setHeight: identity.setHeight,
+    weight: identity.weight,
+    setWeight: identity.setWeight,
+    deity: identity.deity,
+    setDeity: identity.setDeity,
+    homeland: identity.homeland,
+    setHomeland: identity.setHomeland,
 
     // Scores
     scores: scoring.scores,
@@ -143,6 +160,10 @@ export function useCharacter() {
     setEquipmentWeight: extras.setEquipmentWeight,
     skillMiscBonuses: extras.skillMiscBonuses,
     setSkillMiscBonus: extras.setSkillMiscBonus,
+    xp: extras.xp,
+    setXP: extras.setXP,
+    currency: extras.currency,
+    setCurrencyField: extras.setCurrencyField,
     weapons: combat.weapons,
     addWeapon: combat.addWeapon,
     removeWeapon: combat.removeWeapon,

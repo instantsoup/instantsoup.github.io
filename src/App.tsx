@@ -21,7 +21,7 @@ import { TaintPanel } from './components/TaintPanel';
 import { WeaponsPanel } from './components/WeaponsPanel';
 import { useCharacter } from './hooks/useCharacter';
 import { getEncumbranceSummary } from './lib/encumbrance';
-import { calculateTotalBAB, getRacialMods } from './lib/progressions';
+import { calculateTotalBAB, getRacialMods, xpForLevel } from './lib/progressions';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
@@ -30,11 +30,23 @@ export function App() {
   const {
     name,
     setName,
+    race,
+    setRace,
+    alignment,
+    setAlignment,
+    age,
+    setAge,
+    height,
+    setHeight,
+    weight,
+    setWeight,
+    deity,
+    setDeity,
+    homeland,
+    setHomeland,
     scores,
     mods,
     effectiveScores,
-    race,
-    setRace,
     levels,
     addLevel,
     removeLevel,
@@ -44,8 +56,6 @@ export function App() {
     addSpellToLevel,
     removeSpellFromLevel,
     updateLevelSkillRanks,
-    alignment,
-    setAlignment,
     saveBonuses,
     setSaveBonus,
     combatStats,
@@ -87,6 +97,10 @@ export function App() {
     setEquipmentWeight,
     skillMiscBonuses,
     setSkillMiscBonus,
+    xp,
+    setXP,
+    currency,
+    setCurrencyField,
     weapons,
     addWeapon,
     removeWeapon,
@@ -135,6 +149,12 @@ export function App() {
                 name={name}
                 race={race}
                 alignment={alignment}
+                deity={deity}
+                homeland={homeland}
+                xp={xp}
+                setXP={setXP}
+                currency={currency}
+                setCurrencyField={setCurrencyField}
                 scores={scores}
                 effectiveScores={effectiveScores}
                 mods={mods}
@@ -201,6 +221,67 @@ export function App() {
                 />
               </PanelSection>
 
+              <PanelSection title="Character Details" defaultOpen>
+                <div className="selector">
+                  <h3 className="panel-title">Age</h3>
+                  <input
+                    type="number"
+                    className="selector-input"
+                    value={age ?? ''}
+                    onChange={(e) =>
+                      setAge(e.target.value ? parseInt(e.target.value) : undefined)
+                    }
+                    onBlur={persistLocal}
+                    placeholder="e.g. 34"
+                    min="0"
+                  />
+                </div>
+                <div className="selector">
+                  <h3 className="panel-title">Height</h3>
+                  <input
+                    type="text"
+                    className="selector-input"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                    onBlur={persistLocal}
+                    placeholder='e.g. 5&apos;8"'
+                  />
+                </div>
+                <div className="selector">
+                  <h3 className="panel-title">Weight</h3>
+                  <input
+                    type="text"
+                    className="selector-input"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    onBlur={persistLocal}
+                    placeholder="e.g. 160 lbs"
+                  />
+                </div>
+                <div className="selector">
+                  <h3 className="panel-title">Deity</h3>
+                  <input
+                    type="text"
+                    className="selector-input"
+                    value={deity}
+                    onChange={(e) => setDeity(e.target.value)}
+                    onBlur={persistLocal}
+                    placeholder="e.g. Pelor"
+                  />
+                </div>
+                <div className="selector">
+                  <h3 className="panel-title">Homeland</h3>
+                  <input
+                    type="text"
+                    className="selector-input"
+                    value={homeland}
+                    onChange={(e) => setHomeland(e.target.value)}
+                    onBlur={persistLocal}
+                    placeholder="e.g. Waterdeep"
+                  />
+                </div>
+              </PanelSection>
+
               <PanelSection title="Flaws" defaultOpen>
                 <FlawsPanel
                   selected={flaws}
@@ -231,6 +312,42 @@ export function App() {
 
               <PanelSection title="Notes" defaultOpen>
                 <NotesPanel notes={notes} setNotes={setNotes} onBlur={persistLocal} />
+              </PanelSection>
+
+              <PanelSection title="Experience & Currency" defaultOpen>
+                <div className="selector">
+                  <h3 className="panel-title">
+                    XP (next level: {xpForLevel(levels.length + 1).toLocaleString()})
+                  </h3>
+                  <input
+                    type="number"
+                    className="selector-input"
+                    value={xp}
+                    onChange={(e) => setXP(parseInt(e.target.value) || 0)}
+                    onBlur={persistLocal}
+                    min="0"
+                  />
+                </div>
+                <div className="selector">
+                  <h3 className="panel-title">Currency</h3>
+                  <div className="currency-inputs">
+                    {(['pp', 'gp', 'sp', 'cp'] as const).map((coin) => (
+                      <label key={coin} className="currency-inputs__field">
+                        <span className="currency-inputs__label">{coin.toUpperCase()}</span>
+                        <input
+                          type="number"
+                          className="currency-inputs__input"
+                          value={currency[coin]}
+                          onChange={(e) =>
+                            setCurrencyField(coin, parseInt(e.target.value) || 0)
+                          }
+                          onBlur={persistLocal}
+                          min="0"
+                        />
+                      </label>
+                    ))}
+                  </div>
+                </div>
               </PanelSection>
             </div>
           )}

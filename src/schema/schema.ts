@@ -78,6 +78,15 @@ export const StatusEffectSchema = z.object({
 
 export type StatusEffect = z.infer<typeof StatusEffectSchema>;
 
+export const CurrencySchema = z.object({
+  pp: z.number().int().min(0).optional().default(0),
+  gp: z.number().int().min(0).optional().default(0),
+  sp: z.number().int().min(0).optional().default(0),
+  cp: z.number().int().min(0).optional().default(0),
+});
+
+export type Currency = z.infer<typeof CurrencySchema>;
+
 export const AbilityDamageSchema = z.object({
   str: z.number().int().min(0).optional().default(0),
   dex: z.number().int().min(0).optional().default(0),
@@ -131,6 +140,13 @@ export const CharacterSchema = z.object({
   equipment: z.array(EquipmentItemSchema).optional().default([]),
   weapons: z.array(WeaponSchema).optional().default([]),
   skillMiscBonuses: z.record(z.string(), z.number().int()).optional().default({}),
+  age: z.number().int().min(0).optional(),
+  height: z.string().optional(),
+  weight: z.string().optional(),
+  deity: z.string().optional(),
+  homeland: z.string().optional(),
+  xp: z.number().int().min(0).optional().default(0),
+  currency: CurrencySchema.optional().default({}),
 });
 
 export type Character = z.infer<typeof CharacterSchema>;

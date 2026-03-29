@@ -1,10 +1,11 @@
 import { alignments } from '../data/alignments';
 import type { ConditionPenalties } from '../data/conditions';
 import { getEncumbranceSummary } from '../lib/encumbrance';
-import { calculateTotalBAB, calculateTotalSave } from '../lib/progressions';
+import { calculateTotalBAB, calculateTotalSave, xpForLevel } from '../lib/progressions';
 import type {
   AbilityDamage,
   CombatStats,
+  Currency,
   CustomResource,
   EquipmentItem,
   StatusEffect,
@@ -25,6 +26,12 @@ type PlaySheetProps = {
   name: string;
   race: string | undefined;
   alignment: string | undefined;
+  deity?: string;
+  homeland?: string;
+  xp: number;
+  setXP: (value: number) => void;
+  currency: Currency;
+  setCurrencyField: (field: keyof Currency, value: number) => void;
   scores: Scores;
   effectiveScores: Scores;
   mods: Scores;
@@ -67,6 +74,12 @@ export function PlaySheet({
   name,
   race,
   alignment,
+  deity,
+  homeland,
+  xp,
+  setXP,
+  currency,
+  setCurrencyField,
   scores,
   effectiveScores,
   mods,
@@ -239,6 +252,8 @@ export function PlaySheet({
         <span className="play-sheet__name">{name || 'Unnamed Character'}</span>
         {race && <span className="play-sheet__identity-detail">{race}</span>}
         {alignmentLabel && <span className="play-sheet__identity-detail">{alignmentLabel}</span>}
+        {deity && <span className="play-sheet__identity-detail">{deity}</span>}
+        {homeland && <span className="play-sheet__identity-detail">{homeland}</span>}
       </div>
 
       {/* HP */}
@@ -252,6 +267,41 @@ export function PlaySheet({
           onBlur={onBlur}
         />
       </div>
+
+      {/* XP */}
+      <div className="play-sheet__xp">
+        <span className="play-sheet__xp-label">XP</span>
+        <input
+          type="number"
+          className="play-sheet__xp-input"
+          value={xp}
+          onChange={(e) => setXP(parseInt(e.target.value) || 0)}
+          onBlur={onBlur}
+          min="0"
+        />
+        <span className="play-sheet__xp-threshold">
+          / {xpForLevel(levels.length + 1).toLocaleString()} → Level {levels.length + 1}
+        </span>
+      </div>
+
+      {/* Currency */}
+      {(currency.pp > 0 || currency.gp > 0 || currency.sp > 0 || currency.cp > 0) && (
+        <div className="play-sheet__currency">
+          {(['pp', 'gp', 'sp', 'cp'] as const).map((coin) => (
+            <label key={coin} className="play-sheet__coin">
+              <span className="play-sheet__coin-label">{coin.toUpperCase()}</span>
+              <input
+                type="number"
+                className="play-sheet__coin-input"
+                value={currency[coin]}
+                onChange={(e) => setCurrencyField(coin, parseInt(e.target.value) || 0)}
+                onBlur={onBlur}
+                min="0"
+              />
+            </label>
+          ))}
+        </div>
+      )}
 
       {/* Combat Stats Row */}
       <div className="play-sheet__stats-row">

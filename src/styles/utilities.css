@@ -219,6 +219,38 @@
   margin-top: 2px;
 }
 
+.currency-inputs {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  margin-top: var(--space-2);
+}
+
+.currency-inputs__field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.currency-inputs__label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--clr-text-muted);
+}
+
+.currency-inputs__input {
+  width: 5rem;
+  padding: 4px 6px;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
 /* ================================
    Badges
 =================================== */

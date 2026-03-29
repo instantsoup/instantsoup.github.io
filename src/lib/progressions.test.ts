@@ -18,6 +18,7 @@ import {
   getRacialMods,
   recalculateSkillPointsFromLevel,
   validateSkillRanksAtLevel,
+  xpForLevel,
 } from './progressions';
 
 describe('calculateBABForClass', () => {
@@ -425,6 +426,14 @@ describe('calculateSkillPointsAvailableAtLevel', () => {
     expect(() => calculateSkillPointsAvailableAtLevel(-1, levels, 2)).toThrow();
     expect(() => calculateSkillPointsAvailableAtLevel(5, levels, 2)).toThrow();
   });
+});
+
+describe('xpForLevel', () => {
+  it('returns 0 for level 1 (starting level)', () => expect(xpForLevel(1)).toBe(0));
+  it('returns 1000 for level 2', () => expect(xpForLevel(2)).toBe(1000));
+  it('returns 3000 for level 3', () => expect(xpForLevel(3)).toBe(3000));
+  it('returns 10000 for level 5', () => expect(xpForLevel(5)).toBe(10000));
+  it('returns 190000 for level 20', () => expect(xpForLevel(20)).toBe(190000));
 });
 
 describe('calculateSkillPointsSpentAtLevel', () => {

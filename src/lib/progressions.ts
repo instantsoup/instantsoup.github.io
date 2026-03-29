@@ -5,6 +5,11 @@ import { races } from '../data/races';
 import type { BABProgression, SaveProgression } from '../types/class-progression';
 import type { Level } from '../types/level';
 
+/** XP threshold to reach a given level (3.5e PHB: level*(level-1)*500) */
+export function xpForLevel(level: number): number {
+  return level * (level - 1) * 500;
+}
+
 export function getRacialMods(raceName: string | undefined): Record<string, number> {
   if (!raceName) return {};
   return races.find((r) => r.name === raceName)?.modifiers ?? {};
