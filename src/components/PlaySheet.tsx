@@ -26,7 +26,6 @@ import { EquipmentPanel } from './EquipmentPanel';
 import { HPTracker } from './HPTracker';
 import { NotesPanel } from './NotesPanel';
 import { ResourceTracker } from './ResourceTracker';
-import { SkillsPanel } from './SkillsPanel';
 import { StatusEffectsPanel } from './StatusEffectsPanel';
 import { WeaponsPanel } from './WeaponsPanel';
 
@@ -71,8 +70,6 @@ type PlaySheetProps = {
   addWeapon: (w: Weapon) => void;
   removeWeapon: (index: number) => void;
   updateWeapon: (index: number, w: Weapon) => void;
-  skillMiscBonuses: Record<string, number>;
-  setSkillMiscBonus: (name: string, bonus: number) => void;
   notes: string;
   setNotes: (v: string) => void;
   onBlur: () => void;
@@ -119,8 +116,6 @@ export function PlaySheet({
   addWeapon,
   removeWeapon,
   updateWeapon,
-  skillMiscBonuses,
-  setSkillMiscBonus,
   notes,
   setNotes,
   onBlur,
@@ -138,7 +133,7 @@ export function PlaySheet({
 
   // Encumbrance
   const baseSpeed = combatStats.movementSpeed ?? 30;
-  const { loadCategory, totalACP, encMaxDex, effectiveSpeed } = getEncumbranceSummary(
+  const { loadCategory, encMaxDex, effectiveSpeed } = getEncumbranceSummary(
     equipment,
     effectiveScores.str,
     combatStats.armorCheckPenalty ?? 0,
@@ -467,22 +462,6 @@ export function PlaySheet({
           onBlur={onBlur}
         />
       </div>
-
-      {/* Skills */}
-      {levels.length > 0 && (
-        <div className="play-sheet__section">
-          <div className="play-sheet__section-label">Skills</div>
-          <SkillsPanel
-            mods={mods}
-            levels={levels}
-            acp={totalACP}
-            miscBonuses={skillMiscBonuses}
-            onSetMiscBonus={setSkillMiscBonus}
-            onBlur={onBlur}
-            readOnly
-          />
-        </div>
-      )}
 
       {/* Notes */}
       <div className="play-sheet__section">

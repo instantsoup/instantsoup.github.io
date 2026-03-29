@@ -25,7 +25,7 @@
 .combat-stat-card {
   border: 1px solid var(--clr-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--clr-panel-content-bg);
   padding: var(--space-4);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -52,7 +52,7 @@
 
 .combat-stat-card__sublabel {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--clr-text-muted);
   text-align: center;
 }
 
@@ -69,7 +69,7 @@
   font-size: 16px;
   text-align: center;
   font-variant-numeric: tabular-nums;
-  background: #ffffff;
+  background: var(--clr-bg-light);
   transition: border-color 0.15s ease;
 }
 
@@ -122,7 +122,7 @@
 .combat-stat-hp__separator {
   font-size: 24px;
   font-weight: 300;
-  color: #9ca3af;
+  color: var(--clr-text-subtle);
 }
 
 /* ================================
@@ -177,7 +177,7 @@
 .combat-stat-breakdown__label {
   font-size: 12px;
   font-weight: 500;
-  color: #6b7280;
+  color: var(--clr-text-muted);
   text-transform: uppercase;
   min-width: 48px;
 }
@@ -202,7 +202,7 @@
 
 .combat-stat-movement__unit {
   font-size: 14px;
-  color: #6b7280;
+  color: var(--clr-text-muted);
   white-space: nowrap;
 }
 

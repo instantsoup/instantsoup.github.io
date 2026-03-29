@@ -46,7 +46,7 @@
   padding: var(--space-3) var(--space-4);
   border: 2px solid var(--clr-border);
   border-radius: 8px;
-  background: #ffffff;
+  background: var(--clr-bg-light);
   cursor: pointer;
   font: inherit;
   transition:
@@ -73,8 +73,8 @@
 }
 
 .selector-button--selected:hover {
-  border-color: #0284c7;
-  background: #bae6fd;
+  border-color: var(--clr-primary-border);
+  background: var(--clr-primary-bg);
 }
 
 /* ================================
@@ -89,7 +89,7 @@
 }
 
 .selector-button--selected .selector-button__label {
-  color: #0369a1;
+  color: var(--clr-primary-border);
   font-weight: 700;
 }
 
@@ -120,11 +120,11 @@
 }
 
 .selector-button--selected .selector-button__code {
-  color: #0369a1;
+  color: var(--clr-primary-border);
 }
 
 .selector-button--selected .selector-button__sublabel {
-  color: #0284c7;
+  color: var(--clr-primary-border);
   font-weight: 600;
 }
 

@@ -15,10 +15,9 @@ type TabNavProps = {
   active: Tab;
   onSelect: (tab: Tab) => void;
   mode: 'build' | 'play';
-  onModeToggle: () => void;
 };
 
-export function TabNav({ active, onSelect, mode, onModeToggle }: TabNavProps) {
+export function TabNav({ active, onSelect, mode }: TabNavProps) {
   const TABS = mode === 'play' ? PLAY_TABS : BUILD_TABS;
   return (
     <nav className="tab-nav" aria-label="Character sheet sections">
@@ -32,9 +31,6 @@ export function TabNav({ active, onSelect, mode, onModeToggle }: TabNavProps) {
           {t.label}
         </button>
       ))}
-      <button className="tab-nav__mode-btn" onClick={onModeToggle}>
-        {mode === 'build' ? '▶ Play' : '◀ Build'}
-      </button>
     </nav>
   );
 }

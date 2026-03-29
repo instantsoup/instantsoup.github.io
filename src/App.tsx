@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AbilityGrid } from './components/AbilityGrid';
 import { AlignmentSelector } from './components/AlignmentSelector';
@@ -12,7 +12,6 @@ import { NotesPanel } from './components/NotesPanel';
 import { PanelSection } from './components/PanelSection';
 import { PlaySheet } from './components/PlaySheet';
 import { RaceSelector } from './components/RaceSelector';
-import { SavesPanel } from './components/SavesPanel';
 import { SkillsPanel } from './components/SkillsPanel';
 import { SpellSlotsPanel } from './components/SpellSlotsPanel';
 import { SpellsSummary } from './components/SpellsSummary';
@@ -25,7 +24,15 @@ import { calculateTotalBAB, getRacialMods, xpForLevel } from './lib/progressions
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
-  const [mode, setMode] = useState<'build' | 'play'>('build');
+  const [mode, setMode] = useState<'build' | 'play'>('play');
+  const [theme, setTheme] = useState<'light' | 'dark'>(
+    () => (localStorage.getItem('theme') as 'light' | 'dark') ?? 'dark',
+  );
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   const {
     name,
@@ -57,7 +64,6 @@ export function App() {
     removeSpellFromLevel,
     updateLevelSkillRanks,
     saveBonuses,
-    setSaveBonus,
     combatStats,
     updateCombatStat,
     updateSpellSlotsMax,
@@ -136,10 +142,26 @@ export function App() {
 
       <div className="app-content">
         <header className="app-header">
-          <h1 className="app-title">D&amp;D 3.5e Character Sheet</h1>
+          <div className="app-header__row">
+            <h1 className="app-title">
+              {mode === 'build' ? 'Character Builder' : 'Character Sheet'}
+            </h1>
+            <div className="app-header__controls">
+              <button
+                className="app-header__theme-btn"
+                onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+                title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark' ? '☀' : '☾'}
+              </button>
+              <button className="app-header__mode-btn" onClick={toggleMode}>
+                {mode === 'build' ? '▶ Play' : '◀ Build'}
+              </button>
+            </div>
+          </div>
         </header>
 
-        <TabNav active={tab} onSelect={setTab} mode={mode} onModeToggle={toggleMode} />
+        <TabNav active={tab} onSelect={setTab} mode={mode} />
 
         <main className="app-main">
           {/* ── CHARACTER ────────────────────────────── */}
@@ -183,8 +205,6 @@ export function App() {
                 setEquipmentNotes={setEquipmentNotes}
                 setEquipmentWeight={setEquipmentWeight}
                 str={scores.str}
-                skillMiscBonuses={skillMiscBonuses}
-                setSkillMiscBonus={setSkillMiscBonus}
                 weapons={weapons}
                 addWeapon={addWeapon}
                 removeWeapon={removeWeapon}
@@ -383,16 +403,6 @@ export function App() {
                   levels={levels}
                   updateCombatStat={updateCombatStat}
                   setMovementType={setMovementType}
-                  onBlur={persistLocal}
-                />
-              </PanelSection>
-
-              <PanelSection title="Saving Throws" defaultOpen>
-                <SavesPanel
-                  mods={mods}
-                  saveBonuses={saveBonuses}
-                  levels={levels}
-                  setSaveBonus={setSaveBonus}
                   onBlur={persistLocal}
                 />
               </PanelSection>

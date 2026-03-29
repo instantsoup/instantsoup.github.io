@@ -116,7 +116,7 @@
   padding: var(--space-2);
   border: 1px solid var(--clr-border);
   border-top: none;
-  background: #fff;
+  background: var(--clr-bg-light);
 }
 
 .skills-summary__skill:last-child {
@@ -125,7 +125,7 @@
 
 .skills-summary__skill-name {
   font-weight: 500;
-  color: #1f2937;
+  color: var(--clr-text-primary);
 }
 
 .skills-summary__skill-ranks {

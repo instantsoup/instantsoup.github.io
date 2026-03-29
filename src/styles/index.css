@@ -50,6 +50,45 @@
   --clr-bg-light: #f8fafc; /* slate-50 */
 }
 
+[data-theme='dark'] {
+  --clr-bg: #0f172a; /* slate-900 */
+  --clr-border: #1e293b; /* slate-800 */
+  --clr-border-strong: #334155; /* slate-700 */
+
+  --clr-panel-closed-bg: #1e293b;
+  --clr-panel-closed-fg: #e2e8f0;
+  --clr-panel-open-bg: #0c1524;
+  --clr-panel-open-fg: #f1f5f9;
+  --clr-panel-content-bg: #162032;
+
+  --clr-btn: #1e293b;
+  --clr-btn-border: #475569;
+
+  --clr-primary-border: #38bdf8; /* sky-400 */
+  --clr-primary-bg: #0c4a6e; /* sky-900 */
+
+  --clr-danger-border: #f87171; /* red-400 */
+  --clr-danger-bg: #450a0a; /* red-950 */
+
+  --clr-text-primary: #f1f5f9; /* slate-100 */
+  --clr-text-secondary: #e2e8f0; /* slate-200 */
+  --clr-text-muted: #94a3b8; /* slate-400 */
+  --clr-text-subtle: #64748b; /* slate-500 */
+  --clr-bg-light: #1e293b; /* slate-800 */
+}
+
+/* ================================
+   Dark mode input overrides
+=================================== */
+
+[data-theme='dark'] input,
+[data-theme='dark'] textarea,
+[data-theme='dark'] select {
+  background: var(--clr-bg-light);
+  color: var(--clr-text-primary);
+  color-scheme: dark;
+}
+
 *,
 *::before,
 *::after {
@@ -74,7 +113,7 @@ body {
     'Apple Color Emoji',
     'Segoe UI Emoji';
   color: var(--clr-text-primary);
-  background: #ffffff;
+  background: var(--clr-bg);
 }
 
 /* Visually hidden input */
@@ -153,7 +192,7 @@ body {
 .field__label {
   font-size: 12px;
   font-weight: 600;
-  color: #334155; /* slate-700 */
+  color: var(--clr-text-secondary);
   margin-bottom: 8px; /* same as --space-2 */
 }
 
@@ -203,7 +242,7 @@ body {
 }
 
 .btn--secondary:hover:not(:disabled) {
-  background: #e2e8f0;
+  background: var(--clr-panel-closed-bg);
 }
 
 .btn--success {
@@ -262,7 +301,7 @@ body {
 
 .stat-cell {
   padding: 4px 8px;
-  border: 1px solid #eee;
+  border: 1px solid var(--clr-border);
   border-radius: 6px;
 }
 
