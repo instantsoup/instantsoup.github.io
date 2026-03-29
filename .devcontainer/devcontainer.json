@@ -1,6 +1,6 @@
 {
   "name": "DnD 3.5 Character Sheet",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:24-bookworm",
   "postCreateCommand": "npm ci && npm install -g @anthropic-ai/claude-code",
   "secrets": {
     "ANTHROPIC_API_KEY": {
