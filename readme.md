@@ -15,7 +15,7 @@ Used when leveling up, starting a character, or making changes to the character'
 
 **Character tab** — identity panels (all editable):
 
-- Name, Race (7 core PHB races), Alignment (9-option grid)
+- Name, Race (7 core PHB races with PHB ability score modifiers applied automatically), Alignment (9-option grid)
 - Flaws, Languages, Taint/Corruption tracker
 - Notes
 
@@ -26,11 +26,11 @@ Used when leveling up, starting a character, or making changes to the character'
   - Class skills: 1 point = 1 rank; cross-class: 1 point = 0.5 ranks
   - First level gets 4× skill points (min 1); unspent points carry forward
   - Editing a past level triggers forward recalculation
-- Combat stats: AC components (armor/shield/misc), Initiative bonus, Spell Resistance, movement speed
+- Combat stats: AC components (armor/shield/natural armor/misc), Initiative bonus, Spell Resistance, movement speed
 - Saving throws: base bonus inputs (auto-calculated from class progressions)
 - Spell slot maximums per level
 - Feats summary, Known spells summary
-- Weapons: add/edit/remove weapons (name, damage die, crit range/mult, attack type, bonuses, damage type, range increment for ranged weapons)
+- Weapons: add/edit/remove weapons (name, damage die, crit range/mult, attack type melee/ranged/touch/ranged touch, bonuses, damage type, range increment for ranged/ranged-touch weapons)
 - Armor Check Penalty: ACP input stacks with encumbrance ACP and applies to flagged skills
 
 ### Play Mode
@@ -43,7 +43,7 @@ Used at the table. Everything is read-only except session-state elements.
 - HP tracker (current/temp/max with damage/heal input)
   - BLOODIED at ≤½ max HP; DYING at ≤0; DEAD at < −CON score
   - Stabilize/Unstabilize toggle when dying; stable flag auto-clears on heal above 0
-- Stat cards: AC, Initiative, BAB, SR, Movement — each with hover tooltip showing breakdown
+- Stat cards: AC, Touch AC, Flat-footed AC, Initiative, BAB, SR, Movement — each with hover tooltip showing breakdown
 - Save cards: Fort, Ref, Will — each with hover tooltip showing breakdown
 - Conditions (status effects): toggle active conditions; penalties flow into all derived stats automatically
   - STR/DEX reductions (Exhausted −6 STR/DEX, Fatigued −2, Entangled/Grappled −4 DEX, etc.)
@@ -336,7 +336,7 @@ src/
 ## Testing
 
 - **Vitest** with v8 coverage
-- **247 tests**, all passing
+- **269 tests**, all passing
 - Tests co-located with source: `foo.ts` → `foo.test.ts`
 - All `src/data/*.ts` modules have test coverage
 - Coverage: ~97% statements, ~94% branches on covered files

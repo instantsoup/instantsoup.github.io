@@ -16,7 +16,7 @@ Persistence: localStorage (`v0-char` key) + JSON import/export only.
 ```bash
 npm run dev                # dev server
 npm run build              # production build → /dist
-npm run test               # run all tests (247 tests, all passing)
+npm run test               # run all tests (269 tests, all passing)
 npm run test:watch         # watch mode
 npm run test:coverage      # v8 coverage report
 npm run lint               # ESLint check
