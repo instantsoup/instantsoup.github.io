@@ -15,6 +15,9 @@ import {
   calculateTotalBAB,
   calculateTotalSave,
   calculateTotalSkillPoints,
+  formatAttacks,
+  getIterativeAttacks,
+  getPrimarySpellcastingAbility,
   getRacialMods,
   recalculateSkillPointsFromLevel,
   validateSkillRanksAtLevel,
@@ -434,6 +437,49 @@ describe('xpForLevel', () => {
   it('returns 3000 for level 3', () => expect(xpForLevel(3)).toBe(3000));
   it('returns 10000 for level 5', () => expect(xpForLevel(5)).toBe(10000));
   it('returns 190000 for level 20', () => expect(xpForLevel(20)).toBe(190000));
+});
+
+describe('getIterativeAttacks', () => {
+  it('returns single attack for BAB < 6', () => expect(getIterativeAttacks(7, 5)).toEqual([7]));
+  it('returns two attacks for BAB 6–10', () => expect(getIterativeAttacks(9, 7)).toEqual([9, 4]));
+  it('returns three attacks for BAB 11–15', () =>
+    expect(getIterativeAttacks(12, 12)).toEqual([12, 7, 2]));
+  it('returns four attacks for BAB 16+', () =>
+    expect(getIterativeAttacks(16, 17)).toEqual([16, 11, 6, 1]));
+  it('works at exactly BAB 6 threshold', () =>
+    expect(getIterativeAttacks(6, 6)).toEqual([6, 1]));
+  it('works with negative total attack', () =>
+    expect(getIterativeAttacks(-1, 3)).toEqual([-1]));
+});
+
+describe('formatAttacks', () => {
+  it('formats single positive attack', () => expect(formatAttacks([5])).toBe('+5'));
+  it('formats iterative attacks', () => expect(formatAttacks([11, 6, 1])).toBe('+11/+6/+1'));
+  it('formats negative attack', () => expect(formatAttacks([-1])).toBe('-1'));
+  it('formats mixed sign attacks', () => expect(formatAttacks([2, -3])).toBe('+2/-3'));
+});
+
+describe('getPrimarySpellcastingAbility', () => {
+  const mkLevels = (entries: Array<[string, number]>) =>
+    entries.flatMap(([cls, n]) =>
+      Array.from({ length: n }, (_, i) => ({
+        level: i + 1,
+        class: cls,
+        feats: [],
+        unspentSkillPoints: 0,
+      })),
+    );
+
+  it('returns int for Wizard', () =>
+    expect(getPrimarySpellcastingAbility(mkLevels([['Wizard', 3]]))).toBe('int'));
+  it('returns wis for Cleric', () =>
+    expect(getPrimarySpellcastingAbility(mkLevels([['Cleric', 5]]))).toBe('wis'));
+  it('returns null for Fighter', () =>
+    expect(getPrimarySpellcastingAbility(mkLevels([['Fighter', 10]]))).toBe(null));
+  it('returns ability of class with most levels when multiclassing', () =>
+    expect(getPrimarySpellcastingAbility(mkLevels([['Wizard', 3], ['Cleric', 5]]))).toBe('wis'));
+  it('returns null for empty level array', () =>
+    expect(getPrimarySpellcastingAbility([])).toBe(null));
 });
 
 describe('calculateSkillPointsSpentAtLevel', () => {

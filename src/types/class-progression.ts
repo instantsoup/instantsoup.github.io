@@ -21,17 +21,20 @@ export type SaveProgression = z.infer<typeof SaveProgressionSchema>;
 /**
  * Schema for class progression data
  */
-export const ClassProgressionSchema = z
-  .object({
-    name: z.string().min(1),
-    hitDie: z.number().int().min(1).max(20),
-    babProgression: BABProgressionSchema,
-    fortitudeProgression: SaveProgressionSchema,
-    reflexProgression: SaveProgressionSchema,
-    willProgression: SaveProgressionSchema,
-    skillPointsPerLevel: z.number().int().min(1).max(10),
-  })
-  .strict();
+export const ClassProgressionSchema = z.object({
+  name: z.string().min(1),
+  hitDie: z.number().int().min(1).max(20),
+  babProgression: BABProgressionSchema,
+  fortitudeProgression: SaveProgressionSchema,
+  reflexProgression: SaveProgressionSchema,
+  willProgression: SaveProgressionSchema,
+  skillPointsPerLevel: z.number().int().min(1).max(10),
+  spellcastingAbility: z
+    .enum(['str', 'dex', 'con', 'int', 'wis', 'cha'])
+    .nullable()
+    .optional()
+    .default(null),
+});
 
 export type ClassProgression = z.infer<typeof ClassProgressionSchema>;
 

@@ -10,6 +10,42 @@ export function xpForLevel(level: number): number {
   return level * (level - 1) * 500;
 }
 
+/** Returns iterative attack bonuses: +11 BAB → [11, 6, 1] */
+export function getIterativeAttacks(totalAttack: number, bab: number): number[] {
+  const attacks = [totalAttack];
+  if (bab >= 6) attacks.push(totalAttack - 5);
+  if (bab >= 11) attacks.push(totalAttack - 10);
+  if (bab >= 16) attacks.push(totalAttack - 15);
+  return attacks;
+}
+
+/** Formats attack array as "+11/+6/+1" */
+export function formatAttacks(attacks: number[]): string {
+  return attacks.map((n) => (n >= 0 ? `+${n}` : `${n}`)).join('/');
+}
+
+/**
+ * Returns the spellcasting ability key ('int', 'wis', 'cha') for the character's
+ * primary casting class (the casting class with the most levels; ties by first seen).
+ * Returns null for non-casters.
+ */
+export function getPrimarySpellcastingAbility(levels: Level[]): string | null {
+  const classCounts = new Map<string, number>();
+  for (const level of levels) {
+    classCounts.set(level.class, (classCounts.get(level.class) ?? 0) + 1);
+  }
+  let best: { ability: string; count: number } | null = null;
+  for (const [className, count] of classCounts.entries()) {
+    const prog = findClassProgression(className);
+    if (prog?.spellcastingAbility) {
+      if (!best || count > best.count) {
+        best = { ability: prog.spellcastingAbility, count };
+      }
+    }
+  }
+  return best?.ability ?? null;
+}
+
 export function getRacialMods(raceName: string | undefined): Record<string, number> {
   if (!raceName) return {};
   return races.find((r) => r.name === raceName)?.modifiers ?? {};

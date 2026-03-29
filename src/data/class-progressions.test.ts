@@ -19,7 +19,25 @@ describe('classProgressions data', () => {
       expect(cp).toHaveProperty('reflexProgression');
       expect(cp).toHaveProperty('willProgression');
       expect(cp).toHaveProperty('skillPointsPerLevel');
+      expect(cp).toHaveProperty('spellcastingAbility');
     });
+  });
+
+  it('has valid spellcastingAbility on every entry (null or ability key)', () => {
+    const VALID_ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha', null];
+    classProgressions.forEach((cp) => {
+      expect(VALID_ABILITIES).toContain(cp.spellcastingAbility);
+    });
+  });
+
+  it('has correct spellcastingAbility for caster classes', () => {
+    expect(classProgressions.find((c) => c.name === 'Wizard')?.spellcastingAbility).toBe('int');
+    expect(classProgressions.find((c) => c.name === 'Sorcerer')?.spellcastingAbility).toBe('cha');
+    expect(classProgressions.find((c) => c.name === 'Cleric')?.spellcastingAbility).toBe('wis');
+    expect(classProgressions.find((c) => c.name === 'Druid')?.spellcastingAbility).toBe('wis');
+    expect(classProgressions.find((c) => c.name === 'Bard')?.spellcastingAbility).toBe('cha');
+    expect(classProgressions.find((c) => c.name === 'Fighter')?.spellcastingAbility).toBeNull();
+    expect(classProgressions.find((c) => c.name === 'Barbarian')?.spellcastingAbility).toBeNull();
   });
 
   it('has valid BAB progressions', () => {

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { formatAttacks, getIterativeAttacks } from '../lib/progressions';
 import type { Weapon } from '../schema/schema';
 import type { Scores } from '../types';
 
@@ -15,21 +16,9 @@ type WeaponsPanelProps = {
   readOnly?: boolean;
 };
 
-function getIterativeAttacks(totalAttack: number, bab: number): number[] {
-  const attacks = [totalAttack];
-  if (bab >= 6) attacks.push(totalAttack - 5);
-  if (bab >= 11) attacks.push(totalAttack - 10);
-  if (bab >= 16) attacks.push(totalAttack - 15);
-  return attacks;
-}
-
 function formatCrit(critRange: number, critMult: number): string {
   const range = critRange < 20 ? `${critRange}–20` : '20';
   return `${range}/×${critMult}`;
-}
-
-function formatAttacks(attacks: number[]): string {
-  return attacks.map((n) => (n >= 0 ? `+${n}` : `${n}`)).join('/');
 }
 
 function WeaponCard({

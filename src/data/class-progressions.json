@@ -6,7 +6,8 @@
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
     "willProgression": "poor",
-    "skillPointsPerLevel": 4
+    "skillPointsPerLevel": 4,
+    "spellcastingAbility": null
   },
   {
     "name": "Bard",
@@ -15,7 +16,8 @@
     "fortitudeProgression": "poor",
     "reflexProgression": "good",
     "willProgression": "good",
-    "skillPointsPerLevel": 6
+    "skillPointsPerLevel": 6,
+    "spellcastingAbility": "cha"
   },
   {
     "name": "Cleric",
@@ -24,7 +26,8 @@
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
     "willProgression": "good",
-    "skillPointsPerLevel": 2
+    "skillPointsPerLevel": 2,
+    "spellcastingAbility": "wis"
   },
   {
     "name": "Druid",
@@ -33,7 +36,8 @@
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
     "willProgression": "good",
-    "skillPointsPerLevel": 4
+    "skillPointsPerLevel": 4,
+    "spellcastingAbility": "wis"
   },
   {
     "name": "Fighter",
@@ -42,7 +46,8 @@
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
     "willProgression": "poor",
-    "skillPointsPerLevel": 2
+    "skillPointsPerLevel": 2,
+    "spellcastingAbility": null
   },
   {
     "name": "Monk",
@@ -51,7 +56,8 @@
     "fortitudeProgression": "good",
     "reflexProgression": "good",
     "willProgression": "good",
-    "skillPointsPerLevel": 4
+    "skillPointsPerLevel": 4,
+    "spellcastingAbility": null
   },
   {
     "name": "Paladin",
@@ -60,7 +66,8 @@
     "fortitudeProgression": "good",
     "reflexProgression": "poor",
     "willProgression": "poor",
-    "skillPointsPerLevel": 2
+    "skillPointsPerLevel": 2,
+    "spellcastingAbility": "wis"
   },
   {
     "name": "Ranger",
@@ -69,7 +76,8 @@
     "fortitudeProgression": "good",
     "reflexProgression": "good",
     "willProgression": "poor",
-    "skillPointsPerLevel": 6
+    "skillPointsPerLevel": 6,
+    "spellcastingAbility": "wis"
   },
   {
     "name": "Rogue",
@@ -78,7 +86,8 @@
     "fortitudeProgression": "poor",
     "reflexProgression": "good",
     "willProgression": "poor",
-    "skillPointsPerLevel": 8
+    "skillPointsPerLevel": 8,
+    "spellcastingAbility": null
   },
   {
     "name": "Sorcerer",
@@ -87,7 +96,8 @@
     "fortitudeProgression": "poor",
     "reflexProgression": "poor",
     "willProgression": "good",
-    "skillPointsPerLevel": 2
+    "skillPointsPerLevel": 2,
+    "spellcastingAbility": "cha"
   },
   {
     "name": "Wizard",
@@ -96,6 +106,7 @@
     "fortitudeProgression": "poor",
     "reflexProgression": "poor",
     "willProgression": "good",
-    "skillPointsPerLevel": 2
+    "skillPointsPerLevel": 2,
+    "spellcastingAbility": "int"
   }
 ]

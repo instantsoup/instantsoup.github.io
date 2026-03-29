@@ -1,7 +1,19 @@
 import { alignments } from '../data/alignments';
 import type { ConditionPenalties } from '../data/conditions';
 import { getEncumbranceSummary } from '../lib/encumbrance';
-import { calculateTotalBAB, calculateTotalSave, xpForLevel } from '../lib/progressions';
+import {
+  calculateTotalBAB,
+  calculateTotalSave,
+  formatAttacks,
+  getIterativeAttacks,
+  getPrimarySpellcastingAbility,
+  xpForLevel,
+} from '../lib/progressions';
+import {
+  getHeavyLoad,
+  getLightLoad,
+  getMediumLoad,
+} from '../lib/encumbrance';
 import type {
   AbilityDamage,
   CombatStats,
@@ -203,6 +215,21 @@ export function PlaySheet({
   const babResult = calculateTotalBAB(levels);
   const bab = babResult.total;
   const babTooltip = babResult.components.map((c) => `${c.label}: +${c.value}`).join('\n');
+  const iterativeBABStr = formatAttacks(getIterativeAttacks(bab, bab));
+
+  const spellAbility = getPrimarySpellcastingAbility(levels);
+  const spellDC = spellAbility !== null ? 10 + mods[spellAbility as keyof Scores] : null;
+  const spellDCTooltip =
+    spellAbility !== null
+      ? `10 base\n${spellAbility.toUpperCase()}: ${fmt(mods[spellAbility as keyof Scores])}\n(add spell level for per-spell DC)`
+      : undefined;
+
+  const totalCarriedWeight = equipment.reduce((s, i) => s + (i.weight ?? 0), 0);
+  const lightLimit = getLightLoad(effectiveScores.str);
+  const medLimit = getMediumLoad(effectiveScores.str);
+  const heavyLimit = getHeavyLoad(effectiveScores.str);
+  const loadLabel = loadCategory.charAt(0).toUpperCase() + loadCategory.slice(1);
+  const encTooltip = `${totalCarriedWeight} lb carried\nLight ≤${lightLimit} / Med ≤${medLimit} / Heavy ≤${heavyLimit} lb`;
 
   const fortResult = calculateTotalSave(levels, 'fortitude');
   const fortBase = fortResult.total;
@@ -321,14 +348,22 @@ export function PlaySheet({
           <span className="play-sheet__stat-label">Init</span>
           <span className="play-sheet__stat-value">{fmt(initiative)}</span>
         </div>
-        <div className="play-sheet__stat" title={babTooltip || undefined}>
+        <div className="play-sheet__stat play-sheet__stat--wide" title={babTooltip || undefined}>
           <span className="play-sheet__stat-label">BAB</span>
-          <span className="play-sheet__stat-value">{fmt(bab)}</span>
+          <span className="play-sheet__stat-value play-sheet__stat-value--movement">
+            {iterativeBABStr}
+          </span>
         </div>
         {(combatStats.spellResistance ?? 0) > 0 && (
           <div className="play-sheet__stat">
             <span className="play-sheet__stat-label">SR</span>
             <span className="play-sheet__stat-value">{combatStats.spellResistance}</span>
+          </div>
+        )}
+        {spellDC !== null && (
+          <div className="play-sheet__stat" title={spellDCTooltip}>
+            <span className="play-sheet__stat-label">Spell DC</span>
+            <span className="play-sheet__stat-value">{spellDC}+</span>
           </div>
         )}
         <div
@@ -340,6 +375,12 @@ export function PlaySheet({
             {speedEncumbered ? effectiveSpeed : baseSpeed} ft.
             {combatStats.movementType ? ` (${combatStats.movementType})` : ''}
             {speedEncumbered ? ' *' : ''}
+          </span>
+        </div>
+        <div className="play-sheet__stat play-sheet__stat--wide" title={encTooltip}>
+          <span className="play-sheet__stat-label">Enc</span>
+          <span className="play-sheet__stat-value play-sheet__stat-value--movement">
+            {totalCarriedWeight} lb · {loadLabel}
           </span>
         </div>
       </div>
