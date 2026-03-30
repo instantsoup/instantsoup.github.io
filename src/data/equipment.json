@@ -1,0 +1,748 @@
+[
+  {
+    "name": "Backpack (empty)",
+    "category": "Adventuring Gear",
+    "costGp": 2,
+    "weightLb": 2,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Bedroll",
+    "category": "Adventuring Gear",
+    "costGp": 0.1,
+    "weightLb": 5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Blanket, winter",
+    "category": "Adventuring Gear",
+    "costGp": 0.5,
+    "weightLb": 3,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Candle",
+    "category": "Adventuring Gear",
+    "costGp": 0.01,
+    "weightLb": 0,
+    "description": "Illuminates 5 ft. radius; burns for 1 hour.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Case, map or scroll",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 0.5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Chain (10 ft.)",
+    "category": "Adventuring Gear",
+    "costGp": 30,
+    "weightLb": 2,
+    "description": "Break DC 26.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Chalk (1 piece)",
+    "category": "Adventuring Gear",
+    "costGp": 0.01,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Crowbar",
+    "category": "Adventuring Gear",
+    "costGp": 2,
+    "weightLb": 5,
+    "description": "+2 circumstance bonus on Strength checks for prying.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Firewood (per day)",
+    "category": "Adventuring Gear",
+    "costGp": 0.01,
+    "weightLb": 20,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Fishhook",
+    "category": "Adventuring Gear",
+    "costGp": 0.1,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Fishing net (25 sq. ft.)",
+    "category": "Adventuring Gear",
+    "costGp": 4,
+    "weightLb": 5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Flask (empty)",
+    "category": "Adventuring Gear",
+    "costGp": 0.03,
+    "weightLb": 1.5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Flint and steel",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Grappling hook",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 4,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Hammer",
+    "category": "Adventuring Gear",
+    "costGp": 0.5,
+    "weightLb": 2,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Ink (1 oz. vial)",
+    "category": "Adventuring Gear",
+    "costGp": 8,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Inkpen",
+    "category": "Adventuring Gear",
+    "costGp": 0.1,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Jug, clay",
+    "category": "Adventuring Gear",
+    "costGp": 0.03,
+    "weightLb": 9,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Lamp, common",
+    "category": "Adventuring Gear",
+    "costGp": 0.1,
+    "weightLb": 1,
+    "description": "Illuminates 15 ft. radius; burns for 6 hours on 1 pint of oil.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Lantern, bullseye",
+    "category": "Adventuring Gear",
+    "costGp": 12,
+    "weightLb": 3,
+    "description": "Illuminates 60 ft. cone; burns for 6 hours on 1 pint of oil.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Lantern, hooded",
+    "category": "Adventuring Gear",
+    "costGp": 7,
+    "weightLb": 2,
+    "description": "Illuminates 30 ft. radius; burns for 6 hours on 1 pint of oil.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Lock, simple",
+    "category": "Adventuring Gear",
+    "costGp": 20,
+    "weightLb": 1,
+    "description": "Open Lock DC 20.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Lock, average",
+    "category": "Adventuring Gear",
+    "costGp": 40,
+    "weightLb": 1,
+    "description": "Open Lock DC 25.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Lock, good",
+    "category": "Adventuring Gear",
+    "costGp": 80,
+    "weightLb": 1,
+    "description": "Open Lock DC 30.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Lock, amazing",
+    "category": "Adventuring Gear",
+    "costGp": 150,
+    "weightLb": 1,
+    "description": "Open Lock DC 40.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Manacles",
+    "category": "Adventuring Gear",
+    "costGp": 15,
+    "weightLb": 2,
+    "description": "Escape Artist DC 30; break DC 26.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Manacles, masterwork",
+    "category": "Adventuring Gear",
+    "costGp": 50,
+    "weightLb": 2,
+    "description": "Escape Artist DC 35; break DC 28.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Mirror, small steel",
+    "category": "Adventuring Gear",
+    "costGp": 10,
+    "weightLb": 0.5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Oil (1-pint flask)",
+    "category": "Adventuring Gear",
+    "costGp": 0.1,
+    "weightLb": 1,
+    "description": "Fuel for lanterns and lamps. Can be used as splash weapon; deals 1d3 fire damage on direct hit.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Paper (per sheet)",
+    "category": "Adventuring Gear",
+    "costGp": 0.4,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Parchment (per sheet)",
+    "category": "Adventuring Gear",
+    "costGp": 0.2,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Pick, miner's",
+    "category": "Adventuring Gear",
+    "costGp": 3,
+    "weightLb": 10,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Piton",
+    "category": "Adventuring Gear",
+    "costGp": 0.1,
+    "weightLb": 0.5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Pole, 10-foot",
+    "category": "Adventuring Gear",
+    "costGp": 0.2,
+    "weightLb": 8,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Pot, iron",
+    "category": "Adventuring Gear",
+    "costGp": 0.5,
+    "weightLb": 10,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Pouch, belt (empty)",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 0.5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Rations, trail (per day)",
+    "category": "Adventuring Gear",
+    "costGp": 0.5,
+    "weightLb": 1,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Rope, hempen (50 ft.)",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 10,
+    "description": "Break DC 23.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Rope, silk (50 ft.)",
+    "category": "Adventuring Gear",
+    "costGp": 10,
+    "weightLb": 5,
+    "description": "Break DC 24. +2 circumstance bonus on Use Rope checks.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Sack (empty)",
+    "category": "Adventuring Gear",
+    "costGp": 0.1,
+    "weightLb": 0.5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Sewing needle",
+    "category": "Adventuring Gear",
+    "costGp": 0.5,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Signal whistle",
+    "category": "Adventuring Gear",
+    "costGp": 0.8,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Signet ring",
+    "category": "Adventuring Gear",
+    "costGp": 5,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Sledge",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 10,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Spell component pouch",
+    "category": "Adventuring Gear",
+    "costGp": 5,
+    "weightLb": 2,
+    "description": "Contains all common material components for spells.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Spellbook, wizard's (blank)",
+    "category": "Adventuring Gear",
+    "costGp": 15,
+    "weightLb": 3,
+    "description": "Holds 100 pages of spells.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Spikes, iron (12)",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Tent",
+    "category": "Adventuring Gear",
+    "costGp": 10,
+    "weightLb": 20,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Torch",
+    "category": "Adventuring Gear",
+    "costGp": 0.01,
+    "weightLb": 1,
+    "description": "Illuminates 20 ft. radius; burns for 1 hour. Can be used as improvised weapon (1d3 fire + 1d3 bludgeoning).",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Vial, ink or potion",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Waterskin",
+    "category": "Adventuring Gear",
+    "costGp": 1,
+    "weightLb": 4,
+    "description": "Holds 1 gallon of liquid.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Whetstone",
+    "category": "Adventuring Gear",
+    "costGp": 0.02,
+    "weightLb": 1,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Alchemist's lab",
+    "category": "Tools and Skill Kits",
+    "costGp": 500,
+    "weightLb": 40,
+    "description": "Required for Craft (alchemy) checks without penalty.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Artisan's tools",
+    "category": "Tools and Skill Kits",
+    "costGp": 5,
+    "weightLb": 5,
+    "description": "Required for Craft checks without penalty.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Artisan's tools, masterwork",
+    "category": "Tools and Skill Kits",
+    "costGp": 55,
+    "weightLb": 5,
+    "description": "+2 circumstance bonus on Craft checks.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Climber's kit",
+    "category": "Tools and Skill Kits",
+    "costGp": 80,
+    "weightLb": 5,
+    "description": "+2 circumstance bonus on Climb checks.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Disguise kit",
+    "category": "Tools and Skill Kits",
+    "costGp": 50,
+    "weightLb": 8,
+    "description": "+2 circumstance bonus on Disguise checks. Contains 10 uses.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Healer's kit",
+    "category": "Tools and Skill Kits",
+    "costGp": 50,
+    "weightLb": 1,
+    "description": "+2 circumstance bonus on Heal checks. Contains 10 uses.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Holy symbol, wooden",
+    "category": "Tools and Skill Kits",
+    "costGp": 1,
+    "weightLb": 0,
+    "description": "Divine focus for divine spellcasters.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Holy symbol, steel",
+    "category": "Tools and Skill Kits",
+    "costGp": 5,
+    "weightLb": 1,
+    "description": "Divine focus for divine spellcasters.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Holy water (flask)",
+    "category": "Tools and Skill Kits",
+    "costGp": 25,
+    "weightLb": 1,
+    "description": "Splash weapon. Deals 2d4 damage to undead and evil outsiders.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Hourglass",
+    "category": "Tools and Skill Kits",
+    "costGp": 25,
+    "weightLb": 1,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Magnifying glass",
+    "category": "Tools and Skill Kits",
+    "costGp": 100,
+    "weightLb": 0,
+    "description": "+5 circumstance bonus on Appraise checks for small items. Can start fires in direct sunlight.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Musical instrument, common",
+    "category": "Tools and Skill Kits",
+    "costGp": 5,
+    "weightLb": 3,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Musical instrument, masterwork",
+    "category": "Tools and Skill Kits",
+    "costGp": 100,
+    "weightLb": 3,
+    "description": "+2 circumstance bonus on Perform checks.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Scale, merchant's",
+    "category": "Tools and Skill Kits",
+    "costGp": 2,
+    "weightLb": 1,
+    "description": "+2 circumstance bonus on Appraise checks for items measured by weight.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Sealing wax",
+    "category": "Tools and Skill Kits",
+    "costGp": 1,
+    "weightLb": 1,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Thieves' tools",
+    "category": "Tools and Skill Kits",
+    "costGp": 30,
+    "weightLb": 1,
+    "description": "Required for Disable Device and Open Lock checks without penalty.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Thieves' tools, masterwork",
+    "category": "Tools and Skill Kits",
+    "costGp": 100,
+    "weightLb": 2,
+    "description": "+2 circumstance bonus on Disable Device and Open Lock checks.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Spyglass",
+    "category": "Tools and Skill Kits",
+    "costGp": 1000,
+    "weightLb": 1,
+    "description": "Objects viewed through a spyglass are magnified to twice their size.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Ale (mug)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 0.04,
+    "weightLb": 1,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Banquet (per person)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 10,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Inn stay, good (per day)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 2,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Inn stay, common (per day)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 0.5,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Inn stay, poor (per day)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 0.2,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Meals, good (per day)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 0.5,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Meals, common (per day)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 0.3,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Meals, poor (per day)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 0.1,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Wine, common (pitcher)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 0.2,
+    "weightLb": 6,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Wine, fine (bottle)",
+    "category": "Food, Drink, and Lodging",
+    "costGp": 10,
+    "weightLb": 1.5,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Horse, light",
+    "category": "Mounts and Related Gear",
+    "costGp": 75,
+    "weightLb": 0,
+    "description": "Carries up to 150 lb. (light load) at 60 ft. speed.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Horse, heavy",
+    "category": "Mounts and Related Gear",
+    "costGp": 200,
+    "weightLb": 0,
+    "description": "Carries up to 200 lb. (light load) at 50 ft. speed.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Warhorse, light",
+    "category": "Mounts and Related Gear",
+    "costGp": 150,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Warhorse, heavy",
+    "category": "Mounts and Related Gear",
+    "costGp": 400,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Pony",
+    "category": "Mounts and Related Gear",
+    "costGp": 30,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Warpony",
+    "category": "Mounts and Related Gear",
+    "costGp": 100,
+    "weightLb": 0,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Saddle, military",
+    "category": "Mounts and Related Gear",
+    "costGp": 20,
+    "weightLb": 30,
+    "description": "+2 on Ride checks to remain in saddle.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Saddle, riding",
+    "category": "Mounts and Related Gear",
+    "costGp": 10,
+    "weightLb": 25,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Saddlebags",
+    "category": "Mounts and Related Gear",
+    "costGp": 4,
+    "weightLb": 8,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Bit and bridle",
+    "category": "Mounts and Related Gear",
+    "costGp": 2,
+    "weightLb": 1,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Feed (per day)",
+    "category": "Mounts and Related Gear",
+    "costGp": 0.05,
+    "weightLb": 10,
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Acid (flask)",
+    "category": "Special Substances and Items",
+    "costGp": 10,
+    "weightLb": 1,
+    "description": "Splash weapon. Deals 1d6 acid damage on hit; 1 point splash damage.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Alchemist's fire (flask)",
+    "category": "Special Substances and Items",
+    "costGp": 20,
+    "weightLb": 1,
+    "description": "Splash weapon. Deals 1d6 fire damage; 1d6 fire on next round unless extinguished (DC 15 Reflex).",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Antitoxin (vial)",
+    "category": "Special Substances and Items",
+    "costGp": 50,
+    "weightLb": 0,
+    "description": "+5 alchemical bonus on Fortitude saves against poison for 1 hour.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Everburning torch",
+    "category": "Special Substances and Items",
+    "costGp": 110,
+    "weightLb": 1,
+    "description": "Sheds light as a torch; does not burn out. Contains continual flame spell.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Smokestick",
+    "category": "Special Substances and Items",
+    "costGp": 20,
+    "weightLb": 0.5,
+    "description": "Creates 10-ft. cube of opaque smoke for 1 round when ignited.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Sunrod",
+    "category": "Special Substances and Items",
+    "costGp": 2,
+    "weightLb": 1,
+    "description": "Illuminates 30 ft. radius for 6 hours when struck.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Tanglefoot bag",
+    "category": "Special Substances and Items",
+    "costGp": 50,
+    "weightLb": 4,
+    "description": "Splash weapon. Target entangled 2d4 rounds; Reflex DC 15 to avoid. Large or larger creatures are slowed instead.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Thunderstone",
+    "category": "Special Substances and Items",
+    "costGp": 30,
+    "weightLb": 1,
+    "description": "Thrown splash weapon. 10 ft. burst; DC 15 Fortitude or deafened 1 hour.",
+    "source": { "abbr": "SRD", "page": null }
+  },
+  {
+    "name": "Tindertwig",
+    "category": "Special Substances and Items",
+    "costGp": 1,
+    "weightLb": 0,
+    "description": "Lights on contact with rough surface as a free action.",
+    "source": { "abbr": "SRD", "page": null }
+  }
+]
