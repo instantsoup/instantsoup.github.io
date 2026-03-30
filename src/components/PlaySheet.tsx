@@ -22,6 +22,7 @@ import type {
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 import { AbilityDamagePanel } from './AbilityDamagePanel';
+import { CombatTracker } from './CombatTracker';
 import { EquipmentPanel } from './EquipmentPanel';
 import { HPTracker } from './HPTracker';
 import { NotesPanel } from './NotesPanel';
@@ -73,6 +74,10 @@ type PlaySheetProps = {
   notes: string;
   setNotes: (v: string) => void;
   onBlur: () => void;
+  startCombat: () => void;
+  endCombat: () => void;
+  setCombatInitiative: (n: number) => void;
+  onAdvanceRound: () => void;
 };
 
 export function PlaySheet({
@@ -119,6 +124,10 @@ export function PlaySheet({
   notes,
   setNotes,
   onBlur,
+  startCombat,
+  endCombat,
+  setCombatInitiative,
+  onAdvanceRound,
 }: PlaySheetProps) {
   const alignmentLabel = alignment
     ? (alignments.find((a) => a.code === alignment)?.label ?? alignment)
@@ -273,6 +282,18 @@ export function PlaySheet({
         {deity && <span className="play-sheet__identity-detail">{deity}</span>}
         {homeland && <span className="play-sheet__identity-detail">{homeland}</span>}
       </div>
+
+      {/* Combat Tracker */}
+      <CombatTracker
+        inCombat={combatStats.inCombat ?? false}
+        combatRound={combatStats.combatRound ?? 1}
+        combatInitiative={combatStats.combatInitiative}
+        initiativeBonus={mods.dex + (combatStats.initiativeBonus ?? 0)}
+        onStart={startCombat}
+        onEnd={endCombat}
+        onSetInitiative={setCombatInitiative}
+        onAdvanceRound={onAdvanceRound}
+      />
 
       {/* HP */}
       <div className="play-sheet__section">

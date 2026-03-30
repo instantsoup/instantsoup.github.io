@@ -94,6 +94,18 @@ export function useCharacterExtras(initial: Character) {
 
   const clearAllStatusEffects = () => setStatusEffects({});
 
+  const decrementStatusRounds = () =>
+    setStatusEffects((prev) => {
+      const next = { ...prev };
+      for (const name of Object.keys(next)) {
+        const effect = next[name];
+        if (effect.active && effect.rounds !== undefined && effect.rounds > 0) {
+          next[name] = { ...effect, rounds: effect.rounds - 1 };
+        }
+      }
+      return next;
+    });
+
   // Ability damage
   const setAbilityDamage = (key: keyof AbilityDamage, value: number) =>
     setAbilityDamageState((prev) => ({ ...prev, [key]: Math.max(0, value) }));
@@ -182,6 +194,7 @@ export function useCharacterExtras(initial: Character) {
     toggleStatusEffect,
     setStatusEffectRounds,
     clearAllStatusEffects,
+    decrementStatusRounds,
     abilityDamage,
     setAbilityDamage,
     equipment,

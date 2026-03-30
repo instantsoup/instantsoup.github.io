@@ -52,6 +52,9 @@ export const CombatStatsSchema = z.object({
   armorCheckPenalty: z.number().int().min(0).optional().default(0),
   naturalArmorBonus: z.number().int().min(0).optional().default(0),
   stable: z.boolean().optional().default(false),
+  inCombat: z.boolean().optional().default(false),
+  combatRound: z.number().int().min(1).optional().default(1),
+  combatInitiative: z.number().int().optional(),
 });
 
 export type CombatStats = z.infer<typeof CombatStatsSchema>;

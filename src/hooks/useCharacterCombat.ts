@@ -39,6 +39,27 @@ export function useCharacterCombat(initial: Character) {
     setCombatStats((prev) => ({ ...prev, movementType: type || undefined }));
   };
 
+  const startCombat = () => {
+    setCombatStats((prev) => ({ ...prev, inCombat: true, combatRound: 1 }));
+  };
+
+  const endCombat = () => {
+    setCombatStats((prev) => ({
+      ...prev,
+      inCombat: false,
+      combatRound: 1,
+      combatInitiative: undefined,
+    }));
+  };
+
+  const setCombatInitiative = (n: number) => {
+    setCombatStats((prev) => ({ ...prev, combatInitiative: n }));
+  };
+
+  const advanceRound = () => {
+    setCombatStats((prev) => ({ ...prev, combatRound: (prev.combatRound ?? 1) + 1 }));
+  };
+
   const setSaveBonus = (saveName: string, bonus: number) => {
     setSaveBonuses((prev) => ({ ...prev, [saveName]: Math.max(0, Math.min(99, bonus)) }));
   };
@@ -67,6 +88,10 @@ export function useCharacterCombat(initial: Character) {
     updateSpellSlotsUsed,
     resetSpellSlots,
     setMovementType,
+    startCombat,
+    endCombat,
+    setCombatInitiative,
+    advanceRound,
     saveBonuses,
     setSaveBonus,
     weapons,

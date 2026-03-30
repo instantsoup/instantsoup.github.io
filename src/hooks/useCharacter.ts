@@ -123,6 +123,13 @@ export function useCharacter() {
     updateSpellSlotsUsed: combat.updateSpellSlotsUsed,
     resetSpellSlots: combat.resetSpellSlots,
     setMovementType: combat.setMovementType,
+    startCombat: combat.startCombat,
+    endCombat: combat.endCombat,
+    setCombatInitiative: combat.setCombatInitiative,
+    onAdvanceRound: () => {
+      combat.advanceRound();
+      extras.decrementStatusRounds();
+    },
     saveBonuses: combat.saveBonuses,
     setSaveBonus: combat.setSaveBonus,
 

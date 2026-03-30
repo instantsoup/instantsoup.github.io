@@ -71,10 +71,27 @@ export function StickyBar({
         <span className="sticky-stat__value">{totalAC}</span>
       </div>
 
-      <div className="sticky-stat">
-        <span className="sticky-stat__label">Init</span>
-        <span className="sticky-stat__value">{fmt(initiative)}</span>
-      </div>
+      {combatStats.inCombat ? (
+        <>
+          <div className="sticky-stat">
+            <span className="sticky-stat__label">Rnd</span>
+            <span className="sticky-stat__value">{combatStats.combatRound ?? 1}</span>
+          </div>
+          <div className="sticky-stat">
+            <span className="sticky-stat__label">Init</span>
+            <span className="sticky-stat__value">
+              {combatStats.combatInitiative !== undefined
+                ? combatStats.combatInitiative
+                : fmt(initiative)}
+            </span>
+          </div>
+        </>
+      ) : (
+        <div className="sticky-stat">
+          <span className="sticky-stat__label">Init</span>
+          <span className="sticky-stat__value">{fmt(initiative)}</span>
+        </div>
+      )}
 
       <div className="sticky-stat">
         <span className="sticky-stat__label">BAB</span>

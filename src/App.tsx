@@ -70,6 +70,10 @@ export function App() {
     updateSpellSlotsUsed,
     resetSpellSlots,
     setMovementType,
+    startCombat,
+    endCombat,
+    setCombatInitiative,
+    onAdvanceRound,
     flaws,
     addFlaw,
     removeFlaw,
@@ -211,6 +215,10 @@ export function App() {
                 updateWeapon={updateWeapon}
                 setNotes={setNotes}
                 onBlur={persistLocal}
+                startCombat={startCombat}
+                endCombat={endCombat}
+                setCombatInitiative={setCombatInitiative}
+                onAdvanceRound={onAdvanceRound}
               />
             </div>
           )}

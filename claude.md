@@ -189,7 +189,9 @@ New fields: use `.optional().default(value)` for backward compatibility. Existin
 ## Boundaries
 
 ✅ Client-only features, additive schema changes, SRD/OGL content
-❌ No backend, no analytics, no product identity content
+❌ No homebrew content — official D&D 3.5e SRD/OGL material only (PHB, DMG, MM, Complete series, etc.)
+❌ No product identity content (Forgotten Realms / Eberron proper nouns, etc.)
+❌ No backend, no analytics
 
 ---
 
