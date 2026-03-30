@@ -108,9 +108,7 @@ export function EquipmentBrowser({ onAdd }: EquipmentBrowserProps) {
 
               {isExpanded && (
                 <div className="browser__details">
-                  {e.description && (
-                    <div className="browser__details-row">{e.description}</div>
-                  )}
+                  {e.description && <div className="browser__details-row">{e.description}</div>}
                   <div className="browser__details-row">
                     <span className="browser__details-label">Cost:</span> {formatCost(e.costGp)}
                     {e.weightLb !== undefined && (

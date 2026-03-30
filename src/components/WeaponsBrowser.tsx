@@ -112,9 +112,7 @@ export function WeaponsBrowser({ onAdd }: WeaponsBrowserProps) {
                   </div>
                 </div>
                 <div className="browser__item-actions">
-                  <span
-                    className={`browser__item-badge browser__item-badge--${w.category}`}
-                  >
+                  <span className={`browser__item-badge browser__item-badge--${w.category}`}>
                     {w.category}
                   </span>
                   {onAdd && (

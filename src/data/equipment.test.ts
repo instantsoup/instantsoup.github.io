@@ -34,16 +34,16 @@ describe('equipment data', () => {
 
   it('includes alchemical items', () => {
     const names = equipmentRefs.map((e) => e.name);
-    expect(names).toContain('Alchemist\'s fire (flask)');
+    expect(names).toContain("Alchemist's fire (flask)");
     expect(names).toContain('Acid (flask)');
     expect(names).toContain('Antitoxin (vial)');
   });
 
   it('includes skill kit items', () => {
     const names = equipmentRefs.map((e) => e.name);
-    expect(names).toContain('Healer\'s kit');
-    expect(names).toContain('Thieves\' tools');
-    expect(names).toContain('Climber\'s kit');
+    expect(names).toContain("Healer's kit");
+    expect(names).toContain("Thieves' tools");
+    expect(names).toContain("Climber's kit");
   });
 });
 

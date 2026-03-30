@@ -92,8 +92,8 @@ export function ArmorBrowser() {
                   </div>
                   {(a.speed30 !== undefined || a.speed20 !== undefined) && (
                     <div className="browser__details-row">
-                      <span className="browser__details-label">Speed:</span>{' '}
-                      {a.speed30 ?? 30} ft. (30 base) / {a.speed20 ?? 20} ft. (20 base)
+                      <span className="browser__details-label">Speed:</span> {a.speed30 ?? 30} ft.
+                      (30 base) / {a.speed20 ?? 20} ft. (20 base)
                     </div>
                   )}
                   <div className="browser__details-row">
