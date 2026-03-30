@@ -212,3 +212,94 @@
   color: var(--clr-text-subtle);
   font-size: 12px;
 }
+
+/* Right-side column: badge + optional add button */
+.browser__item-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+/* Stat chips (damage, crit, type, etc.) */
+.browser__stats-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 3px;
+}
+
+.browser__stat {
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--clr-bg);
+  color: var(--clr-text-secondary);
+  border: 1px solid var(--clr-border);
+}
+
+.browser__stat--damage {
+  background: var(--clr-accent-amber-bg);
+  color: var(--clr-accent-amber-text);
+  border-color: var(--clr-accent-amber-border);
+}
+
+.browser__stat--crit {
+  background: var(--clr-accent-sky-bg);
+  color: var(--clr-accent-sky-text);
+  border-color: transparent;
+}
+
+/* Add button — shown on hover */
+.browser__item-add {
+  visibility: hidden;
+  padding: 2px 7px;
+  font-size: 11px;
+  border-radius: 3px;
+  border: 1px solid var(--clr-primary-border);
+  color: var(--clr-primary);
+  background: none;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1.4;
+}
+
+.browser__item:hover .browser__item-add {
+  visibility: visible;
+}
+
+.browser__item-add:hover {
+  background: var(--clr-primary-bg);
+}
+
+/* Category badge variants */
+.browser__item-badge--simple {
+  background: var(--clr-accent-green-bg);
+  color: var(--clr-accent-green-text);
+}
+
+.browser__item-badge--martial {
+  background: var(--clr-accent-amber-bg);
+  color: var(--clr-accent-amber-text);
+}
+
+.browser__item-badge--exotic {
+  background: var(--clr-accent-purple-bg);
+  color: var(--clr-accent-purple-text);
+}
+
+.browser__item-badge--medium {
+  background: var(--clr-accent-amber-bg);
+  color: var(--clr-accent-amber-text);
+}
+
+.browser__item-badge--heavy {
+  background: var(--clr-accent-indigo-bg);
+  color: var(--clr-accent-indigo-text);
+}
+
+.browser__item-badge--shield {
+  background: var(--clr-accent-green-bg);
+  color: var(--clr-accent-green-text);
+}

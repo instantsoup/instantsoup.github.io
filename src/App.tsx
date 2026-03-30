@@ -142,6 +142,14 @@ export function App() {
         onFileChange={onFileChange}
         fileInputRef={fileInputRef}
         resetAll={resetAll}
+        onAddWeapon={(w) => {
+          addWeapon(w);
+          persistLocal();
+        }}
+        onAddEquipment={(item) => {
+          addEquipment(item);
+          persistLocal();
+        }}
       />
 
       <div className="app-content">
