@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { Level } from '../types/level';
 import {
+  bonusSlotsForMod,
   calculateBABForClass,
   calculateCumulativeSkillRanks,
   calculateMaxHP,
@@ -12,10 +13,12 @@ import {
   calculateSkillPointsForLevel,
   calculateSkillPointsSpent,
   calculateSkillPointsSpentAtLevel,
+  calculateSpellSlots,
   calculateTotalBAB,
   calculateTotalSave,
   calculateTotalSkillPoints,
   formatAttacks,
+  getCasterSummary,
   getIterativeAttacks,
   getPrimarySpellcastingAbility,
   getRacialMods,
@@ -633,5 +636,138 @@ describe('getRacialMods', () => {
 
   it('returns empty object for Human (no modifiers)', () => {
     expect(getRacialMods('Human')).toEqual({});
+  });
+});
+
+const baseScores = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
+
+describe('bonusSlotsForMod', () => {
+  it('grants 0 bonus slots for cantrips (spell level 0)', () => {
+    expect(bonusSlotsForMod(5, 0)).toBe(0);
+  });
+
+  it('grants 0 bonus slots when mod < spell level', () => {
+    expect(bonusSlotsForMod(0, 1)).toBe(0);
+    expect(bonusSlotsForMod(2, 3)).toBe(0);
+  });
+
+  it('grants 1 bonus slot when mod == spell level', () => {
+    expect(bonusSlotsForMod(1, 1)).toBe(1);
+    expect(bonusSlotsForMod(3, 3)).toBe(1);
+  });
+
+  it('grants 1 bonus slot for mod 1-4 above minimum (spell level 1, mod 1-4)', () => {
+    expect(bonusSlotsForMod(1, 1)).toBe(1);
+    expect(bonusSlotsForMod(4, 1)).toBe(1);
+  });
+
+  it('grants 2 bonus slots for mod 5 (spell level 1)', () => {
+    expect(bonusSlotsForMod(5, 1)).toBe(2);
+  });
+
+  it('grants 3 bonus slots for mod 9 (spell level 1)', () => {
+    expect(bonusSlotsForMod(9, 1)).toBe(3);
+  });
+});
+
+describe('calculateSpellSlots', () => {
+  const makeLevel = (cls: string): Level => ({
+    level: 1,
+    class: cls,
+    feats: [],
+    spells: [],
+    skillRanks: {},
+    unspentSkillPoints: 0,
+  });
+
+  it('returns empty record for non-caster', () => {
+    const levels = [makeLevel('Fighter'), makeLevel('Fighter')];
+    expect(calculateSpellSlots(levels, baseScores)).toEqual({});
+  });
+
+  it('returns correct base slots for a level-1 Wizard with no bonus', () => {
+    const levels = [makeLevel('Wizard')];
+    const result = calculateSpellSlots(levels, baseScores);
+    // Level-1 Wizard: 3 cantrips, 1 first-level spell; INT 10 → mod 0, no bonus
+    expect(result['0']).toBe(3);
+    expect(result['1']).toBe(1);
+    expect(result['2']).toBeUndefined();
+  });
+
+  it('adds bonus slots from high casting stat', () => {
+    const levels = [makeLevel('Wizard')];
+    const scores = { ...baseScores, int: 16 }; // INT 16 → mod +3
+    const result = calculateSpellSlots(levels, scores);
+    // Base: 3 cantrips (no bonus), 1 first; bonus for mod=3: level1=1, level2=1, level3=1
+    expect(result['0']).toBe(3); // no bonus for cantrips
+    expect(result['1']).toBe(2); // 1 base + 1 bonus (mod 3 >= spell level 1)
+    // Level-1 wizard row is [3,1,-1,...] so level 2+ is inaccessible → not in result
+    expect(result['2']).toBeUndefined();
+  });
+
+  it('accumulates slots from multiclass casters', () => {
+    const wizLevels = Array(5).fill(makeLevel('Wizard'));
+    const clericLevels = Array(3).fill(makeLevel('Cleric'));
+    const levels = [...wizLevels, ...clericLevels];
+    const result = calculateSpellSlots(levels, baseScores);
+    // Wizard level 5: [4,3,2,1,-1,...] — cantrips:4, 1st:3, 2nd:2, 3rd:1
+    // Cleric level 3: [4,2,1,-1,...] — cantrips:4, 1st:2, 2nd:1
+    // Combined: cantrips:8, 1st:5, 2nd:3, 3rd:1
+    expect(result['0']).toBe(8);
+    expect(result['1']).toBe(5);
+    expect(result['2']).toBe(3);
+    expect(result['3']).toBe(1);
+  });
+
+  it('returns no slots for Paladin levels 1-3', () => {
+    const levels = [makeLevel('Paladin'), makeLevel('Paladin'), makeLevel('Paladin')];
+    const result = calculateSpellSlots(levels, baseScores);
+    expect(Object.keys(result)).toHaveLength(0);
+  });
+
+  it('returns 0 base + bonus for Paladin level 4 with WIS 12', () => {
+    const levels = Array(4).fill(makeLevel('Paladin'));
+    const scores = { ...baseScores, wis: 12 }; // WIS mod +1
+    const result = calculateSpellSlots(levels, scores);
+    // Paladin level-4 row: [-1, 0, -1, ...] — 1st-level spells: 0 base + bonus
+    // bonus for mod=1, spell level 1: floor((1-1)/4)+1 = 1
+    expect(result['1']).toBe(1);
+    expect(result['0']).toBeUndefined(); // cantrips inaccessible for Paladin
+  });
+});
+
+describe('getCasterSummary', () => {
+  const makeLevel = (cls: string): Level => ({
+    level: 1,
+    class: cls,
+    feats: [],
+    spells: [],
+    skillRanks: {},
+    unspentSkillPoints: 0,
+  });
+
+  it('returns empty array for non-caster', () => {
+    expect(getCasterSummary([makeLevel('Fighter')], baseScores)).toHaveLength(0);
+  });
+
+  it('returns one entry for single casting class', () => {
+    const result = getCasterSummary([makeLevel('Wizard'), makeLevel('Wizard')], {
+      ...baseScores,
+      int: 14,
+    });
+    expect(result).toHaveLength(1);
+    expect(result[0].className).toBe('Wizard');
+    expect(result[0].castingMod).toBe(2);
+    expect(result[0].castingType).toBe('prepared');
+    expect(result[0].casterLevel).toBe(2);
+  });
+
+  it('returns two entries for multiclass caster', () => {
+    const levels = [makeLevel('Wizard'), makeLevel('Sorcerer')];
+    const result = getCasterSummary(levels, baseScores);
+    expect(result).toHaveLength(2);
+    const names = result.map((r) => r.className);
+    expect(names).toContain('Wizard');
+    expect(names).toContain('Sorcerer');
   });
 });

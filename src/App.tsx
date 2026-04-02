@@ -13,6 +13,7 @@ import { PanelSection } from './components/PanelSection';
 import { PlaySheet } from './components/PlaySheet';
 import { RaceSelector } from './components/RaceSelector';
 import { SkillsPanel } from './components/SkillsPanel';
+import { MemorizedSpellsPanel } from './components/MemorizedSpellsPanel';
 import { SpellSlotsPanel } from './components/SpellSlotsPanel';
 import { SpellsSummary } from './components/SpellsSummary';
 import { type Tab, TabNav } from './components/TabNav';
@@ -20,7 +21,13 @@ import { TaintPanel } from './components/TaintPanel';
 import { WeaponsPanel } from './components/WeaponsPanel';
 import { useCharacter } from './hooks/useCharacter';
 import { getEncumbranceSummary } from './lib/encumbrance';
-import { calculateTotalBAB, getRacialMods, xpForLevel } from './lib/progressions';
+import {
+  calculateSpellSlots,
+  calculateTotalBAB,
+  getCasterSummary,
+  getRacialMods,
+  xpForLevel,
+} from './lib/progressions';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
@@ -115,6 +122,10 @@ export function App() {
     addWeapon,
     removeWeapon,
     updateWeapon,
+    memorizedSpells,
+    addMemorizedSpell,
+    removeMemorizedSpell,
+    clearMemorizedSpells,
     onNum,
     persistLocal,
     exportJson,
@@ -124,6 +135,14 @@ export function App() {
     resetAll,
     error,
   } = useCharacter();
+
+  // Spell system derived values
+  const calculatedSlots = calculateSpellSlots(levels, effectiveScores);
+  const casterSummary = getCasterSummary(levels, effectiveScores);
+  const primaryCaster = casterSummary[0] ?? null;
+  const primaryCastingMod = primaryCaster?.castingMod;
+  const isPreparedCaster = casterSummary.some((c) => c.castingType === 'prepared');
+  const accessibleSpellLevels = Object.keys(calculatedSlots);
 
   const toggleMode = () => {
     setMode((m) => {
@@ -430,8 +449,23 @@ export function App() {
                   updateSpellSlotsUsed={updateSpellSlotsUsed}
                   resetSpellSlots={resetSpellSlots}
                   onBlur={persistLocal}
+                  calculatedSlots={calculatedSlots}
+                  primaryCastingMod={primaryCastingMod}
                 />
               </PanelSection>
+
+              {isPreparedCaster && (
+                <PanelSection title="Memorized Spells" defaultOpen={false}>
+                  <MemorizedSpellsPanel
+                    memorizedSpells={memorizedSpells}
+                    accessibleLevels={accessibleSpellLevels}
+                    onAdd={addMemorizedSpell}
+                    onRemove={removeMemorizedSpell}
+                    onClearLevel={clearMemorizedSpells}
+                    onBlur={persistLocal}
+                  />
+                </PanelSection>
+              )}
 
               <PanelSection title="Feats" defaultOpen={false}>
                 <FeatsSummary levels={levels} />

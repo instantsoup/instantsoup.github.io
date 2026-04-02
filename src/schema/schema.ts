@@ -47,6 +47,8 @@ export const CombatStatsSchema = z.object({
   baseAttackBonus: z.number().int().optional(),
   spellSlotsMax: z.record(z.string(), z.number().int().min(0)).optional().default({}),
   spellSlotsUsed: z.record(z.string(), z.number().int().min(0)).optional().default({}),
+  /** Memorized spells keyed by spell level string ('0'..'9'), each value a list of spell names. */
+  memorizedSpells: z.record(z.string(), z.array(z.string())).optional().default({}),
   movementSpeed: z.number().int().min(0).optional(),
   movementType: z.string().optional(),
   armorCheckPenalty: z.number().int().min(0).optional().default(0),

@@ -34,6 +34,19 @@ export const ClassProgressionSchema = z.object({
     .nullable()
     .optional()
     .default(null),
+  castingType: z.enum(['prepared', 'spontaneous']).nullable().optional().default(null),
+  /**
+   * 20×10 matrix of base spells per day.
+   * Outer index = class level - 1 (0..19).
+   * Inner index = spell level (0..9).
+   * -1 = inaccessible at this class level; 0 = accessible, 0 base slots (bonus slots may apply).
+   */
+  spellSlotsPerDay: z
+    .array(z.array(z.number().int().min(-1)))
+    .length(20)
+    .nullable()
+    .optional()
+    .default(null),
 });
 
 export type ClassProgression = z.infer<typeof ClassProgressionSchema>;

@@ -9,6 +9,10 @@ type SpellSlotsPanelProps = {
   resetSpellSlots: () => void;
   onBlur: () => void;
   readOnly?: boolean;
+  /** Pre-calculated max slots from class progression + ability bonus */
+  calculatedSlots?: Record<string, number>;
+  /** Primary spellcasting ability modifier for spell DC display */
+  primaryCastingMod?: number;
 };
 
 export function SpellSlotsPanel({
@@ -18,6 +22,8 @@ export function SpellSlotsPanel({
   resetSpellSlots,
   onBlur,
   readOnly,
+  calculatedSlots,
+  primaryCastingMod,
 }: SpellSlotsPanelProps) {
   const slotsMax = combatStats.spellSlotsMax ?? {};
   const slotsUsed = combatStats.spellSlotsUsed ?? {};
@@ -50,15 +56,47 @@ export function SpellSlotsPanel({
     onBlur();
   };
 
-  // Only show levels that have a max set or if all are 0 show them all for setup (not in readOnly)
-  const activeRows = SPELL_LEVELS.filter((lvl) => (slotsMax[lvl] ?? 0) > 0);
-  const showAll = activeRows.length === 0 && !readOnly;
+  const handleAutoFill = () => {
+    if (!calculatedSlots) return;
+    // First zero out any levels not in calculatedSlots
+    for (const lvl of SPELL_LEVELS) {
+      if (!(lvl in calculatedSlots) && (slotsMax[lvl] ?? 0) > 0) {
+        updateSpellSlotsMax(lvl, 0);
+      }
+    }
+    for (const [lvl, val] of Object.entries(calculatedSlots)) {
+      updateSpellSlotsMax(lvl, val);
+    }
+    onBlur();
+  };
+
+  // Determine which rows to show
+  const hasCalculated = calculatedSlots && Object.keys(calculatedSlots).length > 0;
+  const hasManual = SPELL_LEVELS.some((lvl) => (slotsMax[lvl] ?? 0) > 0);
+  const showAll = !hasManual && !readOnly;
   const rows = showAll ? [...SPELL_LEVELS] : SPELL_LEVELS;
+
+  const spellDC = (spellLevel: number): number | null => {
+    if (primaryCastingMod === undefined) return null;
+    return 10 + spellLevel + primaryCastingMod;
+  };
 
   return (
     <div className="spell-slots">
+      {hasCalculated && !readOnly && (
+        <div className="spell-slots__auto-bar">
+          <span className="spell-slots__auto-hint">Slots calculated from class + ability score</span>
+          <button className="btn btn--xs btn--secondary" onClick={handleAutoFill} title="Apply calculated slots">
+            ↺ Auto-fill
+          </button>
+        </div>
+      )}
+
       <div className="spell-slots__header">
         <span className="spell-slots__col-label">Level</span>
+        {!readOnly && primaryCastingMod !== undefined && (
+          <span className="spell-slots__col-label">DC</span>
+        )}
         <span className="spell-slots__col-label">Max</span>
         <span className="spell-slots__col-label">Used</span>
         <span className="spell-slots__col-label">Remaining</span>
@@ -70,15 +108,33 @@ export function SpellSlotsPanel({
         const used = slotsUsed[lvl] ?? 0;
         const remaining = Math.max(0, max - used);
         const isExhausted = max > 0 && remaining === 0;
+        const calcVal = calculatedSlots?.[lvl];
+        const dc = spellDC(Number(lvl));
+        const mismatch = calcVal !== undefined && calcVal !== max && max > 0;
 
-        if (!showAll && max === 0) return null;
+        if (!showAll && max === 0 && calcVal === undefined) return null;
 
         return (
           <div
             key={lvl}
             className={`spell-slots__row${isExhausted ? ' spell-slots__row--exhausted' : ''}`}
           >
-            <span className="spell-slots__level">{lvl === '0' ? 'Cantrip' : `${lvl}`}</span>
+            <span className="spell-slots__level">
+              {lvl === '0' ? 'Cantrip' : `${lvl}`}
+              {calcVal !== undefined && calcVal !== max && !readOnly && (
+                <span
+                  className="spell-slots__calc-hint"
+                  title={`Calculated: ${calcVal}`}
+                  onClick={() => { updateSpellSlotsMax(lvl, calcVal); onBlur(); }}
+                >
+                  ({calcVal})
+                </span>
+              )}
+              {mismatch && <span className="spell-slots__mismatch" title="Manual value differs from calculated" />}
+            </span>
+            {!readOnly && primaryCastingMod !== undefined && (
+              <span className="spell-slots__dc">{dc}</span>
+            )}
             {readOnly ? (
               <span className="spell-slots__max-display">{max > 0 ? max : '—'}</span>
             ) : (
@@ -87,7 +143,7 @@ export function SpellSlotsPanel({
                 className="spell-slots__input"
                 value={max || ''}
                 onChange={handleMaxChange(lvl)}
-                placeholder="0"
+                placeholder={calcVal !== undefined ? String(calcVal) : '0'}
                 min={0}
                 title={`Max ${lvl === '0' ? 'cantrip' : `level ${lvl}`} slots`}
               />

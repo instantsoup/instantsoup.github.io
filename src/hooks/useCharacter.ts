@@ -41,7 +41,7 @@ export function useCharacter() {
     levels: leveling.levels,
     alignment: identity.alignment,
     saveBonuses: combat.saveBonuses,
-    combatStats: combat.combatStats,
+    combatStats: { ...combat.combatStats, memorizedSpells: combat.memorizedSpells },
     flaws: extras.flaws,
     languages: extras.languages,
     taint: extras.taint,
@@ -132,6 +132,10 @@ export function useCharacter() {
     },
     saveBonuses: combat.saveBonuses,
     setSaveBonus: combat.setSaveBonus,
+    memorizedSpells: combat.memorizedSpells,
+    addMemorizedSpell: combat.addMemorizedSpell,
+    removeMemorizedSpell: combat.removeMemorizedSpell,
+    clearMemorizedSpells: combat.clearMemorizedSpells,
 
     // Extras
     flaws: extras.flaws,

@@ -4,6 +4,7 @@ import { classes } from '../data/classes';
 import { races } from '../data/races';
 import type { BABProgression, SaveProgression } from '../types/class-progression';
 import type { Level } from '../types/level';
+import type { Scores } from '../schema/schema';
 
 /** XP threshold to reach a given level (3.5e PHB: level*(level-1)*500) */
 export function xpForLevel(level: number): number {
@@ -393,4 +394,109 @@ export function recalculateSkillPointsFromLevel(
     };
   }
   return updated;
+}
+
+/**
+ * Bonus spell slots granted by a high casting stat (PHB Table 1-1).
+ * Cantrips (spellLevel 0) never receive bonus slots.
+ * For spell levels 1+: bonus = floor((mod - spellLevel) / 4) + 1, if mod >= spellLevel.
+ */
+export function bonusSlotsForMod(mod: number, spellLevel: number): number {
+  if (spellLevel === 0 || mod < spellLevel) return 0;
+  return Math.floor((mod - spellLevel) / 4) + 1;
+}
+
+/**
+ * Return true if any level in the array belongs to a casting class.
+ */
+export function isCaster(levels: Level[]): boolean {
+  return levels.some((l) => {
+    const prog = findClassProgression(l.class);
+    return prog?.castingType != null;
+  });
+}
+
+/**
+ * Calculate the maximum spell slots per day for a character.
+ *
+ * Returns a record keyed by spell level string ('0'..'9') containing the total
+ * max slots (base + ability bonus) across all casting classes.
+ *
+ * Only spell levels that are accessible (base >= 0) are included.
+ */
+export function calculateSpellSlots(levels: Level[], scores: Scores): Record<string, number> {
+  // Count levels per class
+  const classCounts = new Map<string, number>();
+  for (const level of levels) {
+    classCounts.set(level.class, (classCounts.get(level.class) ?? 0) + 1);
+  }
+
+  const totals: Record<string, number> = {};
+
+  for (const [className, count] of classCounts.entries()) {
+    const prog = findClassProgression(className);
+    if (!prog?.spellSlotsPerDay || !prog.spellcastingAbility) continue;
+
+    const classLevelIndex = Math.min(count, 20) - 1; // 0-based
+    const rowSlots = prog.spellSlotsPerDay[classLevelIndex];
+    const abilityMod = scores[prog.spellcastingAbility as keyof Scores] ?? 0;
+    // ability score value → modifier
+    const abMod = Math.floor((abilityMod - 10) / 2);
+
+    for (let sl = 0; sl <= 9; sl++) {
+      const base = rowSlots[sl];
+      if (base === -1) continue; // inaccessible for this class at this level
+
+      const bonus = bonusSlotsForMod(abMod, sl);
+      const key = String(sl);
+      totals[key] = (totals[key] ?? 0) + base + bonus;
+    }
+  }
+
+  return totals;
+}
+
+/**
+ * Spell save DC = 10 + spell level + casting stat modifier.
+ */
+export function getSpellDC(spellLevel: number, castingAbilityMod: number): number {
+  return 10 + spellLevel + castingAbilityMod;
+}
+
+/**
+ * Returns all casting classes the character has levels in, with their
+ * spellcasting ability modifier, casting type, and effective caster level.
+ */
+export function getCasterSummary(
+  levels: Level[],
+  scores: Scores,
+): Array<{
+  className: string;
+  casterLevel: number;
+  castingAbility: string;
+  castingMod: number;
+  castingType: 'prepared' | 'spontaneous';
+}> {
+  const classCounts = new Map<string, number>();
+  for (const level of levels) {
+    classCounts.set(level.class, (classCounts.get(level.class) ?? 0) + 1);
+  }
+
+  const result = [];
+  for (const [className, count] of classCounts.entries()) {
+    const prog = findClassProgression(className);
+    if (!prog?.castingType || !prog.spellcastingAbility) continue;
+
+    const abilityScore = scores[prog.spellcastingAbility as keyof Scores] ?? 10;
+    const castingMod = Math.floor((abilityScore - 10) / 2);
+
+    result.push({
+      className,
+      casterLevel: count,
+      castingAbility: prog.spellcastingAbility,
+      castingMod,
+      castingType: prog.castingType,
+    });
+  }
+  return result;
 }

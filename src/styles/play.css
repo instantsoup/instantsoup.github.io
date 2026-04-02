@@ -329,9 +329,25 @@
   gap: 4px;
 }
 
+.spell-slots__auto-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 6px;
+  background: var(--clr-bg);
+  border-radius: 4px;
+  border: 1px solid var(--clr-border);
+  gap: 8px;
+}
+
+.spell-slots__auto-hint {
+  font-size: 11px;
+  color: var(--clr-text-muted);
+}
+
 .spell-slots__header {
   display: grid;
-  grid-template-columns: 80px 50px 50px 80px 1fr;
+  grid-template-columns: 100px 50px 50px 80px 1fr;
   gap: 8px;
   align-items: center;
   padding: 4px 6px;
@@ -343,17 +359,45 @@
   border-bottom: 1px solid var(--clr-border);
 }
 
+.spell-slots__header--with-dc {
+  grid-template-columns: 100px 36px 50px 50px 80px 1fr;
+}
+
 .spell-slots__col-label {
   white-space: nowrap;
 }
 
 .spell-slots__row {
   display: grid;
-  grid-template-columns: 80px 50px 50px 80px 1fr;
+  grid-template-columns: 100px 50px 50px 80px 1fr;
   gap: 8px;
   align-items: center;
   padding: 4px 6px;
   border-radius: 4px;
+}
+
+.spell-slots__row--with-dc {
+  grid-template-columns: 100px 36px 50px 50px 80px 1fr;
+}
+
+.spell-slots__calc-hint {
+  font-size: 11px;
+  color: var(--clr-accent);
+  margin-left: 4px;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.spell-slots__calc-hint:hover {
+  opacity: 1;
+  text-decoration: underline;
+}
+
+.spell-slots__dc {
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  color: var(--clr-text-muted);
 }
 
 .spell-slots__row:hover {
@@ -395,6 +439,88 @@
   padding: 8px 6px 4px;
   border-top: 1px solid var(--clr-border);
   margin-top: 4px;
+}
+
+/* ================================
+   Memorized Spells
+=================================== */
+
+.memorized-spells {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.memorized-spells__level {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.memorized-spells__level-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 2px;
+  border-bottom: 1px solid var(--clr-border);
+}
+
+.memorized-spells__level-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: var(--clr-text-muted);
+}
+
+.memorized-spells__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.memorized-spells__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: var(--clr-bg);
+}
+
+.memorized-spells__spell-name {
+  font-size: 13px;
+}
+
+.memorized-spells__remove {
+  opacity: 0;
+  transition: opacity 0.1s;
+  padding: 0 4px;
+  color: var(--clr-danger);
+}
+
+.memorized-spells__item:hover .memorized-spells__remove {
+  opacity: 1;
+}
+
+.memorized-spells__add {
+  display: flex;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.memorized-spells__input {
+  flex: 1;
+  padding: 3px 8px;
+  border: 1px solid var(--clr-border-strong);
+  border-radius: 4px;
+  font: inherit;
+  font-size: 13px;
+  background: var(--clr-surface);
+  color: var(--clr-text);
 }
 
 /* ================================

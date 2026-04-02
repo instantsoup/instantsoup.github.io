@@ -6,6 +6,9 @@ export function useCharacterCombat(initial: Character) {
   const [combatStats, setCombatStats] = useState<CombatStats>(initial.combatStats ?? {});
   const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
   const [weapons, setWeapons] = useState<Weapon[]>(initial.weapons ?? []);
+  const [memorizedSpells, setMemorizedSpells] = useState<Record<string, string[]>>(
+    initial.combatStats?.memorizedSpells ?? {},
+  );
 
   const updateCombatStat = (field: keyof CombatStats, value: number | undefined) => {
     setCombatStats((prev) => ({ ...prev, [field]: value }));
@@ -69,16 +72,40 @@ export function useCharacterCombat(initial: Character) {
   const updateWeapon = (index: number, w: Weapon) =>
     setWeapons((prev) => prev.map((existing, i) => (i === index ? w : existing)));
 
+  const addMemorizedSpell = (spellLevel: string, spellName: string) => {
+    setMemorizedSpells((prev) => ({
+      ...prev,
+      [spellLevel]: [...(prev[spellLevel] ?? []), spellName],
+    }));
+  };
+
+  const removeMemorizedSpell = (spellLevel: string, index: number) => {
+    setMemorizedSpells((prev) => ({
+      ...prev,
+      [spellLevel]: (prev[spellLevel] ?? []).filter((_, i) => i !== index),
+    }));
+  };
+
+  const clearMemorizedSpells = (spellLevel?: string) => {
+    if (spellLevel !== undefined) {
+      setMemorizedSpells((prev) => ({ ...prev, [spellLevel]: [] }));
+    } else {
+      setMemorizedSpells({});
+    }
+  };
+
   const loadFrom = (char: Character) => {
     setCombatStats(char.combatStats ?? {});
     setSaveBonuses(char.saveBonuses ?? {});
     setWeapons(char.weapons ?? []);
+    setMemorizedSpells(char.combatStats?.memorizedSpells ?? {});
   };
 
   const reset = () => {
     setCombatStats({});
     setSaveBonuses({});
     setWeapons([]);
+    setMemorizedSpells({});
   };
 
   return {
@@ -98,6 +125,10 @@ export function useCharacterCombat(initial: Character) {
     addWeapon,
     removeWeapon,
     updateWeapon,
+    memorizedSpells,
+    addMemorizedSpell,
+    removeMemorizedSpell,
+    clearMemorizedSpells,
     loadFrom,
     reset,
   };
