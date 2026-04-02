@@ -85,8 +85,14 @@ export function SpellSlotsPanel({
     <div className="spell-slots">
       {hasCalculated && !readOnly && (
         <div className="spell-slots__auto-bar">
-          <span className="spell-slots__auto-hint">Slots calculated from class + ability score</span>
-          <button className="btn btn--xs btn--secondary" onClick={handleAutoFill} title="Apply calculated slots">
+          <span className="spell-slots__auto-hint">
+            Slots calculated from class + ability score
+          </span>
+          <button
+            className="btn btn--xs btn--secondary"
+            onClick={handleAutoFill}
+            title="Apply calculated slots"
+          >
             ↺ Auto-fill
           </button>
         </div>
@@ -125,12 +131,20 @@ export function SpellSlotsPanel({
                 <span
                   className="spell-slots__calc-hint"
                   title={`Calculated: ${calcVal}`}
-                  onClick={() => { updateSpellSlotsMax(lvl, calcVal); onBlur(); }}
+                  onClick={() => {
+                    updateSpellSlotsMax(lvl, calcVal);
+                    onBlur();
+                  }}
                 >
                   ({calcVal})
                 </span>
               )}
-              {mismatch && <span className="spell-slots__mismatch" title="Manual value differs from calculated" />}
+              {mismatch && (
+                <span
+                  className="spell-slots__mismatch"
+                  title="Manual value differs from calculated"
+                />
+              )}
             </span>
             {!readOnly && primaryCastingMod !== undefined && (
               <span className="spell-slots__dc">{dc}</span>

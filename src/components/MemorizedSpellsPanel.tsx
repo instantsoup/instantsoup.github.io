@@ -25,9 +25,7 @@ export function MemorizedSpellsPanel({
   const activeLevels = SPELL_LEVELS.filter((lvl) => accessibleLevels.includes(lvl));
 
   if (activeLevels.length === 0) {
-    return (
-      <p className="panel-empty">No spell levels available. Set spell slot maximums first.</p>
-    );
+    return <p className="panel-empty">No spell levels available. Set spell slot maximums first.</p>;
   }
 
   const setDraft = (lvl: string, val: string) => setDrafts((prev) => ({ ...prev, [lvl]: val }));
@@ -53,7 +51,10 @@ export function MemorizedSpellsPanel({
               {spells.length > 0 && (
                 <button
                   className="btn btn--xs btn--ghost"
-                  onClick={() => { onClearLevel(lvl); onBlur(); }}
+                  onClick={() => {
+                    onClearLevel(lvl);
+                    onBlur();
+                  }}
                   title={`Clear all ${label}`}
                 >
                   Clear
@@ -67,7 +68,10 @@ export function MemorizedSpellsPanel({
                   <span className="memorized-spells__spell-name">{spell}</span>
                   <button
                     className="btn btn--xs btn--ghost memorized-spells__remove"
-                    onClick={() => { onRemove(lvl, i); onBlur(); }}
+                    onClick={() => {
+                      onRemove(lvl, i);
+                      onBlur();
+                    }}
                     title="Remove"
                     aria-label={`Remove ${spell}`}
                   >
@@ -83,7 +87,9 @@ export function MemorizedSpellsPanel({
                 className="memorized-spells__input"
                 value={drafts[lvl] ?? ''}
                 onChange={(e) => setDraft(lvl, e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') commit(lvl); }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commit(lvl);
+                }}
                 placeholder={`Add ${label === 'Cantrips' ? 'cantrip' : 'spell'}…`}
               />
               <button
