@@ -7,10 +7,7 @@ import rawSpells from './spells.json' assert { type: 'json' };
 export const spells: Spell[] = rawSpells as Spell[];
 
 // All spells: SRD + supplement (cast to Spell for compatibility — supplement entries may be partial)
-export const allSpells: Spell[] = [
-  ...spells,
-  ...(rulebookSpells as unknown as Spell[]),
-];
+export const allSpells: Spell[] = [...spells, ...(rulebookSpells as unknown as Spell[])];
 
 // Extract valid spell names for quick lookup
 export const SPELL_NAMES = spells.map((s) => s.name) as [string, ...string[]];

@@ -29,7 +29,9 @@
   font-weight: 500;
   cursor: pointer;
   margin-bottom: -2px;
-  transition: color 0.1s, border-color 0.1s;
+  transition:
+    color 0.1s,
+    border-color 0.1s;
 }
 
 .spellbook-panel__tab:hover {
@@ -201,7 +203,9 @@
   padding: 4px 8px;
   font-size: 12px;
   border-radius: 4px;
-  transition: border-color 0.1s, opacity 0.1s;
+  transition:
+    border-color 0.1s,
+    opacity 0.1s;
 }
 
 .school-badge--btn:hover {
@@ -230,26 +234,83 @@
   border-radius: 5px;
 }
 
-.school--abj { background: #dbeafe; color: #1d4ed8; } /* blue */
-.school--con { background: #fef9c3; color: #854d0e; } /* yellow */
-.school--div { background: #e0e7ff; color: #3730a3; } /* indigo - this char's specialty */
-.school--enc { background: #fce7f3; color: #9d174d; } /* pink */
-.school--evo { background: #fee2e2; color: #991b1b; } /* red */
-.school--ill { background: #f3e8ff; color: #6b21a8; } /* purple */
-.school--nec { background: #1f2937; color: #9ca3af; } /* dark */
-.school--tra { background: #dcfce7; color: #166534; } /* green */
-.school--uni { background: #f1f5f9; color: #475569; } /* slate */
-.school--other { background: var(--clr-bg); color: var(--clr-text-muted); }
+.school--abj {
+  background: #dbeafe;
+  color: #1d4ed8;
+} /* blue */
+.school--con {
+  background: #fef9c3;
+  color: #854d0e;
+} /* yellow */
+.school--div {
+  background: #e0e7ff;
+  color: #3730a3;
+} /* indigo - this char's specialty */
+.school--enc {
+  background: #fce7f3;
+  color: #9d174d;
+} /* pink */
+.school--evo {
+  background: #fee2e2;
+  color: #991b1b;
+} /* red */
+.school--ill {
+  background: #f3e8ff;
+  color: #6b21a8;
+} /* purple */
+.school--nec {
+  background: #1f2937;
+  color: #9ca3af;
+} /* dark */
+.school--tra {
+  background: #dcfce7;
+  color: #166534;
+} /* green */
+.school--uni {
+  background: #f1f5f9;
+  color: #475569;
+} /* slate */
+.school--other {
+  background: var(--clr-bg);
+  color: var(--clr-text-muted);
+}
 
-[data-theme='dark'] .school--abj { background: #1e3a8a; color: #93c5fd; }
-[data-theme='dark'] .school--con { background: #713f12; color: #fde68a; }
-[data-theme='dark'] .school--div { background: #312e81; color: #a5b4fc; }
-[data-theme='dark'] .school--enc { background: #831843; color: #fbcfe8; }
-[data-theme='dark'] .school--evo { background: #7f1d1d; color: #fca5a5; }
-[data-theme='dark'] .school--ill { background: #4c1d95; color: #d8b4fe; }
-[data-theme='dark'] .school--nec { background: #111827; color: #6b7280; }
-[data-theme='dark'] .school--tra { background: #14532d; color: #86efac; }
-[data-theme='dark'] .school--uni { background: #1e293b; color: #94a3b8; }
+[data-theme='dark'] .school--abj {
+  background: #1e3a8a;
+  color: #93c5fd;
+}
+[data-theme='dark'] .school--con {
+  background: #713f12;
+  color: #fde68a;
+}
+[data-theme='dark'] .school--div {
+  background: #312e81;
+  color: #a5b4fc;
+}
+[data-theme='dark'] .school--enc {
+  background: #831843;
+  color: #fbcfe8;
+}
+[data-theme='dark'] .school--evo {
+  background: #7f1d1d;
+  color: #fca5a5;
+}
+[data-theme='dark'] .school--ill {
+  background: #4c1d95;
+  color: #d8b4fe;
+}
+[data-theme='dark'] .school--nec {
+  background: #111827;
+  color: #6b7280;
+}
+[data-theme='dark'] .school--tra {
+  background: #14532d;
+  color: #86efac;
+}
+[data-theme='dark'] .school--uni {
+  background: #1e293b;
+  color: #94a3b8;
+}
 
 /* ── Specialty star ──────────────────────── */
 

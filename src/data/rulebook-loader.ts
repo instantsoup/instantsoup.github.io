@@ -90,20 +90,32 @@ export const rulebookClasses: Array<RulebookClass & { sourceAbbr: string }> =
     (book.classes ?? []).map((cls) => ({ ...cls, sourceAbbr: book.abbreviation })),
   );
 
-export const rulebookFeats: Array<RulebookFeat & { sourceAbbr: string }> =
-  loadedRulebooks.flatMap((book) =>
-    (book.feats ?? []).map((feat) => ({ ...feat, source: book.abbreviation, sourceAbbr: book.abbreviation })),
-  );
+export const rulebookFeats: Array<RulebookFeat & { sourceAbbr: string }> = loadedRulebooks.flatMap(
+  (book) =>
+    (book.feats ?? []).map((feat) => ({
+      ...feat,
+      source: book.abbreviation,
+      sourceAbbr: book.abbreviation,
+    })),
+);
 
-export const rulebookRaces: Array<RulebookRace & { sourceAbbr: string }> =
-  loadedRulebooks.flatMap((book) =>
-    (book.races ?? []).map((race) => ({ ...race, source: book.abbreviation, sourceAbbr: book.abbreviation })),
-  );
+export const rulebookRaces: Array<RulebookRace & { sourceAbbr: string }> = loadedRulebooks.flatMap(
+  (book) =>
+    (book.races ?? []).map((race) => ({
+      ...race,
+      source: book.abbreviation,
+      sourceAbbr: book.abbreviation,
+    })),
+);
 
-export const rulebookItems: Array<RulebookItem & { sourceAbbr: string }> =
-  loadedRulebooks.flatMap((book) =>
-    (book.items ?? []).map((item) => ({ ...item, source: book.abbreviation, sourceAbbr: book.abbreviation })),
-  );
+export const rulebookItems: Array<RulebookItem & { sourceAbbr: string }> = loadedRulebooks.flatMap(
+  (book) =>
+    (book.items ?? []).map((item) => ({
+      ...item,
+      source: book.abbreviation,
+      sourceAbbr: book.abbreviation,
+    })),
+);
 
 /**
  * Find a spell by name across both SRD and all loaded rulebooks.
@@ -120,7 +132,11 @@ export function findRulebookSpell(
 /**
  * Returns all loaded rulebook names and abbreviations — useful for UI attribution.
  */
-export function getLoadedRulebookSummary(): { name: string; abbreviation: string; counts: Record<string, number> }[] {
+export function getLoadedRulebookSummary(): {
+  name: string;
+  abbreviation: string;
+  counts: Record<string, number>;
+}[] {
   return loadedRulebooks.map((book) => ({
     name: book.name,
     abbreviation: book.abbreviation,

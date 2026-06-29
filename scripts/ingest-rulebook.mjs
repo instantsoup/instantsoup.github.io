@@ -32,7 +32,9 @@ const OUT_DIR = path.join(ROOT, 'src', 'data', 'rulebooks');
 
 const args = process.argv.slice(2);
 if (args.length === 0 || args[0] === '--help') {
-  console.log(`Usage: node scripts/ingest-rulebook.mjs <pdf-path> [--abbr ABBR] [--name "Book Name"]`);
+  console.log(
+    `Usage: node scripts/ingest-rulebook.mjs <pdf-path> [--abbr ABBR] [--name "Book Name"]`,
+  );
   process.exit(0);
 }
 
@@ -76,7 +78,10 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 // ── Slugify ──────────────────────────────────────────────────────────────────
 
 function slugify(str) {
-  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
 }
 
 // ── Extract text from PDF ────────────────────────────────────────────────────
@@ -88,14 +93,20 @@ const fullText = pdfData.text;
 const pageCount = pdfData.numpages;
 
 if (!bookName) bookName = path.basename(pdfPath, path.extname(pdfPath)).replace(/[-_]/g, ' ');
-if (!abbr) abbr = bookName.split(/\s+/).map(w => w[0]).join('').toUpperCase().slice(0, 4);
+if (!abbr)
+  abbr = bookName
+    .split(/\s+/)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 4);
 
 const slug = slugify(bookName);
 console.log(`Book: "${bookName}" (${abbr}), ${pageCount} pages, ${fullText.length} chars`);
 
 // ── Chunk text ───────────────────────────────────────────────────────────────
 
-const CHUNK_CHARS = 80000;  // ~20k tokens per chunk
+const CHUNK_CHARS = 80000; // ~20k tokens per chunk
 const chunks = [];
 for (let i = 0; i < fullText.length; i += CHUNK_CHARS) {
   chunks.push(fullText.slice(i, i + CHUNK_CHARS));
@@ -155,14 +166,19 @@ for (let i = 0; i < chunks.length; i++) {
     });
     const raw = response.content[0]?.text ?? '';
     // Strip markdown code fences if present
-    const json = raw.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '').trim();
+    const json = raw
+      .replace(/^```(?:json)?\n?/, '')
+      .replace(/\n?```$/, '')
+      .trim();
     const parsed = JSON.parse(json);
     for (const key of Object.keys(results)) {
       if (Array.isArray(parsed[key])) {
         results[key].push(...parsed[key]);
       }
     }
-    const counts = Object.entries(results).map(([k, v]) => `${v.length} ${k}`).join(', ');
+    const counts = Object.entries(results)
+      .map(([k, v]) => `${v.length} ${k}`)
+      .join(', ');
     console.log(`  Chunk ${i + 1} done. Running totals: ${counts}`);
   } catch (err) {
     console.error(`  Chunk ${i + 1} failed: ${err.message}`);
@@ -173,7 +189,7 @@ for (let i = 0; i < chunks.length; i++) {
 
 function dedupe(arr) {
   const seen = new Set();
-  return arr.filter(item => {
+  return arr.filter((item) => {
     const key = item.name?.toLowerCase();
     if (!key || seen.has(key)) return false;
     seen.add(key);
