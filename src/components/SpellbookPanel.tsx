@@ -210,9 +210,10 @@ export function SpellbookPanel({
 
   const handleToggleForbidden = (school: string) => {
     const current = wizardForbiddenSchools;
+    const maxForbidden = wizardSpecialty === 'Divination' ? 1 : 2;
     if (current.includes(school)) {
       setWizardForbiddenSchools(current.filter((s) => s !== school));
-    } else {
+    } else if (current.length < maxForbidden) {
       setWizardForbiddenSchools([...current, school]);
     }
     onBlur();
@@ -527,7 +528,9 @@ export function SpellbookPanel({
               </div>
               {wizardSpecialty && (
                 <>
-                  <p className="spellbook-specialist__label">Forbidden schools (choose 2):</p>
+                  <p className="spellbook-specialist__label">
+                    Forbidden schools (choose {wizardSpecialty === 'Divination' ? 1 : 2}):
+                  </p>
                   <div className="spellbook-specialist__schools">
                     {WIZARD_SCHOOLS.filter((s) => s !== 'Universal' && s !== wizardSpecialty).map(
                       (school) => (
