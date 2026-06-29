@@ -41,15 +41,13 @@ jobs:
           destination_dir: dnd35
           keep_files: true
 
-      - name: Prepare root redirect
-        run: |
-          mkdir -p ./root-redirect
-          cp .github/redirect-index.html ./root-redirect/index.html
+      - name: Prepare landing page
+        run: cp -r .github/landing ./root-redirect
 
       - name: Deploy root redirect
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./root-redirect
+          publish_dir: ./root-redirect/landing
           keep_files: true
           cname: majesticfacesweater.com
