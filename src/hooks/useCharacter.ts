@@ -1,7 +1,7 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { computeConditionPenalties } from '../lib/conditions';
-import { type Character, VERSION } from '../schema/schema';
+import { type Character, type SpellbookEntry, VERSION } from '../schema/schema';
 import { loadLocal } from '../store/local';
 import { useCharacterCombat } from './useCharacterCombat';
 import { useCharacterExtras } from './useCharacterExtras';
@@ -16,6 +16,22 @@ import { useCharacterScores } from './useCharacterScores';
  */
 export function useCharacter() {
   const initial = loadLocal();
+
+  const [spellbook, setSpellbook] = useState<SpellbookEntry[]>(initial.spellbook ?? []);
+  const [wizardSpecialty, setWizardSpecialty] = useState<string | undefined>(
+    initial.wizardSpecialty,
+  );
+  const [wizardForbiddenSchools, setWizardForbiddenSchools] = useState<string[]>(
+    initial.wizardForbiddenSchools ?? [],
+  );
+
+  const addSpellbookEntry = (entry: SpellbookEntry) => {
+    setSpellbook((prev) => [...prev, entry]);
+  };
+
+  const removeSpellbookEntry = (spellName: string) => {
+    setSpellbook((prev) => prev.filter((e) => e.spellName !== spellName));
+  };
 
   const identity = useCharacterIdentity(initial);
   // extras must be initialized before scoring so abilityDamage/conditionPenalties can flow into mods
@@ -41,7 +57,11 @@ export function useCharacter() {
     levels: leveling.levels,
     alignment: identity.alignment,
     saveBonuses: combat.saveBonuses,
-    combatStats: { ...combat.combatStats, memorizedSpells: combat.memorizedSpells },
+    combatStats: {
+      ...combat.combatStats,
+      memorizedSpells: combat.memorizedSpells,
+      memorizedSpellsUsed: combat.memorizedSpellsUsed,
+    },
     flaws: extras.flaws,
     languages: extras.languages,
     taint: extras.taint,
@@ -59,6 +79,9 @@ export function useCharacter() {
     homeland: identity.homeland || undefined,
     xp: extras.xp,
     currency: extras.currency,
+    spellbook,
+    wizardSpecialty,
+    wizardForbiddenSchools,
   });
 
   const loadAll = (char: Character) => {
@@ -67,6 +90,9 @@ export function useCharacter() {
     leveling.loadFrom(char);
     combat.loadFrom(char);
     extras.loadFrom(char);
+    setSpellbook(char.spellbook ?? []);
+    setWizardSpecialty(char.wizardSpecialty);
+    setWizardForbiddenSchools(char.wizardForbiddenSchools ?? []);
   };
 
   const resetAll = () => {
@@ -75,6 +101,9 @@ export function useCharacter() {
     leveling.reset();
     combat.reset();
     extras.reset();
+    setSpellbook([]);
+    setWizardSpecialty(undefined);
+    setWizardForbiddenSchools([]);
   };
 
   const persistence = useCharacterPersistence(getCurrent, loadAll, resetAll);
@@ -133,9 +162,20 @@ export function useCharacter() {
     saveBonuses: combat.saveBonuses,
     setSaveBonus: combat.setSaveBonus,
     memorizedSpells: combat.memorizedSpells,
+    memorizedSpellsUsed: combat.memorizedSpellsUsed,
     addMemorizedSpell: combat.addMemorizedSpell,
     removeMemorizedSpell: combat.removeMemorizedSpell,
     clearMemorizedSpells: combat.clearMemorizedSpells,
+    castMemorizedSpell: combat.castMemorizedSpell,
+    uncastMemorizedSpell: combat.uncastMemorizedSpell,
+    newDaySpells: combat.newDaySpells,
+    spellbook,
+    addSpellbookEntry,
+    removeSpellbookEntry,
+    wizardSpecialty,
+    setWizardSpecialty,
+    wizardForbiddenSchools,
+    setWizardForbiddenSchools,
 
     // Extras
     flaws: extras.flaws,

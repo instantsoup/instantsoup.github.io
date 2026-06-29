@@ -277,5 +277,17 @@
       [4, 4, 4, 4, 4, 4, 4, 4, 3, 3],
       [4, 4, 4, 4, 4, 4, 4, 4, 4, 4]
     ]
+  },
+  {
+    "name": "Tainted Scholar",
+    "hitDie": 4,
+    "babProgression": "low",
+    "fortitudeProgression": "poor",
+    "reflexProgression": "poor",
+    "willProgression": "good",
+    "skillPointsPerLevel": 2,
+    "spellcastingAbility": null,
+    "castingType": null,
+    "spellSlotsPerDay": null
   }
 ]

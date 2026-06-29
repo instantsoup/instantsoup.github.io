@@ -35,6 +35,18 @@ export const ClassNameSchema = z.enum(CLASS_NAMES);
 
 export type ClassName = z.infer<typeof ClassNameSchema>;
 
+export const SpellbookEntrySchema = z.object({
+  spellName: z.string(),
+  /** How this spell was acquired. */
+  source: z.enum(['starting', 'free-levelup', 'purchased', 'researched', 'found']),
+  /** Gold paid to copy or research. 0 for free spells. */
+  goldPaid: z.number().int().min(0).default(0),
+  /** Character level when the entry was added. */
+  addedAtCharLevel: z.number().int().min(1).max(20).default(1),
+});
+
+export type SpellbookEntry = z.infer<typeof SpellbookEntrySchema>;
+
 export const CombatStatsSchema = z.object({
   currentHP: z.number().int().optional(),
   maxHP: z.number().int().min(0).optional(),
@@ -49,6 +61,8 @@ export const CombatStatsSchema = z.object({
   spellSlotsUsed: z.record(z.string(), z.number().int().min(0)).optional().default({}),
   /** Memorized spells keyed by spell level string ('0'..'9'), each value a list of spell names. */
   memorizedSpells: z.record(z.string(), z.array(z.string())).optional().default({}),
+  /** Parallel to memorizedSpells: which specific prepared-spell slots have been cast today. */
+  memorizedSpellsUsed: z.record(z.string(), z.array(z.boolean())).optional().default({}),
   movementSpeed: z.number().int().min(0).optional(),
   movementType: z.string().optional(),
   armorCheckPenalty: z.number().int().min(0).optional().default(0),
@@ -152,6 +166,12 @@ export const CharacterSchema = z.object({
   homeland: z.string().optional(),
   xp: z.number().int().min(0).optional().default(0),
   currency: CurrencySchema.optional().default({}),
+  /** Physical spellbook contents — spells the wizard knows and can prepare from. */
+  spellbook: z.array(SpellbookEntrySchema).optional().default([]),
+  /** Wizard specialist school, e.g. 'Divination'. Grants +1 slot/level for that school. */
+  wizardSpecialty: z.string().optional(),
+  /** Schools the wizard has given up access to (specialist restriction). */
+  wizardForbiddenSchools: z.array(z.string()).optional().default([]),
 });
 
 export type Character = z.infer<typeof CharacterSchema>;

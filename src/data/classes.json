@@ -227,5 +227,21 @@
       "Profession",
       "Spellcraft"
     ]
+  },
+  {
+    "name": "Tainted Scholar",
+    "description": "A practitioner of arcane magic who channels taint as a source of power. Prestige class from Heroes of Horror — advances existing arcane spellcaster level. Note: auto-calculated spell slots do not account for this class; set slots manually or via the Wizard auto-fill then adjust.",
+    "classSkills": [
+      "Concentration",
+      "Craft",
+      "Decipher Script",
+      "Knowledge (arcana)",
+      "Knowledge (dungeon)",
+      "Knowledge (history)",
+      "Knowledge (religion)",
+      "Knowledge (the planes)",
+      "Profession",
+      "Spellcraft"
+    ]
   }
 ]

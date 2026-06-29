@@ -9,6 +9,9 @@ export function useCharacterCombat(initial: Character) {
   const [memorizedSpells, setMemorizedSpells] = useState<Record<string, string[]>>(
     initial.combatStats?.memorizedSpells ?? {},
   );
+  const [memorizedSpellsUsed, setMemorizedSpellsUsed] = useState<Record<string, boolean[]>>(
+    initial.combatStats?.memorizedSpellsUsed ?? {},
+  );
 
   const updateCombatStat = (field: keyof CombatStats, value: number | undefined) => {
     setCombatStats((prev) => ({ ...prev, [field]: value }));
@@ -77,6 +80,10 @@ export function useCharacterCombat(initial: Character) {
       ...prev,
       [spellLevel]: [...(prev[spellLevel] ?? []), spellName],
     }));
+    setMemorizedSpellsUsed((prev) => ({
+      ...prev,
+      [spellLevel]: [...(prev[spellLevel] ?? []), false],
+    }));
   };
 
   const removeMemorizedSpell = (spellLevel: string, index: number) => {
@@ -84,14 +91,64 @@ export function useCharacterCombat(initial: Character) {
       ...prev,
       [spellLevel]: (prev[spellLevel] ?? []).filter((_, i) => i !== index),
     }));
+    setMemorizedSpellsUsed((prev) => {
+      const updated = (prev[spellLevel] ?? []).filter((_, i) => i !== index);
+      // Keep spellSlotsUsed in sync
+      return { ...prev, [spellLevel]: updated };
+    });
+    // Sync spellSlotsUsed with actual cast count after removal
+    setCombatStats((prev) => {
+      const usedArr = (memorizedSpellsUsed[spellLevel] ?? []).filter((_, i) => i !== index);
+      const usedCount = usedArr.filter(Boolean).length;
+      return {
+        ...prev,
+        spellSlotsUsed: { ...(prev.spellSlotsUsed ?? {}), [spellLevel]: usedCount },
+      };
+    });
   };
 
   const clearMemorizedSpells = (spellLevel?: string) => {
     if (spellLevel !== undefined) {
       setMemorizedSpells((prev) => ({ ...prev, [spellLevel]: [] }));
+      setMemorizedSpellsUsed((prev) => ({ ...prev, [spellLevel]: [] }));
     } else {
       setMemorizedSpells({});
+      setMemorizedSpellsUsed({});
     }
+  };
+
+  /** Mark a specific prepared spell slot as cast. */
+  const castMemorizedSpell = (spellLevel: string, index: number) => {
+    setMemorizedSpellsUsed((prev) => {
+      const arr = [...(prev[spellLevel] ?? [])];
+      arr[index] = true;
+      const usedCount = arr.filter(Boolean).length;
+      setCombatStats((cs) => ({
+        ...cs,
+        spellSlotsUsed: { ...(cs.spellSlotsUsed ?? {}), [spellLevel]: usedCount },
+      }));
+      return { ...prev, [spellLevel]: arr };
+    });
+  };
+
+  /** Restore a specific prepared spell slot (un-cast). */
+  const uncastMemorizedSpell = (spellLevel: string, index: number) => {
+    setMemorizedSpellsUsed((prev) => {
+      const arr = [...(prev[spellLevel] ?? [])];
+      arr[index] = false;
+      const usedCount = arr.filter(Boolean).length;
+      setCombatStats((cs) => ({
+        ...cs,
+        spellSlotsUsed: { ...(cs.spellSlotsUsed ?? {}), [spellLevel]: usedCount },
+      }));
+      return { ...prev, [spellLevel]: arr };
+    });
+  };
+
+  /** New day: reset all cast markers and slot usage. Memorized list is preserved. */
+  const newDaySpells = () => {
+    setMemorizedSpellsUsed({});
+    setCombatStats((prev) => ({ ...prev, spellSlotsUsed: {} }));
   };
 
   const loadFrom = (char: Character) => {
@@ -99,6 +156,7 @@ export function useCharacterCombat(initial: Character) {
     setSaveBonuses(char.saveBonuses ?? {});
     setWeapons(char.weapons ?? []);
     setMemorizedSpells(char.combatStats?.memorizedSpells ?? {});
+    setMemorizedSpellsUsed(char.combatStats?.memorizedSpellsUsed ?? {});
   };
 
   const reset = () => {
@@ -106,6 +164,7 @@ export function useCharacterCombat(initial: Character) {
     setSaveBonuses({});
     setWeapons([]);
     setMemorizedSpells({});
+    setMemorizedSpellsUsed({});
   };
 
   return {
@@ -126,9 +185,13 @@ export function useCharacterCombat(initial: Character) {
     removeWeapon,
     updateWeapon,
     memorizedSpells,
+    memorizedSpellsUsed,
     addMemorizedSpell,
     removeMemorizedSpell,
     clearMemorizedSpells,
+    castMemorizedSpell,
+    uncastMemorizedSpell,
+    newDaySpells,
     loadFrom,
     reset,
   };

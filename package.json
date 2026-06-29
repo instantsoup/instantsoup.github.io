@@ -18,6 +18,7 @@
     "test:coverage": "vitest run --coverage",
     "validate:feats": "node scripts/validate-feats.mjs src/data/feats.json",
     "validate:skills": "node scripts/validate-skills.mjs src/data/skills.json",
+    "ingest-rulebook": "node scripts/ingest-rulebook.mjs",
     "guard:no-inline-styles": "bash -lc \"! grep -R --line-number -E 'style\\s*=\\s*\\{\\s*\\{' src || (echo 'Inline styles found; please extract to CSS' && exit 1)\"",
     "check": "npm run format:check && npm run lint && npm run guard:no-inline-styles",
     "prepare": "husky"
@@ -49,6 +50,7 @@
     "husky": "9.1.7",
     "jsdom": "^29.0.1",
     "lint-staged": "16.4.0",
+    "playwright": "^1.61.1",
     "prettier": "3.8.1",
     "typescript": "5.9.3",
     "typescript-eslint": "8.57.2",

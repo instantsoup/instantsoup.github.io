@@ -9,6 +9,7 @@ import { LanguagesPanel } from './components/LanguagesPanel';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
 import { MemorizedSpellsPanel } from './components/MemorizedSpellsPanel';
+import { SpellbookPanel } from './components/SpellbookPanel';
 import { NotesPanel } from './components/NotesPanel';
 import { PanelSection } from './components/PanelSection';
 import { PlaySheet } from './components/PlaySheet';
@@ -123,9 +124,20 @@ export function App() {
     removeWeapon,
     updateWeapon,
     memorizedSpells,
+    memorizedSpellsUsed,
     addMemorizedSpell,
     removeMemorizedSpell,
     clearMemorizedSpells,
+    castMemorizedSpell,
+    uncastMemorizedSpell,
+    newDaySpells,
+    spellbook,
+    addSpellbookEntry,
+    removeSpellbookEntry,
+    wizardSpecialty,
+    setWizardSpecialty,
+    wizardForbiddenSchools,
+    setWizardForbiddenSchools,
     onNum,
     persistLocal,
     exportJson,
@@ -138,11 +150,18 @@ export function App() {
 
   // Spell system derived values
   const calculatedSlots = calculateSpellSlots(levels, effectiveScores);
+  // Specialist wizards get +1 slot per accessible spell level for their specialty school
+  const effectiveSlots = wizardSpecialty
+    ? Object.fromEntries(Object.entries(calculatedSlots).map(([k, v]) => [k, v + 1]))
+    : calculatedSlots;
   const casterSummary = getCasterSummary(levels, effectiveScores);
   const primaryCaster = casterSummary[0] ?? null;
   const primaryCastingMod = primaryCaster?.castingMod;
   const isPreparedCaster = casterSummary.some((c) => c.castingType === 'prepared');
-  const accessibleSpellLevels = Object.keys(calculatedSlots);
+  const isWizardCharacter = levels.some(
+    (l) => l.class === 'Wizard' || l.class === 'Tainted Scholar',
+  );
+  const accessibleSpellLevels = Object.keys(effectiveSlots);
 
   const toggleMode = () => {
     setMode((m) => {
@@ -449,7 +468,7 @@ export function App() {
                   updateSpellSlotsUsed={updateSpellSlotsUsed}
                   resetSpellSlots={resetSpellSlots}
                   onBlur={persistLocal}
-                  calculatedSlots={calculatedSlots}
+                  calculatedSlots={effectiveSlots}
                   primaryCastingMod={primaryCastingMod}
                 />
               </PanelSection>
@@ -515,20 +534,60 @@ export function App() {
           {/* ── SPELLS (play mode only) ──────────────── */}
           {tab === 'spells' && (
             <div className="tab-content">
-              <PanelSection title="Spell Slots" defaultOpen>
-                <SpellSlotsPanel
+              {isWizardCharacter ? (
+                <SpellbookPanel
+                  levels={levels}
+                  intMod={mods.int}
                   combatStats={combatStats}
-                  updateSpellSlotsMax={updateSpellSlotsMax}
-                  updateSpellSlotsUsed={updateSpellSlotsUsed}
-                  resetSpellSlots={resetSpellSlots}
+                  calculatedSlots={effectiveSlots}
+                  memorizedSpells={memorizedSpells}
+                  memorizedSpellsUsed={memorizedSpellsUsed}
+                  spellbook={spellbook}
+                  wizardSpecialty={wizardSpecialty}
+                  wizardForbiddenSchools={wizardForbiddenSchools}
+                  primaryCastingMod={primaryCastingMod}
+                  addMemorizedSpell={addMemorizedSpell}
+                  removeMemorizedSpell={removeMemorizedSpell}
+                  castMemorizedSpell={castMemorizedSpell}
+                  uncastMemorizedSpell={uncastMemorizedSpell}
+                  newDaySpells={newDaySpells}
+                  addSpellbookEntry={addSpellbookEntry}
+                  removeSpellbookEntry={removeSpellbookEntry}
+                  setWizardSpecialty={setWizardSpecialty}
+                  setWizardForbiddenSchools={setWizardForbiddenSchools}
                   onBlur={persistLocal}
-                  readOnly={true}
                 />
-              </PanelSection>
-
-              <PanelSection title="Known Spells" defaultOpen={false}>
-                <SpellsSummary levels={levels} />
-              </PanelSection>
+              ) : (
+                <>
+                  <PanelSection title="Spell Slots" defaultOpen>
+                    <SpellSlotsPanel
+                      combatStats={combatStats}
+                      updateSpellSlotsMax={updateSpellSlotsMax}
+                      updateSpellSlotsUsed={updateSpellSlotsUsed}
+                      resetSpellSlots={resetSpellSlots}
+                      onBlur={persistLocal}
+                      readOnly={true}
+                      calculatedSlots={effectiveSlots}
+                      primaryCastingMod={primaryCastingMod}
+                    />
+                  </PanelSection>
+                  {isPreparedCaster && (
+                    <PanelSection title="Memorized Spells" defaultOpen>
+                      <MemorizedSpellsPanel
+                        memorizedSpells={memorizedSpells}
+                        accessibleLevels={accessibleSpellLevels}
+                        onAdd={addMemorizedSpell}
+                        onRemove={removeMemorizedSpell}
+                        onClearLevel={clearMemorizedSpells}
+                        onBlur={persistLocal}
+                      />
+                    </PanelSection>
+                  )}
+                  <PanelSection title="Known Spells" defaultOpen={false}>
+                    <SpellsSummary levels={levels} />
+                  </PanelSection>
+                </>
+              )}
             </div>
           )}
 
