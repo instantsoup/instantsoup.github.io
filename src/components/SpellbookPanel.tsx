@@ -223,10 +223,41 @@ export function SpellbookPanel({
           <span className="spellbook-today__summary">
             {totalPrepared} prepared · {totalCast} cast today
           </span>
+          {wizardSpecialty && (
+            <span className="spellbook-today__specialty">
+              <span className={`school-badge ${schoolClass(wizardSpecialty)} school-badge--specialty`}>
+                {wizardSpecialty} ★
+              </span>
+              {wizardForbiddenSchools.length > 0 && (
+                <span className="spellbook-today__forbidden">
+                  ✕ {wizardForbiddenSchools.join(', ')}
+                </span>
+              )}
+            </span>
+          )}
+          {isWizard && !wizardSpecialty && (
+            <button
+              className="btn btn--xs btn--ghost"
+              onClick={() => { setView('spellbook'); setEditingSpecialty(true); }}
+              title="Configure specialist school and forbidden schools"
+            >
+              + Specialist school
+            </button>
+          )}
           <button className="btn btn--sm btn--secondary" onClick={handleNewDay}>
             New Day
           </button>
         </div>
+
+        {isWizard && spellbook.length === 0 && accessibleLevels.length > 0 && (
+          <div className="spellbook-empty-callout">
+            Your spellbook is empty — add spells in{' '}
+            <button className="btn btn--xs btn--ghost" onClick={() => setView('spellbook')}>
+              My Spellbook
+            </button>{' '}
+            first, then prepare them here each day.
+          </div>
+        )}
 
         {accessibleLevels.length === 0 && (
           <p className="panel-empty">
@@ -246,6 +277,8 @@ export function SpellbookPanel({
           // Spellbook spells at this level not yet prepared
           const canPrepareMore = slotsFilled < max;
           const bookSpellsAtLevel = (spellbookByLevel[lvl] ?? []).filter((entry) => {
+            const spell = findSpell(entry.spellName);
+            if (spell && wizardForbiddenSchools.includes(spell.school)) return false;
             // Can still prepare same spell multiple times
             const preparedCount = prepared.filter(
               (n) => n.toLowerCase() === entry.spellName.toLowerCase(),
@@ -371,9 +404,21 @@ export function SpellbookPanel({
                 <div className="spellbook-prepare-picker">
                   <p className="spellbook-prepare-picker__hint">Choose from your spellbook:</p>
                   {bookSpellsAtLevel.length === 0 ? (
-                    <p className="spellbook-prepare-picker__empty">
-                      No {lvl === '0' ? 'cantrips' : `level ${lvl} spells`} in your spellbook yet.
-                    </p>
+                    <div className="spellbook-prepare-picker__empty-state">
+                      <p className="spellbook-prepare-picker__empty">
+                        No {lvl === '0' ? 'cantrips' : `level ${lvl} spells`} in your spellbook
+                        yet.
+                      </p>
+                      <button
+                        className="btn btn--xs btn--primary"
+                        onClick={() => {
+                          setPreparingLevel(null);
+                          setView('spellbook');
+                        }}
+                      >
+                        Go to My Spellbook →
+                      </button>
+                    </div>
                   ) : (
                     <ul className="spellbook-prepare-picker__list">
                       {bookSpellsAtLevel.map((entry) => {
@@ -689,7 +734,7 @@ export function SpellbookPanel({
                             <span className="spellbook-prepared-count">×{prepared} prepared</span>
                           )}
                           <div className="spellbook-spell-row__actions">
-                            {accessible && (
+                            {accessible && !isForbidden && (
                               <button
                                 className="btn btn--xs btn--secondary"
                                 onClick={() => handlePrepare(lvl, entry.spellName)}

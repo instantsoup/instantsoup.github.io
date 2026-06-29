@@ -47,6 +47,10 @@ export const ClassProgressionSchema = z.object({
     .nullable()
     .optional()
     .default(null),
+  /** Key used to look up spells in spell data levels record (e.g., 'Clr', 'Sor/Wiz'). */
+  spellListKey: z.string().nullable().optional().default(null),
+  /** Whether this class gets an extra domain spell slot per accessible spell level 1-9 (Cleric). */
+  hasDomains: z.boolean().optional().default(false),
 });
 
 export type ClassProgression = z.infer<typeof ClassProgressionSchema>;

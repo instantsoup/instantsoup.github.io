@@ -448,8 +448,10 @@ export function calculateSpellSlots(levels: Level[], scores: Scores): Record<str
       if (base === -1) continue; // inaccessible for this class at this level
 
       const bonus = bonusSlotsForMod(abMod, sl);
+      // Domain classes (Cleric) get +1 slot per accessible spell level 1–9
+      const domainBonus = prog.hasDomains && sl >= 1 ? 1 : 0;
       const key = String(sl);
-      totals[key] = (totals[key] ?? 0) + base + bonus;
+      totals[key] = (totals[key] ?? 0) + base + bonus + domainBonus;
     }
   }
 

@@ -711,11 +711,11 @@ describe('calculateSpellSlots', () => {
     const levels = [...wizLevels, ...clericLevels];
     const result = calculateSpellSlots(levels, baseScores);
     // Wizard level 5: [4,3,2,1,-1,...] — cantrips:4, 1st:3, 2nd:2, 3rd:1
-    // Cleric level 3: [4,2,1,-1,...] — cantrips:4, 1st:2, 2nd:1
-    // Combined: cantrips:8, 1st:5, 2nd:3, 3rd:1
+    // Cleric level 3: [4,2,1,-1,...] — cantrips:4, 1st:2+1(domain), 2nd:1+1(domain)
+    // Combined: cantrips:8, 1st:6, 2nd:4, 3rd:1
     expect(result['0']).toBe(8);
-    expect(result['1']).toBe(5);
-    expect(result['2']).toBe(3);
+    expect(result['1']).toBe(6);
+    expect(result['2']).toBe(4);
     expect(result['3']).toBe(1);
   });
 
