@@ -13,7 +13,7 @@ describe('saves data', () => {
       expect(s).toHaveProperty('ability');
       expect(s).toHaveProperty('description');
       expect(s.name.length).toBeGreaterThan(0);
-      expect(s.description.length).toBeGreaterThan(0);
+      expect(s.description!.length).toBeGreaterThan(0);
     });
   });
 

@@ -1,9 +1,14 @@
 import { useState } from 'react';
 
+import { CombatStatsSchema } from '../schema/schema';
 import type { Character, CombatStats, Weapon } from '../schema/schema';
 
+const DEFAULT_COMBAT_STATS: CombatStats = CombatStatsSchema.parse({});
+
 export function useCharacterCombat(initial: Character) {
-  const [combatStats, setCombatStats] = useState<CombatStats>(initial.combatStats ?? {});
+  const [combatStats, setCombatStats] = useState<CombatStats>(
+    initial.combatStats ?? DEFAULT_COMBAT_STATS,
+  );
   const [saveBonuses, setSaveBonuses] = useState<Record<string, number>>(initial.saveBonuses ?? {});
   const [weapons, setWeapons] = useState<Weapon[]>(initial.weapons ?? []);
   const [memorizedSpells, setMemorizedSpells] = useState<Record<string, string[]>>(
@@ -160,7 +165,7 @@ export function useCharacterCombat(initial: Character) {
   };
 
   const reset = () => {
-    setCombatStats({});
+    setCombatStats(DEFAULT_COMBAT_STATS);
     setSaveBonuses({});
     setWeapons([]);
     setMemorizedSpells({});

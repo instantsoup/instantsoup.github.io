@@ -103,9 +103,13 @@ export function SpellbookPanel({
   const [addSource, setAddSource] = useState<Source>('free-levelup');
   const [editingSpecialty, setEditingSpecialty] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const [showAllSpellLevels, setShowAllSpellLevels] = useState(false);
 
   const wizardLevels = useMemo(() => levels.filter((l) => l.class === 'Wizard').length, [levels]);
   const isWizard = wizardLevels > 0 || levels.some((l) => l.class === 'Tainted Scholar');
+
+  // Max spell level a wizard of this level can learn (ceil(level/2), min 1 at level 1)
+  const maxAddableLevel = wizardLevels > 0 ? Math.min(Math.ceil(wizardLevels / 2), 9) : 9;
 
   const totalFree = freeSlotBudget(wizardLevels, intMod);
   const usedFree = useMemo(
@@ -152,14 +156,23 @@ export function SpellbookPanel({
       .filter((s) => {
         if (s.levels['Sor/Wiz'] === undefined) return false;
         if (wizardForbiddenSchools.includes(s.school)) return false;
+        if (!showAllSpellLevels && (s.levels['Sor/Wiz'] ?? 0) > maxAddableLevel) return false;
         if (addLevelFilter && String(s.levels['Sor/Wiz']) !== addLevelFilter) return false;
         if (addSchoolFilter && s.school !== addSchoolFilter) return false;
         if (q && !s.name.toLowerCase().includes(q)) return false;
         if (inBook.has(s.name.toLowerCase())) return false;
         return true;
       })
-      .slice(0, 25);
-  }, [addSearch, addLevelFilter, addSchoolFilter, wizardForbiddenSchools, spellbook]);
+      .slice(0, showAllSpellLevels ? 200 : 50);
+  }, [
+    addSearch,
+    addLevelFilter,
+    addSchoolFilter,
+    wizardForbiddenSchools,
+    spellbook,
+    showAllSpellLevels,
+    maxAddableLevel,
+  ]);
 
   const handleAddSpell = (spellName: string) => {
     const spell = findSpell(spellName);
@@ -225,7 +238,9 @@ export function SpellbookPanel({
           </span>
           {wizardSpecialty && (
             <span className="spellbook-today__specialty">
-              <span className={`school-badge ${schoolClass(wizardSpecialty)} school-badge--specialty`}>
+              <span
+                className={`school-badge ${schoolClass(wizardSpecialty)} school-badge--specialty`}
+              >
                 {wizardSpecialty} ★
               </span>
               {wizardForbiddenSchools.length > 0 && (
@@ -238,7 +253,10 @@ export function SpellbookPanel({
           {isWizard && !wizardSpecialty && (
             <button
               className="btn btn--xs btn--ghost"
-              onClick={() => { setView('spellbook'); setEditingSpecialty(true); }}
+              onClick={() => {
+                setView('spellbook');
+                setEditingSpecialty(true);
+              }}
               title="Configure specialist school and forbidden schools"
             >
               + Specialist school
@@ -406,8 +424,7 @@ export function SpellbookPanel({
                   {bookSpellsAtLevel.length === 0 ? (
                     <div className="spellbook-prepare-picker__empty-state">
                       <p className="spellbook-prepare-picker__empty">
-                        No {lvl === '0' ? 'cantrips' : `level ${lvl} spells`} in your spellbook
-                        yet.
+                        No {lvl === '0' ? 'cantrips' : `level ${lvl} spells`} in your spellbook yet.
                       </p>
                       <button
                         className="btn btn--xs btn--primary"
@@ -593,6 +610,34 @@ export function SpellbookPanel({
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div className="spellbook-add-form__level-cap">
+                {showAllSpellLevels ? (
+                  <>
+                    <span className="spellbook-add-form__level-cap-note">
+                      Showing all spell levels.
+                    </span>
+                    <button
+                      className="btn btn--xs btn--ghost"
+                      onClick={() => setShowAllSpellLevels(false)}
+                    >
+                      Limit to caster level
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span className="spellbook-add-form__level-cap-note">
+                      Spells limited to level {maxAddableLevel} (wizard level {wizardLevels}).
+                    </span>
+                    <button
+                      className="btn btn--xs btn--ghost"
+                      onClick={() => setShowAllSpellLevels(true)}
+                    >
+                      Load entire list
+                    </button>
+                  </>
+                )}
               </div>
 
               <div className="spellbook-add-form__source">

@@ -466,6 +466,12 @@
   font-size: 13px;
 }
 
+.spellbook-prepare-picker__caster-cap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
 /* ── My Spellbook ────────────────────────── */
 
 .spellbook-specialist {
@@ -581,6 +587,18 @@
   font-size: 13px;
   background: var(--clr-btn);
   color: var(--clr-text-primary);
+}
+
+.spellbook-add-form__level-cap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.spellbook-add-form__level-cap-note {
+  font-size: 12px;
+  color: var(--clr-text-muted);
 }
 
 .spellbook-add-form__source {

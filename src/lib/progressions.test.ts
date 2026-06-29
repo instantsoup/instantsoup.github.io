@@ -27,6 +27,16 @@ import {
   xpForLevel,
 } from './progressions';
 
+const mkLevel = (cls: string, overrides: Partial<Level> = {}): Level => ({
+  level: 1,
+  class: cls as Level['class'],
+  feats: [],
+  spells: [],
+  skillRanks: {},
+  unspentSkillPoints: 0,
+  ...overrides,
+});
+
 describe('calculateBABForClass', () => {
   it('calculates high BAB progression correctly', () => {
     expect(calculateBABForClass(0, 'high')).toBe(0);
@@ -79,9 +89,9 @@ describe('calculateTotalSave', () => {
 
   it('calculates fortitude save for single-class fighter (good fort)', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1 }),
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Fighter', { level: 3 }),
     ];
     const result = calculateTotalSave(levels, 'fortitude');
     // Fighter has good fortitude: 2 + floor(3/2) = 2 + 1 = 3
@@ -91,10 +101,7 @@ describe('calculateTotalSave', () => {
   });
 
   it('calculates reflex save for single-class rogue (good reflex)', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-    ];
+    const levels: Level[] = [mkLevel('Rogue', { level: 1 }), mkLevel('Rogue', { level: 2 })];
     const result = calculateTotalSave(levels, 'reflex');
     // Rogue has good reflex: 2 + floor(2/2) = 2 + 1 = 3
     expect(result.total).toBe(3);
@@ -102,10 +109,10 @@ describe('calculateTotalSave', () => {
 
   it('calculates will save for single-class wizard (good will)', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 4, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Wizard', { level: 1 }),
+      mkLevel('Wizard', { level: 2 }),
+      mkLevel('Wizard', { level: 3 }),
+      mkLevel('Wizard', { level: 4 }),
     ];
     const result = calculateTotalSave(levels, 'will');
     // Wizard has good will: 2 + floor(4/2) = 2 + 2 = 4
@@ -114,9 +121,9 @@ describe('calculateTotalSave', () => {
 
   it('calculates poor save correctly', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1 }),
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Fighter', { level: 3 }),
     ];
     const result = calculateTotalSave(levels, 'will'); // Fighter has poor will
     // Poor save: floor(3/3) = 1
@@ -125,10 +132,10 @@ describe('calculateTotalSave', () => {
 
   it('calculates saves for multiclass character', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 4, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1 }),
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Wizard', { level: 3 }),
+      mkLevel('Wizard', { level: 4 }),
     ];
     const result = calculateTotalSave(levels, 'fortitude');
     // Fighter 2 (good): 2 + floor(2/2) = 3
@@ -139,9 +146,7 @@ describe('calculateTotalSave', () => {
   });
 
   it('handles single level correctly in label', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Cleric', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-    ];
+    const levels: Level[] = [mkLevel('Cleric', { level: 1 })];
     const result = calculateTotalSave(levels, 'fortitude');
     expect(result.components[0].label).toBe('Cleric (1 level)');
   });
@@ -156,9 +161,9 @@ describe('calculateTotalBAB', () => {
 
   it('calculates BAB for single-class fighter (high progression)', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1 }),
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Fighter', { level: 3 }),
     ];
     const result = calculateTotalBAB(levels);
     expect(result.total).toBe(3); // 3 levels of high BAB = +3
@@ -169,10 +174,10 @@ describe('calculateTotalBAB', () => {
 
   it('calculates BAB for single-class wizard (low progression)', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 4, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Wizard', { level: 1 }),
+      mkLevel('Wizard', { level: 2 }),
+      mkLevel('Wizard', { level: 3 }),
+      mkLevel('Wizard', { level: 4 }),
     ];
     const result = calculateTotalBAB(levels);
     expect(result.total).toBe(2); // 4 levels of low BAB = +2 (floor(4/2))
@@ -182,10 +187,10 @@ describe('calculateTotalBAB', () => {
 
   it('calculates BAB for multiclass character', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 4, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1 }),
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Wizard', { level: 3 }),
+      mkLevel('Wizard', { level: 4 }),
     ];
     const result = calculateTotalBAB(levels);
     // Fighter 2: +2 (high), Wizard 2: +1 (low, floor(2/2))
@@ -194,9 +199,7 @@ describe('calculateTotalBAB', () => {
   });
 
   it('handles single level correctly in label', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-    ];
+    const levels: Level[] = [mkLevel('Rogue', { level: 1 })];
     const result = calculateTotalBAB(levels);
     expect(result.components[0].label).toBe('Rogue (1 level)');
   });
@@ -205,9 +208,9 @@ describe('calculateTotalBAB', () => {
 describe('calculateMaxHP', () => {
   it('calculates HP for single-class character with no CON modifier', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1 }),
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Fighter', { level: 3 }),
     ];
     const result = calculateMaxHP(levels, 0);
     expect(result.total).toBe(30); // 3 × 10 = 30
@@ -218,8 +221,8 @@ describe('calculateMaxHP', () => {
 
   it('calculates HP for single-class character with positive CON modifier', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Barbarian', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Barbarian', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Barbarian', { level: 1 }),
+      mkLevel('Barbarian', { level: 2 }),
     ];
     const result = calculateMaxHP(levels, 3);
     expect(result.total).toBe(30); // 2 × 12 + 2 × 3 = 24 + 6 = 30
@@ -231,9 +234,7 @@ describe('calculateMaxHP', () => {
   });
 
   it('calculates HP for single-class character with negative CON modifier', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-    ]; // d4
+    const levels: Level[] = [mkLevel('Wizard', { level: 1 })]; // d4
     const result = calculateMaxHP(levels, -1);
     expect(result.total).toBe(3); // 1 × 4 + 1 × (-1) = 4 - 1 = 3
     expect(result.components).toHaveLength(2);
@@ -245,9 +246,9 @@ describe('calculateMaxHP', () => {
 
   it('calculates HP for multiclass character', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 }, // d10
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Wizard', feats: [], skillRanks: {}, unspentSkillPoints: 0 }, // d4
+      mkLevel('Fighter', { level: 1 }), // d10
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Wizard', { level: 3 }), // d4
     ];
     const result = calculateMaxHP(levels, 2);
     expect(result.total).toBe(30); // 2 × 10 + 1 × 4 + 3 × 2 = 20 + 4 + 6 = 30
@@ -283,9 +284,9 @@ describe('calculateSkillPointsForLevel', () => {
 describe('calculateTotalSkillPoints', () => {
   it('calculates total for single-class character', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 2, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Rogue', { level: 1 }),
+      mkLevel('Rogue', { level: 2 }),
+      mkLevel('Rogue', { level: 3 }),
     ];
     // Level 1: (8 + 2) × 4 = 40
     // Level 2: 8 + 2 = 10
@@ -296,9 +297,9 @@ describe('calculateTotalSkillPoints', () => {
 
   it('calculates total for multiclass character', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 }, // (2 + 1) × 4 = 12
-      { level: 2, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 }, // 8 + 1 = 9
-      { level: 3, class: 'Rogue', feats: [], skillRanks: {}, unspentSkillPoints: 0 }, // 8 + 1 = 9
+      mkLevel('Fighter', { level: 1 }), // (2 + 1) × 4 = 12
+      mkLevel('Rogue', { level: 2 }), // 8 + 1 = 9
+      mkLevel('Rogue', { level: 3 }), // 8 + 1 = 9
     ];
     // Total: 30
     expect(calculateTotalSkillPoints(levels, 1)).toBe(30);
@@ -308,7 +309,7 @@ describe('calculateTotalSkillPoints', () => {
 describe('calculateSkillPointsSpent', () => {
   it('calculates spent points with class and cross-class skills', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [] }, // Class skills: Climb, Intimidate, etc.
+      mkLevel('Fighter', { level: 1 }), // Class skills: Climb, Intimidate, etc.
     ];
     const skillRanks = {
       Climb: 4, // Class skill: 4 points
@@ -321,8 +322,8 @@ describe('calculateSkillPointsSpent', () => {
 
   it('handles multiclass with overlapping class skills', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [] }, // Has Climb as class skill
-      { level: 2, class: 'Barbarian', feats: [] }, // Also has Climb as class skill
+      mkLevel('Fighter', { level: 1 }), // Has Climb as class skill
+      mkLevel('Barbarian', { level: 2 }), // Also has Climb as class skill
     ];
     const skillRanks = {
       Climb: 5, // Class skill for both: 5 points
@@ -333,7 +334,7 @@ describe('calculateSkillPointsSpent', () => {
   });
 
   it('skips skills with 0 ranks', () => {
-    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1 })];
     const skillRanks = {
       Climb: 0, // Should be skipped
       Jump: 2, // Class skill: 2 points
@@ -342,7 +343,7 @@ describe('calculateSkillPointsSpent', () => {
   });
 
   it('returns 0 for empty skill ranks', () => {
-    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1 })];
     expect(calculateSkillPointsSpent({}, levels)).toBe(0);
   });
 });
@@ -369,21 +370,9 @@ describe('calculateMaxRanks', () => {
 describe('calculateCumulativeSkillRanks', () => {
   it('aggregates skill ranks from multiple levels', () => {
     const levels: Level[] = [
-      {
-        level: 1,
-        class: 'Fighter',
-        feats: [],
-        skillRanks: { Climb: 2, Jump: 1 },
-        unspentSkillPoints: 0,
-      },
-      {
-        level: 2,
-        class: 'Fighter',
-        feats: [],
-        skillRanks: { Climb: 1, Swim: 2 },
-        unspentSkillPoints: 0,
-      },
-      { level: 3, class: 'Fighter', feats: [], skillRanks: { Jump: 1 }, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1, skillRanks: { Climb: 2, Jump: 1 } }),
+      mkLevel('Fighter', { level: 2, skillRanks: { Climb: 1, Swim: 2 } }),
+      mkLevel('Fighter', { level: 3, skillRanks: { Jump: 1 } }),
     ];
     const cumulative = calculateCumulativeSkillRanks(levels);
     expect(cumulative['Climb']).toBe(3); // 2 + 1
@@ -392,10 +381,7 @@ describe('calculateCumulativeSkillRanks', () => {
   });
 
   it('returns empty object for levels with no skills', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [] },
-      { level: 2, class: 'Fighter', feats: [] },
-    ];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1 }), mkLevel('Fighter', { level: 2 })];
     const cumulative = calculateCumulativeSkillRanks(levels);
     expect(cumulative).toEqual({});
   });
@@ -403,15 +389,15 @@ describe('calculateCumulativeSkillRanks', () => {
 
 describe('calculateSkillPointsAvailableAtLevel', () => {
   it('calculates available points for level 1 (no carryover)', () => {
-    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [], unspentSkillPoints: 0 }];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1, unspentSkillPoints: 0 })];
     // Fighter: 2 base + 2 INT = 4, first level 4x = 16
     expect(calculateSkillPointsAvailableAtLevel(0, levels, 2)).toBe(16);
   });
 
   it('calculates available points for level 2+ with carryover', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], unspentSkillPoints: 3 },
-      { level: 2, class: 'Fighter', feats: [], unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1, unspentSkillPoints: 3 }),
+      mkLevel('Fighter', { level: 2, unspentSkillPoints: 0 }),
     ];
     // Fighter: 2 base + 2 INT = 4, plus 3 carryover = 7
     expect(calculateSkillPointsAvailableAtLevel(1, levels, 2)).toBe(7);
@@ -419,15 +405,15 @@ describe('calculateSkillPointsAvailableAtLevel', () => {
 
   it('handles missing unspentSkillPoints (defaults to 0)', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [] }, // No unspentSkillPoints
-      { level: 2, class: 'Fighter', feats: [] },
+      mkLevel('Fighter', { level: 1 }), // No unspentSkillPoints (uses default 0)
+      mkLevel('Fighter', { level: 2 }),
     ];
     // Fighter: 2 base + 2 INT = 4, plus 0 carryover (undefined defaults to 0) = 4
     expect(calculateSkillPointsAvailableAtLevel(1, levels, 2)).toBe(4);
   });
 
   it('returns 0 for invalid level index', () => {
-    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1 })];
     // Defensive: these are not valid in UI, but test for robustness
     expect(() => calculateSkillPointsAvailableAtLevel(-1, levels, 2)).toThrow();
     expect(() => calculateSkillPointsAvailableAtLevel(5, levels, 2)).toThrow();
@@ -463,12 +449,7 @@ describe('formatAttacks', () => {
 describe('getPrimarySpellcastingAbility', () => {
   const mkLevels = (entries: Array<[string, number]>) =>
     entries.flatMap(([cls, n]) =>
-      Array.from({ length: n }, (_, i) => ({
-        level: i + 1,
-        class: cls,
-        feats: [],
-        unspentSkillPoints: 0,
-      })),
+      Array.from({ length: n }, (_, i) => mkLevel(cls, { level: i + 1 })),
     );
 
   it('returns int for Wizard', () =>
@@ -492,42 +473,26 @@ describe('getPrimarySpellcastingAbility', () => {
 
 describe('calculateSkillPointsSpentAtLevel', () => {
   it('calculates spent points considering class/cross-class', () => {
-    const level: Level = {
+    const level: Level = mkLevel('Fighter', {
       level: 1,
-      class: 'Fighter',
-      feats: [],
       skillRanks: { Climb: 2, Diplomacy: 1 }, // Climb is class, Diplomacy is cross-class
-    };
+    });
     // Climb: 2 ranks × 1 = 2, Diplomacy: 1 rank × 2 = 2, Total: 4
     expect(calculateSkillPointsSpentAtLevel(level, [level])).toBe(4);
   });
 
   it('returns 0 for level with no skill ranks', () => {
-    const level: Level = {
-      level: 1,
-      class: 'Fighter',
-      feats: [],
-      skillRanks: {},
-    };
+    const level: Level = mkLevel('Fighter', { level: 1, skillRanks: {} });
     expect(calculateSkillPointsSpentAtLevel(level, [level])).toBe(0);
   });
 
   it('handles level without skillRanks property', () => {
-    const level: Level = {
-      level: 1,
-      class: 'Fighter',
-      feats: [],
-    };
+    const level: Level = mkLevel('Fighter', { level: 1 });
     expect(calculateSkillPointsSpentAtLevel(level, [level])).toBe(0);
   });
 
   it('skips skills with 0 ranks', () => {
-    const level: Level = {
-      level: 1,
-      class: 'Fighter',
-      feats: [],
-      skillRanks: { Climb: 0, Jump: 1 },
-    };
+    const level: Level = mkLevel('Fighter', { level: 1, skillRanks: { Climb: 0, Jump: 1 } });
     expect(calculateSkillPointsSpentAtLevel(level, [level])).toBe(1);
   });
 });
@@ -535,7 +500,7 @@ describe('calculateSkillPointsSpentAtLevel', () => {
 describe('validateSkillRanksAtLevel', () => {
   it('validates skill ranks within max', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 2 } }, // Max: 4 for class skill
+      mkLevel('Fighter', { level: 1, skillRanks: { Climb: 2 } }), // Max: 4 for class skill
     ];
     const result = validateSkillRanksAtLevel(levels[0], levels);
     expect(result.valid).toBe(true);
@@ -544,7 +509,7 @@ describe('validateSkillRanksAtLevel', () => {
 
   it('detects when skill ranks exceed max', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 5 } }, // Max: 4 for class skill
+      mkLevel('Fighter', { level: 1, skillRanks: { Climb: 5 } }), // Max: 4 for class skill
     ];
     const result = validateSkillRanksAtLevel(levels[0], levels);
     expect(result.valid).toBe(false);
@@ -554,7 +519,7 @@ describe('validateSkillRanksAtLevel', () => {
 
   it('validates cross-class skill max ranks', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Diplomacy: 2 } }, // Max: 2 for cross-class at level 1
+      mkLevel('Fighter', { level: 1, skillRanks: { Diplomacy: 2 } }), // Max: 2 for cross-class at level 1
     ];
     const result = validateSkillRanksAtLevel(levels[0], levels);
     expect(result.valid).toBe(true);
@@ -562,7 +527,7 @@ describe('validateSkillRanksAtLevel', () => {
 
   it('detects cross-class skill exceeding max ranks', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Diplomacy: 3 } }, // Max: 2 for cross-class at level 1
+      mkLevel('Fighter', { level: 1, skillRanks: { Diplomacy: 3 } }), // Max: 2 for cross-class at level 1
     ];
     const result = validateSkillRanksAtLevel(levels[0], levels);
     expect(result.valid).toBe(false);
@@ -570,15 +535,13 @@ describe('validateSkillRanksAtLevel', () => {
   });
 
   it('skips validation for skills with 0 ranks', () => {
-    const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 0, Jump: 2 } },
-    ];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1, skillRanks: { Climb: 0, Jump: 2 } })];
     const result = validateSkillRanksAtLevel(levels[0], levels);
     expect(result.valid).toBe(true);
   });
 
   it('handles level without skillRanks', () => {
-    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1 })];
     const result = validateSkillRanksAtLevel(levels[0], levels);
     expect(result.valid).toBe(true);
     expect(result.errors).toHaveLength(0);
@@ -586,8 +549,8 @@ describe('validateSkillRanksAtLevel', () => {
 
   it('validates cumulative ranks across multiple levels', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 4 } },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: { Climb: 2 } }, // Total: 6, max at level 2 is 5
+      mkLevel('Fighter', { level: 1, skillRanks: { Climb: 4 } }),
+      mkLevel('Fighter', { level: 2, skillRanks: { Climb: 2 } }), // Total: 6, max at level 2 is 5
     ];
     const result = validateSkillRanksAtLevel(levels[1], levels);
     expect(result.valid).toBe(false);
@@ -598,9 +561,9 @@ describe('validateSkillRanksAtLevel', () => {
 describe('recalculateSkillPointsFromLevel', () => {
   it('recalculates carryover from specified level forward', () => {
     const levels: Level[] = [
-      { level: 1, class: 'Fighter', feats: [], skillRanks: { Climb: 2 }, unspentSkillPoints: 0 },
-      { level: 2, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
-      { level: 3, class: 'Fighter', feats: [], skillRanks: {}, unspentSkillPoints: 0 },
+      mkLevel('Fighter', { level: 1, skillRanks: { Climb: 2 }, unspentSkillPoints: 0 }),
+      mkLevel('Fighter', { level: 2 }),
+      mkLevel('Fighter', { level: 3 }),
     ];
     const updated = recalculateSkillPointsFromLevel(0, levels, 2);
     // Level 1: 16 available, 2 spent (class skill), 14 remaining
@@ -612,7 +575,7 @@ describe('recalculateSkillPointsFromLevel', () => {
   });
 
   it('returns original array for invalid level index', () => {
-    const levels: Level[] = [{ level: 1, class: 'Fighter', feats: [] }];
+    const levels: Level[] = [mkLevel('Fighter', { level: 1 })];
     expect(() => recalculateSkillPointsFromLevel(-1, levels, 2)).toThrow();
   });
 });
@@ -671,22 +634,13 @@ describe('bonusSlotsForMod', () => {
 });
 
 describe('calculateSpellSlots', () => {
-  const makeLevel = (cls: string): Level => ({
-    level: 1,
-    class: cls,
-    feats: [],
-    spells: [],
-    skillRanks: {},
-    unspentSkillPoints: 0,
-  });
-
   it('returns empty record for non-caster', () => {
-    const levels = [makeLevel('Fighter'), makeLevel('Fighter')];
+    const levels = [mkLevel('Fighter'), mkLevel('Fighter')];
     expect(calculateSpellSlots(levels, baseScores)).toEqual({});
   });
 
   it('returns correct base slots for a level-1 Wizard with no bonus', () => {
-    const levels = [makeLevel('Wizard')];
+    const levels = [mkLevel('Wizard')];
     const result = calculateSpellSlots(levels, baseScores);
     // Level-1 Wizard: 3 cantrips, 1 first-level spell; INT 10 → mod 0, no bonus
     expect(result['0']).toBe(3);
@@ -695,7 +649,7 @@ describe('calculateSpellSlots', () => {
   });
 
   it('adds bonus slots from high casting stat', () => {
-    const levels = [makeLevel('Wizard')];
+    const levels = [mkLevel('Wizard')];
     const scores = { ...baseScores, int: 16 }; // INT 16 → mod +3
     const result = calculateSpellSlots(levels, scores);
     // Base: 3 cantrips (no bonus), 1 first; bonus for mod=3: level1=1, level2=1, level3=1
@@ -706,8 +660,8 @@ describe('calculateSpellSlots', () => {
   });
 
   it('accumulates slots from multiclass casters', () => {
-    const wizLevels = Array(5).fill(makeLevel('Wizard'));
-    const clericLevels = Array(3).fill(makeLevel('Cleric'));
+    const wizLevels = Array(5).fill(mkLevel('Wizard'));
+    const clericLevels = Array(3).fill(mkLevel('Cleric'));
     const levels = [...wizLevels, ...clericLevels];
     const result = calculateSpellSlots(levels, baseScores);
     // Wizard level 5: [4,3,2,1,-1,...] — cantrips:4, 1st:3, 2nd:2, 3rd:1
@@ -720,13 +674,13 @@ describe('calculateSpellSlots', () => {
   });
 
   it('returns no slots for Paladin levels 1-3', () => {
-    const levels = [makeLevel('Paladin'), makeLevel('Paladin'), makeLevel('Paladin')];
+    const levels = [mkLevel('Paladin'), mkLevel('Paladin'), mkLevel('Paladin')];
     const result = calculateSpellSlots(levels, baseScores);
     expect(Object.keys(result)).toHaveLength(0);
   });
 
   it('returns 0 base + bonus for Paladin level 4 with WIS 12', () => {
-    const levels = Array(4).fill(makeLevel('Paladin'));
+    const levels = Array(4).fill(mkLevel('Paladin'));
     const scores = { ...baseScores, wis: 12 }; // WIS mod +1
     const result = calculateSpellSlots(levels, scores);
     // Paladin level-4 row: [-1, 0, -1, ...] — 1st-level spells: 0 base + bonus
@@ -737,21 +691,12 @@ describe('calculateSpellSlots', () => {
 });
 
 describe('getCasterSummary', () => {
-  const makeLevel = (cls: string): Level => ({
-    level: 1,
-    class: cls,
-    feats: [],
-    spells: [],
-    skillRanks: {},
-    unspentSkillPoints: 0,
-  });
-
   it('returns empty array for non-caster', () => {
-    expect(getCasterSummary([makeLevel('Fighter')], baseScores)).toHaveLength(0);
+    expect(getCasterSummary([mkLevel('Fighter')], baseScores)).toHaveLength(0);
   });
 
   it('returns one entry for single casting class', () => {
-    const result = getCasterSummary([makeLevel('Wizard'), makeLevel('Wizard')], {
+    const result = getCasterSummary([mkLevel('Wizard'), mkLevel('Wizard')], {
       ...baseScores,
       int: 14,
     });
@@ -763,7 +708,7 @@ describe('getCasterSummary', () => {
   });
 
   it('returns two entries for multiclass caster', () => {
-    const levels = [makeLevel('Wizard'), makeLevel('Sorcerer')];
+    const levels = [mkLevel('Wizard'), mkLevel('Sorcerer')];
     const result = getCasterSummary(levels, baseScores);
     expect(result).toHaveLength(2);
     const names = result.map((r) => r.className);

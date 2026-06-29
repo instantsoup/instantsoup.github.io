@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import type { CombatStats } from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 import { AbilityGrid } from './AbilityGrid';
@@ -9,21 +10,13 @@ import { SavesPanel } from './SavesPanel';
 type Props = {
   scores: Scores;
   mods: Scores;
-  onNum: (ability: keyof Scores, value: number) => void;
-  combatStats: {
-    currentHp: number;
-    maxHp: number;
-    armorBonus: number;
-    shieldBonus: number;
-    miscAcBonus: number;
-    spellResistance: number;
-    initiativeBonus: number;
-    baseAttackBonus: number;
-  };
+  onNum: (k: keyof Scores) => (e: React.ChangeEvent<HTMLInputElement>) => void;
+  combatStats: CombatStats;
   levels: Level[];
-  updateCombatStat: (stat: string, value: number) => void;
-  saveBonuses: { fortitude: number; reflex: number; will: number };
-  setSaveBonus: (save: 'fortitude' | 'reflex' | 'will', value: number) => void;
+  updateCombatStat: (field: keyof CombatStats, value: number | undefined) => void;
+  setMovementType: (type: string) => void;
+  saveBonuses: Record<string, number>;
+  setSaveBonus: (saveName: string, bonus: number) => void;
   onBlur: () => void;
 };
 
@@ -34,6 +27,7 @@ export function CharacterStatsPanel({
   combatStats,
   levels,
   updateCombatStat,
+  setMovementType,
   saveBonuses,
   setSaveBonus,
   onBlur,
@@ -82,6 +76,7 @@ export function CharacterStatsPanel({
               combatStats={combatStats}
               levels={levels}
               updateCombatStat={updateCombatStat}
+              setMovementType={setMovementType}
               onBlur={onBlur}
             />
           </div>

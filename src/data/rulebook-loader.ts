@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 /**
  * Loads all extracted rulebook JSON files from src/data/rulebooks/
  * and merges their content into the app's data layer.

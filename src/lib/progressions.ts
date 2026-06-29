@@ -2,7 +2,7 @@
 import { findClassProgression } from '../data/class-progressions';
 import { classes } from '../data/classes';
 import { races } from '../data/races';
-import type { Scores } from '../schema/schema';
+import type { Scores } from '../types';
 import type { BABProgression, SaveProgression } from '../types/class-progression';
 import type { Level } from '../types/level';
 

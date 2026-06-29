@@ -56,12 +56,21 @@ export function PreparedSpellsPanel({
 }: Props) {
   const [preparingLevel, setPreparingLevel] = useState<string | null>(null);
   const [pickSearch, setPickSearch] = useState('');
+  const [showFullListForLevel, setShowFullListForLevel] = useState<Record<string, boolean>>({});
 
   const slotsMax = combatStats.spellSlotsMax ?? {};
 
-  const accessibleLevels = useMemo(
+  // Max spell level the character can cast based on class progression (ignores manual slot overrides)
+  const maxCastableLevel = useMemo(
     () =>
-      SPELL_LEVELS.filter((lvl) => (slotsMax[lvl] ?? effectiveSlots[lvl] ?? 0) > 0),
+      Object.keys(effectiveSlots).length > 0
+        ? Math.max(...Object.keys(effectiveSlots).map(Number))
+        : 0,
+    [effectiveSlots],
+  );
+
+  const accessibleLevels = useMemo(
+    () => SPELL_LEVELS.filter((lvl) => (slotsMax[lvl] ?? effectiveSlots[lvl] ?? 0) > 0),
     [slotsMax, effectiveSlots],
   );
 
@@ -122,6 +131,13 @@ export function PreparedSpellsPanel({
         const filteredPickList = pickSearch
           ? pickList.filter((s) => s.name.toLowerCase().includes(pickSearch.toLowerCase()))
           : pickList;
+
+        const levelNum = Number(lvl);
+        const exceedsCasterLevel = levelNum > maxCastableLevel;
+        const showFull = showFullListForLevel[lvl] ?? false;
+        const INITIAL_CAP = 30;
+        const visiblePickList =
+          showFull || pickSearch ? filteredPickList : filteredPickList.slice(0, INITIAL_CAP);
 
         const showDomainBadge = hasDomains && lvl !== '0';
 
@@ -241,42 +257,70 @@ export function PreparedSpellsPanel({
 
             {preparingLevel === lvl && (
               <div className="spellbook-prepare-picker">
-                <div className="spellbook-prepare-picker__search">
-                  <input
-                    type="text"
-                    className="memorized-spells__input"
-                    value={pickSearch}
-                    onChange={(e) => setPickSearch(e.target.value)}
-                    placeholder="Filter spells…"
-                    autoFocus
-                  />
-                </div>
-                {filteredPickList.length === 0 ? (
-                  <p className="spellbook-prepare-picker__empty">
-                    {pickSearch
-                      ? 'No matching spells.'
-                      : lvl === '0'
-                        ? 'No orisons available.'
-                        : `No level ${lvl} spells available.`}
-                  </p>
+                {exceedsCasterLevel && !showFull ? (
+                  <div className="spellbook-prepare-picker__caster-cap">
+                    <p className="spellbook-prepare-picker__empty">
+                      Level {lvl} spells exceed your caster level (max level {maxCastableLevel}).
+                    </p>
+                    <button
+                      className="btn btn--xs btn--secondary"
+                      onClick={() => setShowFullListForLevel((prev) => ({ ...prev, [lvl]: true }))}
+                    >
+                      Load entire list
+                    </button>
+                  </div>
                 ) : (
-                  <ul className="spellbook-prepare-picker__list">
-                    {filteredPickList.map((spell) => (
-                      <li key={spell.name} className="spellbook-prepare-picker__item">
-                        <span className={`school-badge ${schoolClass(spell.school)}`}>
-                          {spell.school.slice(0, 3)}
-                        </span>
-                        <span className="spellbook-prepare-picker__name">{spell.name}</span>
-                        <button
-                          className="btn btn--xs btn--primary"
-                          onClick={() => handlePrepare(lvl, spell.name)}
-                          disabled={!canPrepareMore}
-                        >
-                          Prepare
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
+                  <>
+                    <div className="spellbook-prepare-picker__search">
+                      <input
+                        type="text"
+                        className="memorized-spells__input"
+                        value={pickSearch}
+                        onChange={(e) => setPickSearch(e.target.value)}
+                        placeholder="Filter spells…"
+                        autoFocus
+                      />
+                    </div>
+                    {filteredPickList.length === 0 ? (
+                      <p className="spellbook-prepare-picker__empty">
+                        {pickSearch
+                          ? 'No matching spells.'
+                          : lvl === '0'
+                            ? 'No orisons available.'
+                            : `No level ${lvl} spells available.`}
+                      </p>
+                    ) : (
+                      <>
+                        <ul className="spellbook-prepare-picker__list">
+                          {visiblePickList.map((spell) => (
+                            <li key={spell.name} className="spellbook-prepare-picker__item">
+                              <span className={`school-badge ${schoolClass(spell.school)}`}>
+                                {spell.school.slice(0, 3)}
+                              </span>
+                              <span className="spellbook-prepare-picker__name">{spell.name}</span>
+                              <button
+                                className="btn btn--xs btn--primary"
+                                onClick={() => handlePrepare(lvl, spell.name)}
+                                disabled={!canPrepareMore}
+                              >
+                                Prepare
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                        {!showFull && !pickSearch && filteredPickList.length > INITIAL_CAP && (
+                          <button
+                            className="btn btn--xs btn--ghost spellbook-prepare-btn"
+                            onClick={() =>
+                              setShowFullListForLevel((prev) => ({ ...prev, [lvl]: true }))
+                            }
+                          >
+                            Load entire list ({filteredPickList.length} spells)
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </>
                 )}
                 <button
                   className="btn btn--xs btn--ghost"

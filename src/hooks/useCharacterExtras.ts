@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { AbilityDamageSchema } from '../schema/schema';
 import type {
   AbilityDamage,
   Character,
@@ -164,7 +165,7 @@ export function useCharacterExtras(initial: Character) {
     setCustomResources([]);
     setNotes('');
     setStatusEffects({});
-    setAbilityDamageState({});
+    setAbilityDamageState(AbilityDamageSchema.parse({}));
     setEquipment([]);
     setSkillMiscBonusesState({});
     setXPState(0);

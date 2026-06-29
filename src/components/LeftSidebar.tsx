@@ -15,7 +15,7 @@ interface LeftSidebarProps {
   exportJson: () => void;
   onPickFile: () => void;
   onFileChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  fileInputRef: React.RefObject<HTMLInputElement>;
+  fileInputRef: React.RefObject<HTMLInputElement | null>;
   resetAll: () => void;
   onAddWeapon?: (weapon: Weapon) => void;
   onAddEquipment?: (item: EquipmentItem) => void;

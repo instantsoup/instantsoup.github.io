@@ -1,11 +1,13 @@
 // src/data/skills.ts
+import { z } from 'zod';
+
 import { AbilityKey, type Skill, SkillsFileSchema } from '../types/skill';
 import rawSkills from './skills.json' assert { type: 'json' };
 
 const parsed = SkillsFileSchema.parse(rawSkills);
 export const skills: Skill[] = parsed;
 
-export function skillsByAbility(key: typeof AbilityKey._type): Skill[] {
+export function skillsByAbility(key: z.infer<typeof AbilityKey>): Skill[] {
   return skills.filter((s) => s.ability === key);
 }
 

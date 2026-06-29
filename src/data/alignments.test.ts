@@ -14,7 +14,7 @@ describe('alignments data', () => {
       expect(a).toHaveProperty('description');
       expect(a.code.length).toBeGreaterThan(0);
       expect(a.label.length).toBeGreaterThan(0);
-      expect(a.description.length).toBeGreaterThan(0);
+      expect(a.description!.length).toBeGreaterThan(0);
     });
   });
 
