@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { classes } from '../data/classes';
+import { findClassProgression } from '../data/class-progressions';
 import { feats } from '../data/feats';
 import { spells } from '../data/spells';
 import {
@@ -96,11 +97,23 @@ export function LevelsPanel({
       .slice(0, 10);
   };
 
-  const getSpellSearchResults = (levelNumber: number) => {
+  const getSpellSearchResults = (
+    levelNumber: number,
+    spellListKey: string | null,
+    maxLevel: number | null,
+  ) => {
     const searchTerm = spellSearchTerms[levelNumber] ?? '';
     if (!searchTerm.trim()) return [];
     return spells
-      .filter((spell) => spell.name.toLowerCase().includes(searchTerm.toLowerCase()))
+      .filter((spell) => {
+        if (!spell.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+        if (spellListKey) {
+          const spellLevel = spell.levels[spellListKey];
+          if (spellLevel === undefined) return false;
+          if (maxLevel !== null && spellLevel > maxLevel) return false;
+        }
+        return true;
+      })
       .sort((a, b) => a.name.localeCompare(b.name))
       .slice(0, 10);
   };
@@ -118,7 +131,29 @@ export function LevelsPanel({
             const levelFeats = lvl.feats ?? [];
             const levelSpells = lvl.spells ?? [];
             const featSearchResults = getFeatSearchResults(lvl.level);
-            const spellSearchResults = getSpellSearchResults(lvl.level);
+
+            // Per-level spell context — currently implemented for Wizard only.
+            // TODO: add per-level spells-known rules for spontaneous casters (Sorcerer, Bard)
+            // who choose spells from a fixed table and can replace one spell per level.
+            const prog = findClassProgression(lvl.class);
+            const spellListKey = prog?.spellListKey ?? null;
+            const classLevelAtThisPoint = levels
+              .slice(0, levelIndex + 1)
+              .filter((l) => l.class === lvl.class).length;
+            const isWizard = lvl.class === 'Wizard';
+            const maxCastableSpellLevel = isWizard ? Math.ceil(classLevelAtThisPoint / 2) : null;
+            // Level 1: 3 + Int modifier 1st-level spells; each subsequent level: 2 spells
+            const spellsToLearn = isWizard
+              ? classLevelAtThisPoint === 1
+                ? Math.max(1, 3 + intModifier)
+                : 2
+              : null;
+
+            const spellSearchResults = getSpellSearchResults(
+              lvl.level,
+              spellListKey,
+              maxCastableSpellLevel,
+            );
 
             const available = calculateSkillPointsAvailableAtLevel(levelIndex, levels, intModifier);
             const spent = calculateSkillPointsSpentAtLevel(lvl, levels);
@@ -268,10 +303,28 @@ export function LevelsPanel({
                 {/* Spells Tab */}
                 {activeTab === 'spells' && (
                   <div className="level-card__spells">
+                    {isWizard && spellsToLearn !== null && (
+                      <div className="level-spells-header">
+                        <span
+                          className={`level-spells-quota${levelSpells.length > spellsToLearn ? ' level-spells-quota--over' : levelSpells.length === spellsToLearn ? ' level-spells-quota--met' : ''}`}
+                        >
+                          {levelSpells.length} / {spellsToLearn} spells
+                        </span>
+                        <span className="level-spells-hint">
+                          {classLevelAtThisPoint === 1
+                            ? `Starting spellbook — up to level ${maxCastableSpellLevel} spells (3 + Int mod)`
+                            : `Spells added to spellbook this level — up to level ${maxCastableSpellLevel}`}
+                        </span>
+                      </div>
+                    )}
                     <div className="level-spells-search">
                       <input
                         type="text"
-                        placeholder="Search spells..."
+                        placeholder={
+                          isWizard
+                            ? `Search Sor/Wiz spells (level 0–${maxCastableSpellLevel})…`
+                            : 'Search spells...'
+                        }
                         value={spellSearchTerms[lvl.level] ?? ''}
                         onChange={(e) =>
                           setSpellSearchTerms((prev) => ({ ...prev, [lvl.level]: e.target.value }))
@@ -342,7 +395,11 @@ export function LevelsPanel({
                       <div className="level-spells-empty">
                         {spellSearchTerms[lvl.level]?.trim()
                           ? 'No spells found. Try a different search.'
-                          : 'Search above to add spells for this level.'}
+                          : isWizard
+                            ? classLevelAtThisPoint === 1
+                              ? `Search to choose your starting ${spellsToLearn} spells (Sor/Wiz level 1).`
+                              : `Search to choose ${spellsToLearn} spells learned this wizard level (up to spell level ${maxCastableSpellLevel}).`
+                            : 'Search above to add spells for this level.'}
                       </div>
                     )}
                   </div>

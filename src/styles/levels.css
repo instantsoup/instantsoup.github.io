@@ -343,6 +343,39 @@
   background: var(--clr-accent-purple-bg);
 }
 
+.level-spells-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.level-spells-quota {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--clr-surface-2);
+  color: var(--clr-text-muted);
+  white-space: nowrap;
+}
+
+.level-spells-quota--met {
+  background: var(--clr-success-bg, #d4edda);
+  color: var(--clr-success, #155724);
+}
+
+.level-spells-quota--over {
+  background: var(--clr-warning-bg, #fff3cd);
+  color: var(--clr-warning, #856404);
+}
+
+.level-spells-hint {
+  font-size: 11px;
+  color: var(--clr-text-muted);
+}
+
 .level-spells-search {
   margin-bottom: 1rem;
 }
