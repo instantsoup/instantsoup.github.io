@@ -1,11 +1,10 @@
 import { Fragment, useMemo, useState } from 'react';
 
-import { SpellDetail } from './SpellDetail';
-
 import { findClassProgression } from '../data/class-progressions';
 import { findSpell, spells as allSpells } from '../data/spells';
 import type { CombatStats, SpellbookEntry } from '../schema/schema';
 import type { Level } from '../types/level';
+import { SpellDetail } from './SpellDetail';
 
 const WIZARD_SCHOOLS = [
   'Abjuration',

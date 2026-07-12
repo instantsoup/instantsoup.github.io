@@ -15,7 +15,8 @@ export function SpellDetail({ spellName }: Props) {
     spell.spellResistance && { label: 'SR', value: spell.spellResistance },
   ].filter(Boolean) as { label: string; value: string }[];
 
-  const schoolLine = [spell.school, spell.subschool].filter(Boolean).join(' / ') +
+  const schoolLine =
+    [spell.school, spell.subschool].filter(Boolean).join(' / ') +
     (spell.descriptor.length ? ` [${spell.descriptor.join(', ')}]` : '');
 
   return (
