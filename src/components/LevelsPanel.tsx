@@ -25,6 +25,7 @@ type LevelsPanelProps = {
   removeSpellFromLevel: (levelNumber: number, spellName: string) => void;
   updateLevelSkillRanks: (levelNumber: number, skillName: string, ranks: number) => void;
   intModifier: number;
+  wizardForbiddenSchools: string[];
   onBlur?: () => void;
 };
 
@@ -39,6 +40,7 @@ export function LevelsPanel({
   removeSpellFromLevel,
   updateLevelSkillRanks,
   intModifier,
+  wizardForbiddenSchools,
   onBlur,
 }: LevelsPanelProps) {
   const canAddLevel = levels.length < 20;
@@ -107,6 +109,7 @@ export function LevelsPanel({
     return spells
       .filter((spell) => {
         if (!spell.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
+        if (wizardForbiddenSchools.includes(spell.school)) return false;
         if (spellListKey) {
           const spellLevel = spell.levels[spellListKey];
           if (spellLevel === undefined) return false;

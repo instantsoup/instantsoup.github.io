@@ -484,6 +484,7 @@ export function App() {
                   removeSpellFromLevel={removeSpellFromLevel}
                   updateLevelSkillRanks={updateLevelSkillRanks}
                   intModifier={mods.int}
+                  wizardForbiddenSchools={wizardForbiddenSchools}
                   onBlur={persistLocal}
                 />
               </PanelSection>
