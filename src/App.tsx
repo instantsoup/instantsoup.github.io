@@ -32,6 +32,7 @@ import {
   getRacialMods,
   xpForLevel,
 } from './lib/progressions';
+import { isWizardCharacter } from './rules/wizard/levels';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
@@ -161,17 +162,13 @@ export function App() {
   const primaryCaster = casterSummary[0] ?? null;
   const primaryCastingMod = primaryCaster?.castingMod;
   const isPreparedCaster = casterSummary.some((c) => c.castingType === 'prepared');
-  const isWizardCharacter = levels.some((l) => {
-    if (l.class === 'Wizard') return true;
-    const prog = findClassProgression(l.class);
-    return prog?.advancesSpellcastingOf === 'Wizard';
-  });
+  const isWizard = isWizardCharacter(levels);
   const accessibleSpellLevels = Object.keys(effectiveSlots);
 
   // For non-wizard prepared casters: build class spell list keyed by spell level
   const primaryPreparedClass = casterSummary.find((c) => c.castingType === 'prepared');
   const classSpellsByLevel = useMemo(() => {
-    if (isWizardCharacter || !primaryPreparedClass) return {};
+    if (isWizard || !primaryPreparedClass) return {};
     const prog = findClassProgression(primaryPreparedClass.className);
     if (!prog?.spellListKey) return {};
     const key = prog.spellListKey;
@@ -190,7 +187,7 @@ export function App() {
       arr.sort((a, b) => a.name.localeCompare(b.name));
     }
     return byLevel;
-  }, [isWizardCharacter, primaryPreparedClass, allSpells]);
+  }, [isWizard, primaryPreparedClass, allSpells]);
 
   const hasDomains = useMemo(
     () =>
@@ -573,7 +570,7 @@ export function App() {
           {/* ── SPELLS (play mode only) ──────────────── */}
           {tab === 'spells' && (
             <div className="tab-content">
-              {isWizardCharacter ? (
+              {isWizard ? (
                 <SpellbookPanel
                   levels={levels}
                   intMod={mods.int}

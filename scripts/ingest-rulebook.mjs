@@ -9,13 +9,18 @@
  *   node scripts/ingest-rulebook.mjs <path-to-pdf> [--abbr ABBR] [--name "Full Name"]
  *
  * Example:
- *   node scripts/ingest-rulebook.mjs "C:/Users/insta/Dropbox/DnD/spell_compendium.pdf" --abbr SC --name "Spell Compendium"
+ *   node scripts/ingest-rulebook.mjs "Books/spell_compendium.pdf" --abbr SC --name "Spell Compendium"
  *
  * Requirements:
- *   npm install pdf-parse @anthropic-ai/sdk  (one-time setup, dev only)
+ *   npm install pdf-parse @anthropic-ai/sdk zod  (one-time setup, dev only)
  *
  * Env:
  *   ANTHROPIC_API_KEY  must be set
+ *
+ * Output shape is compatible with the rules engine:
+ *   - Spell.levels keys match D&D 3.5e class spell-list keys ("Sor/Wiz", "Clr", etc.)
+ *   - Class entries include `advancesSpellcastingOf` for prestige classes that grant
+ *     caster level advancement, which the rules engine uses to compute effective caster level.
  */
 
 import { createRequire } from 'module';
@@ -58,7 +63,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
 
 // ── Load dependencies ────────────────────────────────────────────────────────
 
-let pdfParse, Anthropic;
+let pdfParse, Anthropic, z;
 try {
   pdfParse = require('pdf-parse');
 } catch {
@@ -72,6 +77,13 @@ try {
   console.error('@anthropic-ai/sdk not found. Run: npm install @anthropic-ai/sdk');
   process.exit(1);
 }
+try {
+  const mod = await import('zod');
+  z = mod.z ?? mod.default;
+} catch {
+  console.error('zod not found. Run: npm install zod');
+  process.exit(1);
+}
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
@@ -83,6 +95,74 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 }
+
+// ── Validation schemas (mirrors the rules engine's expected shapes) ───────────
+
+const SpellSchema = z.object({
+  name: z.string().min(1),
+  school: z.string().min(1),
+  subschool: z.string().nullable().optional(),
+  descriptor: z.string().nullable().optional(),
+  levels: z.record(z.string(), z.number()).default({}),
+  components: z.string().optional(),
+  castingTime: z.string().optional(),
+  range: z.string().optional(),
+  duration: z.string().optional(),
+  savingThrow: z.string().optional(),
+  spellResistance: z.string().optional(),
+  description: z.string().optional(),
+});
+
+const ClassSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+  hitDie: z.number().int().positive(),
+  babProgression: z.enum(['high', 'medium', 'low']),
+  fortitudeProgression: z.enum(['good', 'poor']),
+  reflexProgression: z.enum(['good', 'poor']),
+  willProgression: z.enum(['good', 'poor']),
+  skillPointsPerLevel: z.number().int().nonnegative(),
+  spellcastingAbility: z.enum(['int', 'wis', 'cha']).nullable().default(null),
+  castingType: z.enum(['prepared', 'spontaneous']).nullable().default(null),
+  // Key rules-engine field: prestige class caster level advancement
+  advancesSpellcastingOf: z.string().nullable().default(null),
+  classSkills: z.array(z.string()).default([]),
+  spellSlotsPerDay: z.array(z.array(z.number())).nullable().default(null),
+});
+
+const FeatSchema = z.object({
+  name: z.string().min(1),
+  type: z.string().optional(),
+  prerequisites: z.string().optional(),
+  benefit: z.string().optional(),
+  special: z.string().optional(),
+});
+
+const RaceSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+  abilityMods: z.record(z.string(), z.number()).default({}),
+  size: z.string().optional(),
+  speed: z.number().optional(),
+  racialTraits: z.array(z.string()).default([]),
+});
+
+const ItemSchema = z.object({
+  name: z.string().min(1),
+  type: z.string().optional(),
+  cost: z.string().optional(),
+  weight: z.number().optional(),
+  description: z.string().optional(),
+  properties: z.string().optional(),
+});
+
+const ChunkResultSchema = z.object({
+  spells: z.array(SpellSchema).default([]),
+  classes: z.array(ClassSchema).default([]),
+  feats: z.array(FeatSchema).default([]),
+  races: z.array(RaceSchema).default([]),
+  items: z.array(ItemSchema).default([]),
+});
 
 // ── Extract text from PDF ────────────────────────────────────────────────────
 
@@ -117,26 +197,76 @@ console.log(`Split into ${chunks.length} chunk(s) for processing`);
 
 const SYSTEM = `You are a D&D 3.5e rules expert extracting structured game data from rulebook text.
 Extract only what is clearly present in the provided text. Do not invent or guess.
-Return valid JSON only — no prose, no markdown fences.`;
+Return valid JSON only — no prose, no markdown fences, no code blocks.`;
 
 function chunkPrompt(chunk, chunkIdx, totalChunks) {
   return `This is chunk ${chunkIdx + 1} of ${totalChunks} from the rulebook "${bookName}" (abbreviation: ${abbr}).
 
 Extract ALL of the following that appear in this chunk:
 
-1. SPELLS: { name, school, subschool, descriptor, levels (as object mapping class → level), components, castingTime, range, duration, savingThrow, spellResistance, description }
-   - levels example: { "Sor/Wiz": 3, "Clr": 4 }
-   - Class keys must match D&D 3.5 standard: "Sor/Wiz", "Clr", "Drd", "Brd", "Pal", "Rgr", "Blk", "Arc", "Div"
+1. SPELLS — one object per spell:
+{
+  "name": string,
+  "school": string (e.g. "Evocation"),
+  "subschool": string|null,
+  "descriptor": string|null (e.g. "Fire"),
+  "levels": { "<classKey>": <level> },   // class keys: "Sor/Wiz", "Clr", "Drd", "Brd", "Pal", "Rgr", "Arc", "Div"
+  "components": string,
+  "castingTime": string,
+  "range": string,
+  "duration": string,
+  "savingThrow": string,
+  "spellResistance": string,
+  "description": string
+}
 
-2. CLASSES (base or prestige): { name, description, hitDie, babProgression ("high"|"medium"|"low"), fortitudeProgression ("good"|"poor"), reflexProgression ("good"|"poor"), willProgression ("good"|"poor"), skillPointsPerLevel, spellcastingAbility (null|"int"|"wis"|"cha"), castingType (null|"prepared"|"spontaneous"), advancesClass (null or base class name for PrCs), classSkills (array), spellSlotsPerDay (null or 20×10 array, -1 for inaccessible) }
+2. CLASSES (base or prestige) — one object per class:
+{
+  "name": string,
+  "description": string,
+  "hitDie": number (e.g. 6, 8, 10, 12),
+  "babProgression": "high"|"medium"|"low",
+  "fortitudeProgression": "good"|"poor",
+  "reflexProgression": "good"|"poor",
+  "willProgression": "good"|"poor",
+  "skillPointsPerLevel": number,
+  "spellcastingAbility": "int"|"wis"|"cha"|null,
+  "castingType": "prepared"|"spontaneous"|null,
+  "advancesSpellcastingOf": string|null,  // CRITICAL: for prestige classes that grant "+1 caster level" advancement, set this to the BASE class name they advance (e.g. "Wizard", "Cleric"). null for base classes or PrCs that don't advance casting.
+  "classSkills": [string],
+  "spellSlotsPerDay": null  // leave null unless you have the full 20-row slot table; do not guess
+}
 
-3. FEATS: { name, type ("General"|"Fighter"|"Metamagic"|"Item Creation"|"Special"), prerequisites, benefit, special }
+3. FEATS — one object per feat:
+{
+  "name": string,
+  "type": "General"|"Fighter"|"Metamagic"|"Item Creation"|"Special"|string,
+  "prerequisites": string,
+  "benefit": string,
+  "special": string
+}
 
-4. RACES: { name, description, abilityMods (e.g. {"str":2,"dex":-2}), size, speed, racialTraits }
+4. RACES — one object per race:
+{
+  "name": string,
+  "description": string,
+  "abilityMods": { "<ability>": <modifier> },  // e.g. {"str": 2, "dex": -2}
+  "size": "Small"|"Medium"|"Large"|string,
+  "speed": number,
+  "racialTraits": [string]
+}
 
-5. ITEMS/EQUIPMENT: { name, type ("weapon"|"armor"|"wondrous"|"ring"|"rod"|"staff"|"wand"|"scroll"|"potion"|"general"), cost, weight, description, properties }
+5. ITEMS/EQUIPMENT — one object per item:
+{
+  "name": string,
+  "type": "weapon"|"armor"|"wondrous"|"ring"|"rod"|"staff"|"wand"|"scroll"|"potion"|"general",
+  "cost": string,
+  "weight": number,
+  "description": string,
+  "properties": string
+}
 
-Return JSON in this exact shape:
+Return ONLY this JSON structure, nothing else:
 {
   "spells": [...],
   "classes": [...],
@@ -145,8 +275,6 @@ Return JSON in this exact shape:
   "items": []
 }
 
-If nothing of a category appears, return an empty array for that key.
-
 RULEBOOK TEXT:
 ${chunk}`;
 }
@@ -154,6 +282,7 @@ ${chunk}`;
 // ── Call Claude API per chunk ─────────────────────────────────────────────────
 
 const results = { spells: [], classes: [], feats: [], races: [], items: [] };
+const validationWarnings = [];
 
 for (let i = 0; i < chunks.length; i++) {
   console.log(`\nProcessing chunk ${i + 1}/${chunks.length}…`);
@@ -170,12 +299,53 @@ for (let i = 0; i < chunks.length; i++) {
       .replace(/^```(?:json)?\n?/, '')
       .replace(/\n?```$/, '')
       .trim();
-    const parsed = JSON.parse(json);
-    for (const key of Object.keys(results)) {
-      if (Array.isArray(parsed[key])) {
-        results[key].push(...parsed[key]);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(json);
+    } catch (e) {
+      console.error(`  Chunk ${i + 1}: JSON parse error — ${e.message}`);
+      console.error(`  Raw response (first 500 chars): ${raw.slice(0, 500)}`);
+      continue;
+    }
+
+    // Validate with Zod if requested or always at the chunk level
+    const validated = ChunkResultSchema.safeParse(parsed);
+    if (!validated.success) {
+      const issues = validated.error.issues
+        .slice(0, 5)
+        .map((e) => `${e.path.join('.')}: ${e.message}`);
+      console.warn(
+        `  Chunk ${i + 1}: ${validated.error.issues.length} validation issue(s). First 5:`,
+      );
+      for (const issue of issues) console.warn(`    - ${issue}`);
+      validationWarnings.push({ chunk: i + 1, count: validated.error.issues.length });
+
+      // Use the partial data that did parse correctly
+      for (const key of Object.keys(results)) {
+        if (Array.isArray(parsed[key])) {
+          // Filter to only valid entries
+          const valid = [];
+          for (const item of parsed[key]) {
+            const schema = {
+              spells: SpellSchema,
+              classes: ClassSchema,
+              feats: FeatSchema,
+              races: RaceSchema,
+              items: ItemSchema,
+            }[key];
+            const r = schema?.safeParse(item);
+            if (r?.success) valid.push(r.data);
+          }
+          results[key].push(...valid);
+        }
+      }
+    } else {
+      for (const key of Object.keys(results)) {
+        results[key].push(...(validated.data[key] ?? []));
       }
     }
+
     const counts = Object.entries(results)
       .map(([k, v]) => `${v.length} ${k}`)
       .join(', ');
@@ -198,7 +368,20 @@ function dedupe(arr) {
 }
 
 for (const key of Object.keys(results)) {
+  const before = results[key].length;
   results[key] = dedupe(results[key]);
+  const dupes = before - results[key].length;
+  if (dupes > 0) console.log(`  Deduped ${dupes} duplicate ${key}`);
+}
+
+// ── Summarize prestige class caster advancement ──────────────────────────────
+
+const advancingClasses = results.classes.filter((c) => c.advancesSpellcastingOf);
+if (advancingClasses.length > 0) {
+  console.log(`\nPrestige classes with spellcasting advancement:`);
+  for (const cls of advancingClasses) {
+    console.log(`  ${cls.name} → advances ${cls.advancesSpellcastingOf}`);
+  }
 }
 
 // ── Build final output ────────────────────────────────────────────────────────
@@ -217,10 +400,19 @@ const counts = Object.entries(results)
   .join(', ');
 console.log(`\nExtraction complete: ${counts}`);
 
+if (validationWarnings.length > 0) {
+  console.warn(
+    `\nValidation warnings occurred in ${validationWarnings.length} chunk(s). Some entries may have been skipped.`,
+  );
+}
+
 // ── Write output ──────────────────────────────────────────────────────────────
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 const outPath = path.join(OUT_DIR, `${slug}.json`);
 fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
 console.log(`\nWritten to: ${outPath}`);
-console.log('\nNext: rebuild the app (npm run build) to include the new data.\n');
+console.log('\nNext steps:');
+console.log('  1. Review extracted data, especially advancesSpellcastingOf on classes');
+console.log('  2. Copy class entries to src/data/class-progressions.json if needed');
+console.log('  3. npm run build to include the new spell/feat data\n');

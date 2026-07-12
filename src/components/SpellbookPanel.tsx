@@ -1,7 +1,12 @@
 import { Fragment, useMemo, useState } from 'react';
 
-import { findClassProgression } from '../data/class-progressions';
 import { findSpell, spells as allSpells } from '../data/spells';
+import { getLearnableSpells } from '../rules/wizard/eligibility';
+import {
+  effectiveWizardLevels,
+  wizardClassLevels as getWizardClassLevels,
+} from '../rules/wizard/levels';
+import { freeSpellbookSlots, maxLearnableSpellLevel } from '../rules/wizard/spellbook';
 import type { CombatStats, SpellbookEntry } from '../schema/schema';
 import type { Level } from '../types/level';
 import { SpellDetail } from './SpellDetail';
@@ -43,12 +48,6 @@ function schoolClass(school: string): string {
     Universal: 'school--uni',
   };
   return map[school] ?? 'school--other';
-}
-
-function freeSlotBudget(wizardLevels: number, intMod: number): number {
-  if (wizardLevels === 0) return 0;
-  // Level 1: 3 + intMod starting 1st-level spells; each additional level: 2 free spells
-  return 3 + Math.max(0, intMod) + Math.max(0, wizardLevels - 1) * 2;
 }
 
 type Props = {
@@ -108,27 +107,11 @@ export function SpellbookPanel({
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [showAllSpellLevels, setShowAllSpellLevels] = useState(false);
 
-  // Actual Wizard class levels only — used for the free-spell-slot budget (a Wizard class feature)
-  const wizardClassLevels = useMemo(
-    () => levels.filter((l) => l.class === 'Wizard').length,
-    [levels],
-  );
-  // Effective wizard caster level: Wizard levels + levels in classes that advance Wizard casting
-  const wizardLevels = useMemo(
-    () =>
-      levels.reduce((total, l) => {
-        if (l.class === 'Wizard') return total + 1;
-        const prog = findClassProgression(l.class);
-        return prog?.advancesSpellcastingOf === 'Wizard' ? total + 1 : total;
-      }, 0),
-    [levels],
-  );
+  const wizardClassLvls = useMemo(() => getWizardClassLevels(levels), [levels]);
+  const wizardLevels = useMemo(() => effectiveWizardLevels(levels), [levels]);
   const isWizard = wizardLevels > 0;
-
-  // Max spell level a wizard of this effective caster level can learn
-  const maxAddableLevel = wizardLevels > 0 ? Math.min(Math.ceil(wizardLevels / 2), 9) : 9;
-
-  const totalFree = freeSlotBudget(wizardClassLevels, intMod);
+  const maxAddableLevel = isWizard ? maxLearnableSpellLevel(wizardLevels) : 9;
+  const totalFree = freeSpellbookSlots(wizardClassLvls, intMod);
   const usedFree = useMemo(
     () => spellbook.filter((e) => e.source === 'starting' || e.source === 'free-levelup').length,
     [spellbook],
@@ -164,31 +147,37 @@ export function SpellbookPanel({
     return byLevel;
   }, [spellbook]);
 
-  // Spell search results for the Add Spell form
   const addResults = useMemo(() => {
     if (!addSearch.trim() && !addLevelFilter && !addSchoolFilter) return [];
-    const q = addSearch.toLowerCase();
-    const inBook = new Set(spellbook.map((e) => e.spellName.toLowerCase()));
-    return allSpells
-      .filter((s) => {
-        if (s.levels['Sor/Wiz'] === undefined) return false;
-        if (wizardForbiddenSchools.includes(s.school)) return false;
-        if (!showAllSpellLevels && (s.levels['Sor/Wiz'] ?? 0) > maxAddableLevel) return false;
-        if (addLevelFilter && String(s.levels['Sor/Wiz']) !== addLevelFilter) return false;
-        if (addSchoolFilter && s.school !== addSchoolFilter) return false;
-        if (q && !s.name.toLowerCase().includes(q)) return false;
-        if (inBook.has(s.name.toLowerCase())) return false;
-        return true;
-      })
-      .slice(0, showAllSpellLevels ? 200 : 50);
+    const spellbookNames = new Set(spellbook.map((e) => e.spellName.toLowerCase()));
+    return getLearnableSpells(
+      allSpells,
+      {
+        wizardClassLevels: wizardClassLvls,
+        effectiveWizardLevels: wizardLevels,
+        wizardSpecialty,
+        wizardForbiddenSchools,
+        intMod,
+        spellbookNames,
+      },
+      {
+        search: addSearch,
+        levelFilter: addLevelFilter,
+        schoolFilter: addSchoolFilter,
+        showAllLevels: showAllSpellLevels,
+      },
+    ).slice(0, showAllSpellLevels ? 200 : 50);
   }, [
     addSearch,
     addLevelFilter,
     addSchoolFilter,
     wizardForbiddenSchools,
+    wizardSpecialty,
+    wizardClassLvls,
+    wizardLevels,
     spellbook,
     showAllSpellLevels,
-    maxAddableLevel,
+    intMod,
   ]);
 
   const handleAddSpell = (spellName: string) => {
@@ -604,7 +593,7 @@ export function SpellbookPanel({
         </div>
 
         {/* Free slot budget — Wizard class feature only, not from prestige class advancement */}
-        {wizardClassLevels > 0 && (
+        {wizardClassLvls > 0 && (
           <div className="spellbook-budget">
             <span className="spellbook-budget__label">
               Free spell slots: {freeRemaining} remaining ({usedFree}/{totalFree} used)
