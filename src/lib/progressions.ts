@@ -417,6 +417,26 @@ export function isCaster(levels: Level[]): boolean {
 }
 
 /**
+ * Builds a map of effective class levels, folding prestige-class advancement
+ * levels into the base class they advance (e.g. Tainted Scholar → Wizard).
+ */
+function buildEffectiveLevels(levels: Level[]): Map<string, number> {
+  const raw = new Map<string, number>();
+  for (const level of levels) {
+    raw.set(level.class, (raw.get(level.class) ?? 0) + 1);
+  }
+  const effective = new Map<string, number>(raw);
+  for (const [cls, count] of raw) {
+    const prog = findClassProgression(cls);
+    if (prog?.advancesSpellcastingOf) {
+      const target = prog.advancesSpellcastingOf;
+      effective.set(target, (effective.get(target) ?? 0) + count);
+    }
+  }
+  return effective;
+}
+
+/**
  * Calculate the maximum spell slots per day for a character.
  *
  * Returns a record keyed by spell level string ('0'..'9') containing the total
@@ -425,15 +445,11 @@ export function isCaster(levels: Level[]): boolean {
  * Only spell levels that are accessible (base >= 0) are included.
  */
 export function calculateSpellSlots(levels: Level[], scores: Scores): Record<string, number> {
-  // Count levels per class
-  const classCounts = new Map<string, number>();
-  for (const level of levels) {
-    classCounts.set(level.class, (classCounts.get(level.class) ?? 0) + 1);
-  }
+  const effectiveCounts = buildEffectiveLevels(levels);
 
   const totals: Record<string, number> = {};
 
-  for (const [className, count] of classCounts.entries()) {
+  for (const [className, count] of effectiveCounts.entries()) {
     const prog = findClassProgression(className);
     if (!prog?.spellSlotsPerDay || !prog.spellcastingAbility) continue;
 
@@ -479,13 +495,10 @@ export function getCasterSummary(
   castingMod: number;
   castingType: 'prepared' | 'spontaneous';
 }> {
-  const classCounts = new Map<string, number>();
-  for (const level of levels) {
-    classCounts.set(level.class, (classCounts.get(level.class) ?? 0) + 1);
-  }
+  const effectiveCounts = buildEffectiveLevels(levels);
 
   const result = [];
-  for (const [className, count] of classCounts.entries()) {
+  for (const [className, count] of effectiveCounts.entries()) {
     const prog = findClassProgression(className);
     if (!prog?.castingType || !prog.spellcastingAbility) continue;
 

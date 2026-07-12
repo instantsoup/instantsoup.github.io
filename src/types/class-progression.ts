@@ -51,6 +51,11 @@ export const ClassProgressionSchema = z.object({
   spellListKey: z.string().nullable().optional().default(null),
   /** Whether this class gets an extra domain spell slot per accessible spell level 1-9 (Cleric). */
   hasDomains: z.boolean().optional().default(false),
+  /**
+   * Name of the spellcasting class this class advances (e.g. "Wizard" for Tainted Scholar).
+   * Each level in this class counts as a level in the named class for spell slots and caster level.
+   */
+  advancesSpellcastingOf: z.string().nullable().optional().default(null),
 });
 
 export type ClassProgression = z.infer<typeof ClassProgressionSchema>;

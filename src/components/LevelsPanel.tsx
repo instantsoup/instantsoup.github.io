@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { classes } from '../data/classes';
 import { findClassProgression } from '../data/class-progressions';
+import { classes } from '../data/classes';
 import { feats } from '../data/feats';
 import { spells } from '../data/spells';
 import {

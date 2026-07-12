@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { AbilityDamageSchema } from '../schema/schema';
 import type {
   AbilityDamage,
   Character,
@@ -10,6 +9,7 @@ import type {
   StatusEffect,
   Taint,
 } from '../schema/schema';
+import { AbilityDamageSchema } from '../schema/schema';
 
 type SkillMiscBonuses = Record<string, number>;
 

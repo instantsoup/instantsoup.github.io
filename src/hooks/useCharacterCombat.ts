@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { CombatStatsSchema } from '../schema/schema';
 import type { Character, CombatStats, Weapon } from '../schema/schema';
+import { CombatStatsSchema } from '../schema/schema';
 
 const DEFAULT_COMBAT_STATS: CombatStats = CombatStatsSchema.parse({});
 

@@ -1,5 +1,8 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
+import { SpellDetail } from './SpellDetail';
+
+import { findClassProgression } from '../data/class-progressions';
 import { findSpell, spells as allSpells } from '../data/spells';
 import type { CombatStats, SpellbookEntry } from '../schema/schema';
 import type { Level } from '../types/level';
@@ -96,6 +99,7 @@ export function SpellbookPanel({
 }: Props) {
   const [view, setView] = useState<'today' | 'spellbook'>('today');
   const [preparingLevel, setPreparingLevel] = useState<string | null>(null);
+  const [expandedSpell, setExpandedSpell] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
   const [addSearch, setAddSearch] = useState('');
   const [addLevelFilter, setAddLevelFilter] = useState('');
@@ -105,13 +109,27 @@ export function SpellbookPanel({
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [showAllSpellLevels, setShowAllSpellLevels] = useState(false);
 
-  const wizardLevels = useMemo(() => levels.filter((l) => l.class === 'Wizard').length, [levels]);
-  const isWizard = wizardLevels > 0 || levels.some((l) => l.class === 'Tainted Scholar');
+  // Actual Wizard class levels only — used for the free-spell-slot budget (a Wizard class feature)
+  const wizardClassLevels = useMemo(
+    () => levels.filter((l) => l.class === 'Wizard').length,
+    [levels],
+  );
+  // Effective wizard caster level: Wizard levels + levels in classes that advance Wizard casting
+  const wizardLevels = useMemo(
+    () =>
+      levels.reduce((total, l) => {
+        if (l.class === 'Wizard') return total + 1;
+        const prog = findClassProgression(l.class);
+        return prog?.advancesSpellcastingOf === 'Wizard' ? total + 1 : total;
+      }, 0),
+    [levels],
+  );
+  const isWizard = wizardLevels > 0;
 
-  // Max spell level a wizard of this level can learn (ceil(level/2), min 1 at level 1)
+  // Max spell level a wizard of this effective caster level can learn
   const maxAddableLevel = wizardLevels > 0 ? Math.min(Math.ceil(wizardLevels / 2), 9) : 9;
 
-  const totalFree = freeSlotBudget(wizardLevels, intMod);
+  const totalFree = freeSlotBudget(wizardClassLevels, intMod);
   const usedFree = useMemo(
     () => spellbook.filter((e) => e.source === 'starting' || e.source === 'free-levelup').length,
     [spellbook],
@@ -215,6 +233,7 @@ export function SpellbookPanel({
       setWizardForbiddenSchools(current.filter((s) => s !== school));
     } else if (current.length < maxForbidden) {
       setWizardForbiddenSchools([...current, school]);
+      if (addSchoolFilter === school) setAddSchoolFilter('');
     }
     onBlur();
   };
@@ -351,60 +370,72 @@ export function SpellbookPanel({
                   const spell = findSpell(name);
                   const school = spell?.school ?? '';
                   const isSpecialty = school === wizardSpecialty;
+                  const detailKey = `today-${lvl}-${i}`;
+                  const isExpanded = expandedSpell === detailKey;
                   return (
-                    <li
-                      key={i}
-                      className={`spellbook-spell-row${isUsed ? ' spellbook-spell-row--cast' : ''}`}
-                    >
-                      <span
-                        className={`spellbook-spell-row__indicator${isUsed ? ' spellbook-spell-row__indicator--used' : ''}`}
-                        title={isUsed ? 'Cast' : 'Ready'}
+                    <Fragment key={i}>
+                      <li
+                        className={`spellbook-spell-row${isUsed ? ' spellbook-spell-row--cast' : ''}`}
                       >
-                        {isUsed ? '●' : '○'}
-                      </span>
-                      <span className="spellbook-spell-row__name">
-                        {name}
-                        {isSpecialty && <span className="spellbook-specialty-star">★</span>}
-                      </span>
-                      {school && (
-                        <span className={`school-badge ${schoolClass(school)}`}>
-                          {school.slice(0, 3)}
-                        </span>
-                      )}
-                      <div className="spellbook-spell-row__actions">
-                        {isUsed ? (
-                          <button
-                            className="btn btn--xs btn--secondary"
-                            onClick={() => {
-                              uncastMemorizedSpell(lvl, i);
-                              onBlur();
-                            }}
-                          >
-                            Restore
-                          </button>
-                        ) : (
-                          <button
-                            className="btn btn--xs btn--danger"
-                            onClick={() => {
-                              castMemorizedSpell(lvl, i);
-                              onBlur();
-                            }}
-                          >
-                            Cast
-                          </button>
-                        )}
-                        <button
-                          className="btn btn--xs btn--ghost"
-                          title="Remove from today's preparation"
-                          onClick={() => {
-                            removeMemorizedSpell(lvl, i);
-                            onBlur();
-                          }}
+                        <span
+                          className={`spellbook-spell-row__indicator${isUsed ? ' spellbook-spell-row__indicator--used' : ''}`}
+                          title={isUsed ? 'Cast' : 'Ready'}
                         >
-                          ×
-                        </button>
-                      </div>
-                    </li>
+                          {isUsed ? '●' : '○'}
+                        </span>
+                        <span
+                          className="spellbook-spell-row__name spellbook-spell-row__name--clickable"
+                          onClick={() => setExpandedSpell(isExpanded ? null : detailKey)}
+                          title="Click to see description"
+                        >
+                          {name}
+                          {isSpecialty && <span className="spellbook-specialty-star">★</span>}
+                        </span>
+                        {school && (
+                          <span className={`school-badge ${schoolClass(school)}`}>
+                            {school.slice(0, 3)}
+                          </span>
+                        )}
+                        <div className="spellbook-spell-row__actions">
+                          {isUsed ? (
+                            <button
+                              className="btn btn--xs btn--secondary"
+                              onClick={() => {
+                                uncastMemorizedSpell(lvl, i);
+                                onBlur();
+                              }}
+                            >
+                              Restore
+                            </button>
+                          ) : (
+                            <button
+                              className="btn btn--xs btn--danger"
+                              onClick={() => {
+                                castMemorizedSpell(lvl, i);
+                                onBlur();
+                              }}
+                            >
+                              Cast
+                            </button>
+                          )}
+                          <button
+                            className="btn btn--xs btn--ghost"
+                            title="Remove from today's preparation"
+                            onClick={() => {
+                              removeMemorizedSpell(lvl, i);
+                              onBlur();
+                            }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      </li>
+                      {isExpanded && (
+                        <li className="spell-detail-row">
+                          <SpellDetail spellName={name} />
+                        </li>
+                      )}
+                    </Fragment>
                   );
                 })}
               </ul>
@@ -441,22 +472,38 @@ export function SpellbookPanel({
                     <ul className="spellbook-prepare-picker__list">
                       {bookSpellsAtLevel.map((entry) => {
                         const spell = findSpell(entry.spellName);
+                        const pickerKey = `picker-${lvl}-${entry.spellName}`;
+                        const isExpanded = expandedSpell === pickerKey;
                         return (
-                          <li key={entry.spellName} className="spellbook-prepare-picker__item">
-                            <span className={`school-badge ${schoolClass(spell?.school ?? '')}`}>
-                              {(spell?.school ?? '').slice(0, 3)}
-                            </span>
-                            <span className="spellbook-prepare-picker__name">
-                              {entry.spellName}
-                            </span>
-                            <button
-                              className="btn btn--xs btn--primary"
-                              onClick={() => handlePrepare(lvl, entry.spellName)}
-                              disabled={!canPrepareMore}
-                            >
-                              Prepare
-                            </button>
-                          </li>
+                          <Fragment key={entry.spellName}>
+                            <li className="spellbook-prepare-picker__item">
+                              <span className={`school-badge ${schoolClass(spell?.school ?? '')}`}>
+                                {(spell?.school ?? '').slice(0, 3)}
+                              </span>
+                              <span
+                                className="spellbook-prepare-picker__name spellbook-prepare-picker__name--clickable"
+                                onClick={() => setExpandedSpell(isExpanded ? null : pickerKey)}
+                                title="Click to expand full details"
+                              >
+                                <span>{entry.spellName}</span>
+                                {spell?.description && (
+                                  <span className="spell-inline-desc">{spell.description}</span>
+                                )}
+                              </span>
+                              <button
+                                className="btn btn--xs btn--primary"
+                                onClick={() => handlePrepare(lvl, entry.spellName)}
+                                disabled={!canPrepareMore}
+                              >
+                                Prepare
+                              </button>
+                            </li>
+                            {isExpanded && (
+                              <li className="spell-detail-row">
+                                <SpellDetail spellName={entry.spellName} />
+                              </li>
+                            )}
+                          </Fragment>
                         );
                       })}
                     </ul>
@@ -557,8 +604,8 @@ export function SpellbookPanel({
           )}
         </div>
 
-        {/* Free slot budget */}
-        {wizardLevels > 0 && (
+        {/* Free slot budget — Wizard class feature only, not from prestige class advancement */}
+        {wizardClassLevels > 0 && (
           <div className="spellbook-budget">
             <span className="spellbook-budget__label">
               Free spell slots: {freeRemaining} remaining ({usedFree}/{totalFree} used)
@@ -607,7 +654,7 @@ export function SpellbookPanel({
                   onChange={(e) => setAddSchoolFilter(e.target.value)}
                 >
                   <option value="">Any school</option>
-                  {WIZARD_SCHOOLS.map((s) => (
+                  {WIZARD_SCHOOLS.filter((s) => !wizardForbiddenSchools.includes(s)).map((s) => (
                     <option key={s} value={s}>
                       {s}
                     </option>
@@ -686,25 +733,43 @@ export function SpellbookPanel({
                         : addSource === 'researched'
                           ? `${1000 * Math.max(1, lvl)} gp`
                           : null;
+                    const addKey = `add-${spell.name}`;
+                    const isExpanded = expandedSpell === addKey;
                     return (
-                      <li key={spell.name} className="spellbook-add-form__result">
-                        <span className={`school-badge ${schoolClass(spell.school)}`}>
-                          {spell.school.slice(0, 3)}
-                        </span>
-                        <span className="spellbook-add-form__result-name">
-                          {spell.name}
-                          {isSpecialty && <span className="spellbook-specialty-star">★</span>}
-                        </span>
-                        <span className="spellbook-add-form__result-level">Lvl {lvl}</span>
-                        {cost && <span className="spellbook-add-form__result-cost">{cost}</span>}
-                        <button
-                          className="btn btn--xs btn--primary"
-                          onClick={() => handleAddSpell(spell.name)}
-                          disabled={addSource === 'free-levelup' && freeRemaining <= 0}
-                        >
-                          Add
-                        </button>
-                      </li>
+                      <Fragment key={spell.name}>
+                        <li className="spellbook-add-form__result">
+                          <span className={`school-badge ${schoolClass(spell.school)}`}>
+                            {spell.school.slice(0, 3)}
+                          </span>
+                          <span
+                            className="spellbook-add-form__result-name spellbook-add-form__result-name--clickable"
+                            onClick={() => setExpandedSpell(isExpanded ? null : addKey)}
+                            title="Click to expand full details"
+                          >
+                            <span>
+                              {spell.name}
+                              {isSpecialty && <span className="spellbook-specialty-star">★</span>}
+                            </span>
+                            {spell.description && (
+                              <span className="spell-inline-desc">{spell.description}</span>
+                            )}
+                          </span>
+                          <span className="spellbook-add-form__result-level">Lvl {lvl}</span>
+                          {cost && <span className="spellbook-add-form__result-cost">{cost}</span>}
+                          <button
+                            className="btn btn--xs btn--primary"
+                            onClick={() => handleAddSpell(spell.name)}
+                            disabled={addSource === 'free-levelup' && freeRemaining <= 0}
+                          >
+                            Add
+                          </button>
+                        </li>
+                        {isExpanded && (
+                          <li className="spell-detail-row">
+                            <SpellDetail spellName={spell.name} />
+                          </li>
+                        )}
+                      </Fragment>
                     );
                   })}
                 </ul>
@@ -753,79 +818,91 @@ export function SpellbookPanel({
                       const prepared = (memorizedSpells[lvl] ?? []).filter(
                         (n) => n.toLowerCase() === entry.spellName.toLowerCase(),
                       ).length;
+                      const bookKey = `book-${entry.spellName}`;
+                      const isExpanded = expandedSpell === bookKey;
                       return (
-                        <li
-                          key={entry.spellName}
-                          className={`spellbook-spell-row spellbook-spell-row--book${isForbidden ? ' spellbook-spell-row--forbidden' : ''}`}
-                        >
-                          <span className={`school-badge ${schoolClass(school)}`} title={school}>
-                            {school.slice(0, 3)}
-                          </span>
-                          <span className="spellbook-spell-row__name">
-                            {entry.spellName}
-                            {isSpecialty && (
-                              <span
-                                className="spellbook-specialty-star"
-                                title={`${wizardSpecialty} specialty`}
-                              >
-                                ★
-                              </span>
-                            )}
-                          </span>
-                          <span
-                            className={`spellbook-source-badge spellbook-source-badge--${entry.source}`}
+                        <Fragment key={entry.spellName}>
+                          <li
+                            className={`spellbook-spell-row spellbook-spell-row--book${isForbidden ? ' spellbook-spell-row--forbidden' : ''}`}
                           >
-                            {SOURCE_LABELS[entry.source]}
-                            {entry.goldPaid > 0 && ` (${entry.goldPaid} gp)`}
-                          </span>
-                          {prepared > 0 && (
-                            <span className="spellbook-prepared-count">×{prepared} prepared</span>
-                          )}
-                          <div className="spellbook-spell-row__actions">
-                            {accessible && !isForbidden && (
-                              <button
-                                className="btn btn--xs btn--secondary"
-                                onClick={() => handlePrepare(lvl, entry.spellName)}
-                                disabled={
-                                  (memorizedSpells[lvl] ?? []).length >=
-                                  (slotsMax[lvl] ?? effectiveSlots[lvl] ?? 0)
-                                }
-                                title="Add to today's prepared spells"
-                              >
-                                Prepare
-                              </button>
-                            )}
-                            {confirmRemove === entry.spellName ? (
-                              <>
-                                <span className="spellbook-confirm-text">Remove?</span>
-                                <button
-                                  className="btn btn--xs btn--danger"
-                                  onClick={() => {
-                                    removeSpellbookEntry(entry.spellName);
-                                    setConfirmRemove(null);
-                                    onBlur();
-                                  }}
+                            <span className={`school-badge ${schoolClass(school)}`} title={school}>
+                              {school.slice(0, 3)}
+                            </span>
+                            <span
+                              className="spellbook-spell-row__name spellbook-spell-row__name--clickable"
+                              onClick={() => setExpandedSpell(isExpanded ? null : bookKey)}
+                              title="Click to see description"
+                            >
+                              {entry.spellName}
+                              {isSpecialty && (
+                                <span
+                                  className="spellbook-specialty-star"
+                                  title={`${wizardSpecialty} specialty`}
                                 >
-                                  Yes
+                                  ★
+                                </span>
+                              )}
+                            </span>
+                            <span
+                              className={`spellbook-source-badge spellbook-source-badge--${entry.source}`}
+                            >
+                              {SOURCE_LABELS[entry.source]}
+                              {entry.goldPaid > 0 && ` (${entry.goldPaid} gp)`}
+                            </span>
+                            {prepared > 0 && (
+                              <span className="spellbook-prepared-count">×{prepared} prepared</span>
+                            )}
+                            <div className="spellbook-spell-row__actions">
+                              {accessible && !isForbidden && (
+                                <button
+                                  className="btn btn--xs btn--secondary"
+                                  onClick={() => handlePrepare(lvl, entry.spellName)}
+                                  disabled={
+                                    (memorizedSpells[lvl] ?? []).length >=
+                                    (slotsMax[lvl] ?? effectiveSlots[lvl] ?? 0)
+                                  }
+                                  title="Add to today's prepared spells"
+                                >
+                                  Prepare
                                 </button>
+                              )}
+                              {confirmRemove === entry.spellName ? (
+                                <>
+                                  <span className="spellbook-confirm-text">Remove?</span>
+                                  <button
+                                    className="btn btn--xs btn--danger"
+                                    onClick={() => {
+                                      removeSpellbookEntry(entry.spellName);
+                                      setConfirmRemove(null);
+                                      onBlur();
+                                    }}
+                                  >
+                                    Yes
+                                  </button>
+                                  <button
+                                    className="btn btn--xs btn--ghost"
+                                    onClick={() => setConfirmRemove(null)}
+                                  >
+                                    No
+                                  </button>
+                                </>
+                              ) : (
                                 <button
                                   className="btn btn--xs btn--ghost"
-                                  onClick={() => setConfirmRemove(null)}
+                                  onClick={() => setConfirmRemove(entry.spellName)}
+                                  title="Remove from spellbook"
                                 >
-                                  No
+                                  ×
                                 </button>
-                              </>
-                            ) : (
-                              <button
-                                className="btn btn--xs btn--ghost"
-                                onClick={() => setConfirmRemove(entry.spellName)}
-                                title="Remove from spellbook"
-                              >
-                                ×
-                              </button>
-                            )}
-                          </div>
-                        </li>
+                              )}
+                            </div>
+                          </li>
+                          {isExpanded && (
+                            <li className="spell-detail-row">
+                              <SpellDetail spellName={entry.spellName} />
+                            </li>
+                          )}
+                        </Fragment>
                       );
                     })}
                   </ul>

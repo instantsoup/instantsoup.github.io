@@ -161,9 +161,11 @@ export function App() {
   const primaryCaster = casterSummary[0] ?? null;
   const primaryCastingMod = primaryCaster?.castingMod;
   const isPreparedCaster = casterSummary.some((c) => c.castingType === 'prepared');
-  const isWizardCharacter = levels.some(
-    (l) => l.class === 'Wizard' || l.class === 'Tainted Scholar',
-  );
+  const isWizardCharacter = levels.some((l) => {
+    if (l.class === 'Wizard') return true;
+    const prog = findClassProgression(l.class);
+    return prog?.advancesSpellcastingOf === 'Wizard';
+  });
   const accessibleSpellLevels = Object.keys(effectiveSlots);
 
   // For non-wizard prepared casters: build class spell list keyed by spell level
@@ -173,12 +175,16 @@ export function App() {
     const prog = findClassProgression(primaryPreparedClass.className);
     if (!prog?.spellListKey) return {};
     const key = prog.spellListKey;
-    const byLevel: Record<string, { name: string; school: string }[]> = {};
+    const byLevel: Record<string, { name: string; school: string; description?: string }[]> = {};
     for (const spell of allSpells) {
       const lvl = spell.levels[key];
       if (lvl === undefined) continue;
       const k = String(lvl);
-      (byLevel[k] ??= []).push({ name: spell.name, school: spell.school });
+      (byLevel[k] ??= []).push({
+        name: spell.name,
+        school: spell.school,
+        description: spell.description ?? undefined,
+      });
     }
     for (const arr of Object.values(byLevel)) {
       arr.sort((a, b) => a.name.localeCompare(b.name));

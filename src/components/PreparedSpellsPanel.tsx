@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 import type { CombatStats } from '../schema/schema';
+import { SpellDetail } from './SpellDetail';
 
 const SPELL_LEVELS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] as const;
 
@@ -19,7 +20,7 @@ function schoolClass(school: string): string {
   return map[school] ?? 'school--other';
 }
 
-type ClassSpell = { name: string; school: string };
+type ClassSpell = { name: string; school: string; description?: string };
 
 type Props = {
   combatStats: CombatStats;
@@ -57,6 +58,7 @@ export function PreparedSpellsPanel({
   const [preparingLevel, setPreparingLevel] = useState<string | null>(null);
   const [pickSearch, setPickSearch] = useState('');
   const [showFullListForLevel, setShowFullListForLevel] = useState<Record<string, boolean>>({});
+  const [expandedSpell, setExpandedSpell] = useState<string | null>(null);
 
   const slotsMax = combatStats.spellSlotsMax ?? {};
 
@@ -188,57 +190,71 @@ export function PreparedSpellsPanel({
                   (s) => s.name.toLowerCase() === name.toLowerCase(),
                 );
                 const school = spellMatch?.school ?? '';
+                const detailKey = `prepared-${lvl}-${i}`;
+                const isExpanded = expandedSpell === detailKey;
                 return (
-                  <li
-                    key={i}
-                    className={`spellbook-spell-row${isUsed ? ' spellbook-spell-row--cast' : ''}`}
-                  >
-                    <span
-                      className={`spellbook-spell-row__indicator${isUsed ? ' spellbook-spell-row__indicator--used' : ''}`}
-                      title={isUsed ? 'Cast' : 'Ready'}
+                  <Fragment key={i}>
+                    <li
+                      className={`spellbook-spell-row${isUsed ? ' spellbook-spell-row--cast' : ''}`}
                     >
-                      {isUsed ? '●' : '○'}
-                    </span>
-                    <span className="spellbook-spell-row__name">{name}</span>
-                    {school && (
-                      <span className={`school-badge ${schoolClass(school)}`}>
-                        {school.slice(0, 3)}
-                      </span>
-                    )}
-                    <div className="spellbook-spell-row__actions">
-                      {isUsed ? (
-                        <button
-                          className="btn btn--xs btn--secondary"
-                          onClick={() => {
-                            uncastMemorizedSpell(lvl, i);
-                            onBlur();
-                          }}
-                        >
-                          Restore
-                        </button>
-                      ) : (
-                        <button
-                          className="btn btn--xs btn--danger"
-                          onClick={() => {
-                            castMemorizedSpell(lvl, i);
-                            onBlur();
-                          }}
-                        >
-                          Cast
-                        </button>
-                      )}
-                      <button
-                        className="btn btn--xs btn--ghost"
-                        title="Remove from today's preparation"
-                        onClick={() => {
-                          removeMemorizedSpell(lvl, i);
-                          onBlur();
-                        }}
+                      <span
+                        className={`spellbook-spell-row__indicator${isUsed ? ' spellbook-spell-row__indicator--used' : ''}`}
+                        title={isUsed ? 'Cast' : 'Ready'}
                       >
-                        ×
-                      </button>
-                    </div>
-                  </li>
+                        {isUsed ? '●' : '○'}
+                      </span>
+                      <span
+                        className="spellbook-spell-row__name spellbook-spell-row__name--clickable"
+                        onClick={() => setExpandedSpell(isExpanded ? null : detailKey)}
+                        title="Click to see description"
+                      >
+                        {name}
+                      </span>
+                      {school && (
+                        <span className={`school-badge ${schoolClass(school)}`}>
+                          {school.slice(0, 3)}
+                        </span>
+                      )}
+                      <div className="spellbook-spell-row__actions">
+                        {isUsed ? (
+                          <button
+                            className="btn btn--xs btn--secondary"
+                            onClick={() => {
+                              uncastMemorizedSpell(lvl, i);
+                              onBlur();
+                            }}
+                          >
+                            Restore
+                          </button>
+                        ) : (
+                          <button
+                            className="btn btn--xs btn--danger"
+                            onClick={() => {
+                              castMemorizedSpell(lvl, i);
+                              onBlur();
+                            }}
+                          >
+                            Cast
+                          </button>
+                        )}
+                        <button
+                          className="btn btn--xs btn--ghost"
+                          title="Remove from today's preparation"
+                          onClick={() => {
+                            removeMemorizedSpell(lvl, i);
+                            onBlur();
+                          }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    </li>
+                    {isExpanded && (
+                      <li className="spell-detail-row">
+                        <SpellDetail spellName={name} />
+                      </li>
+                    )}
+                  </Fragment>
                 );
               })}
             </ul>
@@ -292,21 +308,41 @@ export function PreparedSpellsPanel({
                     ) : (
                       <>
                         <ul className="spellbook-prepare-picker__list">
-                          {visiblePickList.map((spell) => (
-                            <li key={spell.name} className="spellbook-prepare-picker__item">
-                              <span className={`school-badge ${schoolClass(spell.school)}`}>
-                                {spell.school.slice(0, 3)}
-                              </span>
-                              <span className="spellbook-prepare-picker__name">{spell.name}</span>
-                              <button
-                                className="btn btn--xs btn--primary"
-                                onClick={() => handlePrepare(lvl, spell.name)}
-                                disabled={!canPrepareMore}
-                              >
-                                Prepare
-                              </button>
-                            </li>
-                          ))}
+                          {visiblePickList.map((spell) => {
+                            const pickerKey = `picker-${lvl}-${spell.name}`;
+                            const isExpanded = expandedSpell === pickerKey;
+                            return (
+                              <Fragment key={spell.name}>
+                                <li className="spellbook-prepare-picker__item">
+                                  <span className={`school-badge ${schoolClass(spell.school)}`}>
+                                    {spell.school.slice(0, 3)}
+                                  </span>
+                                  <span
+                                    className="spellbook-prepare-picker__name spellbook-prepare-picker__name--clickable"
+                                    onClick={() => setExpandedSpell(isExpanded ? null : pickerKey)}
+                                    title="Click to expand full details"
+                                  >
+                                    <span>{spell.name}</span>
+                                    {spell.description && (
+                                      <span className="spell-inline-desc">{spell.description}</span>
+                                    )}
+                                  </span>
+                                  <button
+                                    className="btn btn--xs btn--primary"
+                                    onClick={() => handlePrepare(lvl, spell.name)}
+                                    disabled={!canPrepareMore}
+                                  >
+                                    Prepare
+                                  </button>
+                                </li>
+                                {isExpanded && (
+                                  <li className="spell-detail-row">
+                                    <SpellDetail spellName={spell.name} />
+                                  </li>
+                                )}
+                              </Fragment>
+                            );
+                          })}
                         </ul>
                         {!showFull && !pickSearch && filteredPickList.length > INITIAL_CAP && (
                           <button
