@@ -31,9 +31,7 @@ export default [
     },
     settings: {
       react: { version: 'detect' },
-      // If you use TS path aliases (@/*), uncomment and install resolver:
-      // npm i -D eslint-import-resolver-typescript
-      // 'import/resolver': { typescript: true },
+      'import/resolver': { typescript: true },
     },
     plugins: {
       react,
@@ -67,9 +65,48 @@ export default [
       'simple-import-sort/imports': 'error',
       'simple-import-sort/exports': 'error',
 
+      // Layering: rules/ is the sole rule-logic layer and must stay UI-free;
+      // data/ is the sole static-content layer and must stay rules/UI-free.
+      // See claude.md's architecture section.
+      'import/no-restricted-paths': [
+        'error',
+        {
+          zones: [
+            {
+              target: './src/rules/**/*',
+              from: ['./src/components/**/*', './src/hooks/**/*'],
+              message:
+                'src/rules/ has no UI dependencies; it may only import from src/data and src/types.',
+            },
+            {
+              target: './src/data/**/*',
+              from: ['./src/rules/**/*', './src/components/**/*'],
+              message:
+                'src/data/ is the static-content layer; it may not import from src/rules or src/components.',
+            },
+          ],
+        },
+      ],
+
       // Optional tighten-ups you can enable later:
       // '@typescript-eslint/no-explicit-any': 'warn',
       // '@typescript-eslint/explicit-function-return-type': 'off',
+    },
+  },
+
+  // src/rules/ additionally has no React/DOM dependencies (see claude.md)
+  {
+    files: ['src/rules/**/*.{ts,tsx}'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            { name: 'react', message: 'src/rules/ has no React/DOM dependencies.' },
+            { name: 'react-dom', message: 'src/rules/ has no React/DOM dependencies.' },
+          ],
+        },
+      ],
     },
   },
 
