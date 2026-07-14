@@ -2,6 +2,7 @@ import { type Character, CharacterSchema } from '../schema/schema';
 import { emptyScores } from '../types';
 
 const KEY = 'v0-char';
+const BACKUP_KEY = 'v0-char-backup';
 
 /** Migrate a v1 character save (or any unknown shape) to v2. */
 function migrateCharacter(raw: unknown): unknown {
@@ -38,11 +39,16 @@ function emptyCharacter(): Character {
 }
 
 export function loadLocal(): Character {
+  const raw = localStorage.getItem(KEY);
+  if (!raw) return emptyCharacter();
   try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return emptyCharacter();
     return parseCharacter(JSON.parse(raw));
-  } catch {
+  } catch (e) {
+    console.warn('Saved character could not be loaded; backing up raw data.', e);
+    // Don't clobber an earlier backup with this failure's own corrupt data.
+    if (!localStorage.getItem(BACKUP_KEY)) {
+      localStorage.setItem(BACKUP_KEY, raw);
+    }
     return emptyCharacter();
   }
 }

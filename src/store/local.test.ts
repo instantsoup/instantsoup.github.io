@@ -75,6 +75,29 @@ describe('localStorage migration (v1 → v2)', () => {
     localStorage.clear();
   });
 
+  it('loadLocal backs up unparseable data instead of silently discarding it', () => {
+    localStorage.setItem('v0-char', 'not valid json{{{');
+    loadLocal();
+    expect(localStorage.getItem('v0-char-backup')).toBe('not valid json{{{');
+    localStorage.clear();
+  });
+
+  it('loadLocal backs up data that fails schema validation too, not just JSON.parse failures', () => {
+    const invalidShape = JSON.stringify({ version: 2, name: 'Bad' }); // missing required fields
+    localStorage.setItem('v0-char', invalidShape);
+    loadLocal();
+    expect(localStorage.getItem('v0-char-backup')).toBe(invalidShape);
+    localStorage.clear();
+  });
+
+  it('loadLocal does not clobber an existing backup with a later failure', () => {
+    localStorage.setItem('v0-char-backup', 'original-corrupt-data');
+    localStorage.setItem('v0-char', 'not valid json{{{');
+    loadLocal();
+    expect(localStorage.getItem('v0-char-backup')).toBe('original-corrupt-data');
+    localStorage.clear();
+  });
+
   it('loadLocal migrates a v1 character to v2', () => {
     const v1Character = {
       version: 1,
