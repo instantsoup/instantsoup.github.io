@@ -3,131 +3,63 @@
  * Loads all extracted rulebook JSON files from src/data/rulebooks/
  * and merges their content into the app's data layer.
  *
- * Each JSON file is produced by scripts/ingest-rulebook.mjs.
- * The app keeps SRD data separate from supplement data for attribution.
+ * Each JSON file is produced by scripts/ingest-rulebook.mts and validated
+ * here against the same RulebookFileSchema the script itself validates
+ * against before writing - a malformed file is skipped (logged, not thrown)
+ * rather than blindly merged into the app's data.
  */
 
+import type { ClassProgression } from '../types/class-progression';
+import { type RulebookFile, RulebookFileSchema } from '../types/rulebook';
 import type { Spell } from '../types/spell';
 
 // Vite glob import — picks up all .json files in the rulebooks directory at build time.
 // When the directory is empty this returns {}.
 const rulebookModules = import.meta.glob('./rulebooks/*.json', {
   eager: true,
-}) as Record<string, { default: RulebookFile }>;
+}) as Record<string, { default: unknown }>;
 
-export interface RulebookFile {
-  name: string;
-  abbreviation: string;
-  slug: string;
-  pageCount?: number;
-  extractedAt?: string;
-  spells?: Partial<Spell>[];
-  classes?: RulebookClass[];
-  feats?: RulebookFeat[];
-  races?: RulebookRace[];
-  items?: RulebookItem[];
+/**
+ * Validates each raw module's default export against RulebookFileSchema.
+ * A malformed file is logged and skipped, never blindly merged into the
+ * app's data. Exported (pure, no Vite glob dependency) for unit testing.
+ */
+export function parseRulebookModules(
+  modules: Record<string, { default: unknown }>,
+): RulebookFile[] {
+  return Object.entries(modules).flatMap(([path, mod]) => {
+    const result = RulebookFileSchema.safeParse(mod.default);
+    if (!result.success) {
+      console.error(`Skipping malformed rulebook file "${path}":`, result.error.issues);
+      return [];
+    }
+    return [result.data];
+  });
 }
 
-export interface RulebookClass {
-  name: string;
-  description?: string;
-  hitDie?: number;
-  babProgression?: string;
-  fortitudeProgression?: string;
-  reflexProgression?: string;
-  willProgression?: string;
-  skillPointsPerLevel?: number;
-  spellcastingAbility?: string | null;
-  castingType?: string | null;
-  advancesClass?: string | null;
-  classSkills?: string[];
-  spellSlotsPerDay?: number[][] | null;
-}
+// ── Load and validate all rulebooks ────────────────────────────────────────
 
-export interface RulebookFeat {
-  name: string;
-  type?: string;
-  prerequisites?: string;
-  benefit?: string;
-  special?: string;
-  source?: string;
-}
-
-export interface RulebookRace {
-  name: string;
-  description?: string;
-  abilityMods?: Record<string, number>;
-  size?: string;
-  speed?: number;
-  racialTraits?: string[];
-  source?: string;
-}
-
-export interface RulebookItem {
-  name: string;
-  type?: string;
-  cost?: string;
-  weight?: number;
-  description?: string;
-  properties?: string;
-  source?: string;
-}
-
-// ── Load all rulebooks ────────────────────────────────────────────────────────
-
-export const loadedRulebooks: RulebookFile[] = Object.values(rulebookModules).map(
-  (mod) => mod.default,
-);
+export const loadedRulebooks: RulebookFile[] = parseRulebookModules(rulebookModules);
 
 // ── Merged collections (supplement data, tagged with source abbreviation) ─────
 
-export const rulebookSpells: Array<Partial<Spell> & { sourceAbbr: string }> =
+export const rulebookSpells: Array<Spell & { sourceAbbr: string }> = loadedRulebooks.flatMap(
+  (book) => book.spells.map((spell) => ({ ...spell, sourceAbbr: book.abbreviation })),
+);
+
+export const rulebookClasses: Array<ClassProgression & { sourceAbbr: string }> =
   loadedRulebooks.flatMap((book) =>
-    (book.spells ?? []).map((spell) => ({ ...spell, sourceAbbr: book.abbreviation })),
+    book.classes.map((cls) => ({ ...cls, sourceAbbr: book.abbreviation })),
   );
-
-export const rulebookClasses: Array<RulebookClass & { sourceAbbr: string }> =
-  loadedRulebooks.flatMap((book) =>
-    (book.classes ?? []).map((cls) => ({ ...cls, sourceAbbr: book.abbreviation })),
-  );
-
-export const rulebookFeats: Array<RulebookFeat & { sourceAbbr: string }> = loadedRulebooks.flatMap(
-  (book) =>
-    (book.feats ?? []).map((feat) => ({
-      ...feat,
-      source: book.abbreviation,
-      sourceAbbr: book.abbreviation,
-    })),
-);
-
-export const rulebookRaces: Array<RulebookRace & { sourceAbbr: string }> = loadedRulebooks.flatMap(
-  (book) =>
-    (book.races ?? []).map((race) => ({
-      ...race,
-      source: book.abbreviation,
-      sourceAbbr: book.abbreviation,
-    })),
-);
-
-export const rulebookItems: Array<RulebookItem & { sourceAbbr: string }> = loadedRulebooks.flatMap(
-  (book) =>
-    (book.items ?? []).map((item) => ({
-      ...item,
-      source: book.abbreviation,
-      sourceAbbr: book.abbreviation,
-    })),
-);
 
 /**
  * Find a spell by name across both SRD and all loaded rulebooks.
  * Returns the first match; SRD spells are checked first by callers who
  * import findSpell from data/spells.ts (which calls this for fallback).
  */
-export function findRulebookSpell(
-  name: string,
-): (Partial<Spell> & { sourceAbbr: string }) | undefined {
+export function findRulebookSpell(name: string): (Spell & { sourceAbbr: string }) | undefined {
   const needle = name.trim().toLowerCase();
-  return rulebookSpells.find((s) => s.name?.toLowerCase() === needle);
+  return rulebookSpells.find((s) => s.name.toLowerCase() === needle);
 }
 
 /**
@@ -142,11 +74,11 @@ export function getLoadedRulebookSummary(): {
     name: book.name,
     abbreviation: book.abbreviation,
     counts: {
-      spells: book.spells?.length ?? 0,
-      classes: book.classes?.length ?? 0,
-      feats: book.feats?.length ?? 0,
-      races: book.races?.length ?? 0,
-      items: book.items?.length ?? 0,
+      spells: book.spells.length,
+      classes: book.classes.length,
+      feats: book.feats.length,
+      races: book.races.length,
+      items: book.items.length,
     },
   }));
 }
