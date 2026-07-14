@@ -22,16 +22,16 @@ import { type Tab, TabNav } from './components/TabNav';
 import { TaintPanel } from './components/TaintPanel';
 import { WeaponsPanel } from './components/WeaponsPanel';
 import { findClassProgression } from './data/class-progressions';
+import { getRacialMods } from './data/races';
 import { allSpells } from './data/spells';
 import { useCharacter } from './hooks/useCharacter';
-import { getEncumbranceSummary } from './lib/encumbrance';
 import {
   calculateSpellSlots,
   calculateTotalBAB,
   getCasterSummary,
-  getRacialMods,
+  getEncumbranceSummary,
   xpForLevel,
-} from './lib/progressions';
+} from './rules';
 import { isWizardCharacter } from './rules/wizard/levels';
 
 export function App() {

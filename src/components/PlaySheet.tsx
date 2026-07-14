@@ -4,16 +4,14 @@ import {
   calculateTotalBAB,
   calculateTotalSave,
   formatAttacks,
+  getEncumbranceSummary,
   getIterativeAttacks,
   getPrimarySpellcastingAbility,
-  xpForLevel,
-} from '../lib/progressions';
-import {
-  getEncumbranceSummary,
   heavyLoad as getHeavyLoad,
   lightLoad as getLightLoad,
   mediumLoad as getMediumLoad,
-} from '../rules/character';
+  xpForLevel,
+} from '../rules';
 import type {
   AbilityDamage,
   CombatStats,
