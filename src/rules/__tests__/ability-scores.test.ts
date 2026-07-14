@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 
-import { costOf as libCostOf } from '../../lib/statline';
 import type { Scores } from '../../types';
 import {
   abilityMod,
@@ -46,14 +45,6 @@ describe('pointBuyCost', () => {
   it('score 10 costs 2 points', () => expect(pointBuyCost(10)).toBe(2));
   it('score 14 costs 6 points', () => expect(pointBuyCost(14)).toBe(6));
   it('score 18 costs 16 points', () => expect(pointBuyCost(18)).toBe(16));
-
-  it('agrees with lib/statline.costOf for every score 3-18', () => {
-    // Cross-check against the pre-existing, independently-verified point-buy
-    // table until src/lib/statline.ts is deleted (Phase 3.1).
-    for (let s = 3; s <= 18; s++) {
-      expect(pointBuyCost(s)).toBe(libCostOf(s));
-    }
-  });
 });
 
 describe('totalPointBuyCost', () => {
@@ -69,8 +60,7 @@ describe('totalPointBuyCost', () => {
   });
 });
 
-// -- The following, folded in from src/lib/statline.ts (Phase 1.3), operate
-// -- on a 6-element StatLine array rather than a Scores object.
+// -- The following operate on a 6-element StatLine array rather than a Scores object.
 
 describe('costOf / totalCost (StatLine array form)', () => {
   it('costOf matches pointBuyCost for in-range values', () => {

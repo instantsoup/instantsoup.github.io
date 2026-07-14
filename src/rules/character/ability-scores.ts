@@ -49,13 +49,11 @@ export function totalPointBuyCost(scores: Scores): number {
   return Object.values(scores).reduce((sum, s) => sum + pointBuyCost(s), 0);
 }
 
-// -- 28-point-buy stat-line adjustment and 3d6 rolling, folded in from
-// -- src/lib/statline.ts. Names kept as-is so RollCharacterPanel's migration
-// -- (Phase 2.6) is a pure import-path swap.
+// -- 28-point-buy stat-line adjustment and 3d6 rolling.
 
 export type StatLine = number[];
 
-/** Alias of pointBuyCost, kept for statline-derived call sites. */
+/** Alias of pointBuyCost, for RollCharacterPanel's array-based StatLine usage. */
 export const costOf = pointBuyCost;
 
 export function totalCost(stats: StatLine): number {
