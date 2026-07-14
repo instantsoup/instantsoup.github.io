@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import { computeConditionPenalties } from '../lib/conditions';
+import { computeConditionPenalties } from '../rules/character';
 import { type Character, type SpellbookEntry, VERSION } from '../schema/schema';
 import { loadLocal } from '../store/local';
 import { useCharacterCombat } from './useCharacterCombat';

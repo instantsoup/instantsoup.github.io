@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { recalculateSkillPointsFromLevel } from '../lib/progressions';
+import { recalculateSkillPointsFromLevel } from '../rules/character';
 import type { Character, ClassName } from '../schema/schema';
 import type { Level } from '../types/level';
 

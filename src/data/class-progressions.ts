@@ -1,6 +1,6 @@
 // src/data/class-progressions.ts
 import { type ClassProgression, ClassProgressionsFileSchema } from '../types/class-progression';
-import rawProgressions from './class-progressions.json' assert { type: 'json' };
+import rawProgressions from './class-progressions.json' with { type: 'json' };
 
 const parsed = ClassProgressionsFileSchema.parse(rawProgressions);
 export const classProgressions: ClassProgression[] = parsed;

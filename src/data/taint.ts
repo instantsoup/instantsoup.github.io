@@ -1,5 +1,5 @@
 import { type TaintData, TaintDataSchema } from '../types/taint-data';
-import rawTaint from './taint.json' assert { type: 'json' };
+import rawTaint from './taint.json' with { type: 'json' };
 
 export const taintData: TaintData = TaintDataSchema.parse(rawTaint);
 

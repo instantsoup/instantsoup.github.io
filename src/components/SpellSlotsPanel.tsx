@@ -1,3 +1,4 @@
+import { spellDC } from '../rules/caster/caster-summary';
 import type { CombatStats } from '../schema/schema';
 
 const SPELL_LEVELS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'] as const;
@@ -76,9 +77,9 @@ export function SpellSlotsPanel({
   const showAll = !hasManual && !readOnly;
   const rows = showAll ? [...SPELL_LEVELS] : SPELL_LEVELS;
 
-  const spellDC = (spellLevel: number): number | null => {
+  const spellDCFor = (spellLevel: number): number | null => {
     if (primaryCastingMod === undefined) return null;
-    return 10 + spellLevel + primaryCastingMod;
+    return spellDC(spellLevel, primaryCastingMod);
   };
 
   return (
@@ -115,7 +116,7 @@ export function SpellSlotsPanel({
         const remaining = Math.max(0, max - used);
         const isExhausted = max > 0 && remaining === 0;
         const calcVal = calculatedSlots?.[lvl];
-        const dc = spellDC(Number(lvl));
+        const dc = spellDCFor(Number(lvl));
         const mismatch = calcVal !== undefined && calcVal !== max && max > 0;
 
         if (!showAll && max === 0 && calcVal === undefined) return null;

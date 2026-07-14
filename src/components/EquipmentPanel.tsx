@@ -1,6 +1,11 @@
 import { useState } from 'react';
 
-import { getHeavyLoad, getLightLoad, getLoadCategory, getMediumLoad } from '../lib/encumbrance';
+import {
+  heavyLoad as getHeavyLoad,
+  lightLoad as getLightLoad,
+  loadCategory as getLoadCategory,
+  mediumLoad as getMediumLoad,
+} from '../rules/character';
 import type { EquipmentItem } from '../schema/schema';
 
 type EquipmentPanelProps = {

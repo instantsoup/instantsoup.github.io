@@ -1,5 +1,5 @@
 import { type Flaw } from '../types/flaw';
-import rawFlaws from './flaws.json' assert { type: 'json' };
+import rawFlaws from './flaws.json' with { type: 'json' };
 
 export const flaws: Flaw[] = rawFlaws as Flaw[];
 

@@ -22,16 +22,17 @@ import { type Tab, TabNav } from './components/TabNav';
 import { TaintPanel } from './components/TaintPanel';
 import { WeaponsPanel } from './components/WeaponsPanel';
 import { findClassProgression } from './data/class-progressions';
+import { getRacialMods } from './data/races';
 import { allSpells } from './data/spells';
 import { useCharacter } from './hooks/useCharacter';
-import { getEncumbranceSummary } from './lib/encumbrance';
 import {
-  calculateSpellSlots,
+  calculateEffectiveSlots,
   calculateTotalBAB,
   getCasterSummary,
-  getRacialMods,
+  getEncumbranceSummary,
   xpForLevel,
-} from './lib/progressions';
+} from './rules';
+import { isWizardCharacter } from './rules/wizard/levels';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
@@ -151,27 +152,20 @@ export function App() {
     error,
   } = useCharacter();
 
-  // Spell system derived values
-  const calculatedSlots = calculateSpellSlots(levels, effectiveScores);
-  // Specialist wizards get +1 slot per accessible spell level for their specialty school
-  const effectiveSlots = wizardSpecialty
-    ? Object.fromEntries(Object.entries(calculatedSlots).map(([k, v]) => [k, v + 1]))
-    : calculatedSlots;
+  // Spell system derived values.
+  // Specialist wizards get +1 slot per accessible spell level for their specialty school.
+  const effectiveSlots = calculateEffectiveSlots(levels, effectiveScores, wizardSpecialty);
   const casterSummary = getCasterSummary(levels, effectiveScores);
   const primaryCaster = casterSummary[0] ?? null;
   const primaryCastingMod = primaryCaster?.castingMod;
   const isPreparedCaster = casterSummary.some((c) => c.castingType === 'prepared');
-  const isWizardCharacter = levels.some((l) => {
-    if (l.class === 'Wizard') return true;
-    const prog = findClassProgression(l.class);
-    return prog?.advancesSpellcastingOf === 'Wizard';
-  });
+  const isWizard = isWizardCharacter(levels);
   const accessibleSpellLevels = Object.keys(effectiveSlots);
 
   // For non-wizard prepared casters: build class spell list keyed by spell level
   const primaryPreparedClass = casterSummary.find((c) => c.castingType === 'prepared');
   const classSpellsByLevel = useMemo(() => {
-    if (isWizardCharacter || !primaryPreparedClass) return {};
+    if (isWizard || !primaryPreparedClass) return {};
     const prog = findClassProgression(primaryPreparedClass.className);
     if (!prog?.spellListKey) return {};
     const key = prog.spellListKey;
@@ -190,7 +184,7 @@ export function App() {
       arr.sort((a, b) => a.name.localeCompare(b.name));
     }
     return byLevel;
-  }, [isWizardCharacter, primaryPreparedClass, allSpells]);
+  }, [isWizard, primaryPreparedClass, allSpells]);
 
   const hasDomains = useMemo(
     () =>
@@ -573,12 +567,12 @@ export function App() {
           {/* ── SPELLS (play mode only) ──────────────── */}
           {tab === 'spells' && (
             <div className="tab-content">
-              {isWizardCharacter ? (
+              {isWizard ? (
                 <SpellbookPanel
                   levels={levels}
                   intMod={mods.int}
                   combatStats={combatStats}
-                  calculatedSlots={calculatedSlots}
+                  calculatedSlots={effectiveSlots}
                   memorizedSpells={memorizedSpells}
                   memorizedSpellsUsed={memorizedSpellsUsed}
                   spellbook={spellbook}

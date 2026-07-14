@@ -9,8 +9,17 @@
     "skipLibCheck": true,
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
     "types": ["vitest/globals"],
     "useUnknownInCatchVariables": true
   },
-  "include": ["src", "scripts/convert-feats.mjs"]
+  "include": [
+    "src",
+    "scripts/convert-feats.mjs",
+    "scripts/ingest-rulebook.mts",
+    "scripts/merge-rulebook-classes.mts",
+    "scripts/ambient.d.ts",
+    "scripts/lib"
+  ]
 }

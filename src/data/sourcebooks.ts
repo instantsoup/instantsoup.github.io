@@ -1,6 +1,6 @@
 // src/data/sourcebooks.ts
 
-import ABBR from './sourcebook-abbrevs.json' assert { type: 'json' };
+import ABBR from './sourcebook-abbrevs.json' with { type: 'json' };
 
 /**
  * Canonical list of all accepted source abbreviations (single source of truth comes from JSON).

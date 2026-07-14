@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { CharacterSchema } from '../schema/schema';
-import { clearLocal, loadLocal, saveLocal } from './local';
+import { clearLocal, loadLocal, parseCharacter, saveLocal } from './local';
 
 // Minimal valid v2 character shape for testing
 const minimalV2 = {
@@ -75,6 +75,44 @@ describe('localStorage migration (v1 → v2)', () => {
     localStorage.clear();
   });
 
+  it('loadLocal backs up unparseable data instead of silently discarding it', () => {
+    localStorage.setItem('v0-char', 'not valid json{{{');
+    loadLocal();
+    expect(localStorage.getItem('v0-char-backup')).toBe('not valid json{{{');
+    localStorage.clear();
+  });
+
+  it('loadLocal backs up data that fails schema validation too, not just JSON.parse failures', () => {
+    const invalidShape = JSON.stringify({ version: 2, name: 'Bad' }); // missing required fields
+    localStorage.setItem('v0-char', invalidShape);
+    loadLocal();
+    expect(localStorage.getItem('v0-char-backup')).toBe(invalidShape);
+    localStorage.clear();
+  });
+
+  it('loadLocal does not clobber an existing backup with a later failure', () => {
+    localStorage.setItem('v0-char-backup', 'original-corrupt-data');
+    localStorage.setItem('v0-char', 'not valid json{{{');
+    loadLocal();
+    expect(localStorage.getItem('v0-char-backup')).toBe('original-corrupt-data');
+    localStorage.clear();
+  });
+
+  it('loadLocal returns an empty character instead of throwing when localStorage.getItem itself throws', () => {
+    const original = localStorage.getItem;
+    localStorage.getItem = () => {
+      throw new Error('SecurityError: localStorage unavailable');
+    };
+    try {
+      expect(() => loadLocal()).not.toThrow();
+      const char = loadLocal();
+      expect(char.version).toBe(2);
+      expect(char.name).toBe('');
+    } finally {
+      localStorage.getItem = original;
+    }
+  });
+
   it('loadLocal migrates a v1 character to v2', () => {
     const v1Character = {
       version: 1,
@@ -118,5 +156,45 @@ describe('localStorage migration (v1 → v2)', () => {
     expect(loaded.version).toBe(2);
     expect(loaded.name).toBe('Test');
     clearLocal();
+  });
+});
+
+describe('parseCharacter', () => {
+  it('parses a v2 character directly', () => {
+    const char = parseCharacter(minimalV2);
+    expect(char.version).toBe(2);
+    expect(char.name).toBe('Test');
+  });
+
+  it('migrates a v1 character to v2, matching loadLocal/migrateCharacter behavior', () => {
+    const v1Character = {
+      version: 1,
+      name: 'OldHero',
+      scores: { str: 18, dex: 14, con: 16, int: 12, wis: 10, cha: 8 },
+      levels: [
+        {
+          level: 1,
+          class: 'Fighter',
+          feats: ['Cleave'],
+          spells: [],
+          skillRanks: {},
+          unspentSkillPoints: 0,
+        },
+      ],
+      class: 'Fighter',
+      feats: ['Cleave'],
+      skillRanks: { Jump: 4 },
+      saveBonuses: {},
+      combatStats: {},
+    };
+    const char = parseCharacter(v1Character);
+    expect(char.version).toBe(2);
+    expect(char.name).toBe('OldHero');
+    expect((char as Record<string, unknown>).class).toBeUndefined();
+    expect(char.levels[0].class).toBe('Fighter');
+  });
+
+  it('throws a ZodError for an invalid shape (e.g. an imported file that fails validation)', () => {
+    expect(() => parseCharacter({ version: 2, name: 'Broken' })).toThrow();
   });
 });

@@ -1,5 +1,5 @@
 import { type Language } from '../types/language';
-import rawLanguages from './languages.json' assert { type: 'json' };
+import rawLanguages from './languages.json' with { type: 'json' };
 
 export const languages: Language[] = rawLanguages as Language[];
 

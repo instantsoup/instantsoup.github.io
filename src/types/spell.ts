@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import ABBR from '../data/sourcebook-abbrevs.json' assert { type: 'json' };
+import ABBR from '../data/sourcebook-abbrevs.json' with { type: 'json' };
 
 export const SourceAbbrev = z.enum(ABBR as [string, ...string[]]);
 

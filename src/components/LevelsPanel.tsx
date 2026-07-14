@@ -5,9 +5,11 @@ import { classes } from '../data/classes';
 import { feats } from '../data/feats';
 import { spells } from '../data/spells';
 import {
-  calculateSkillPointsAvailableAtLevel,
-  calculateSkillPointsSpentAtLevel,
-} from '../lib/progressions';
+  skillPointsAvailableAtLevel as calculateSkillPointsAvailableAtLevel,
+  skillPointsSpentAtLevel as calculateSkillPointsSpentAtLevel,
+} from '../rules/character';
+import { isSpellForbidden } from '../rules/wizard/eligibility';
+import { maxCastableSpellLevel } from '../rules/wizard/spellbook';
 import type { ClassName } from '../schema/schema';
 import type { Level } from '../types/level';
 import { SkillSpendingPanel } from './SkillSpendingPanel';
@@ -109,7 +111,7 @@ export function LevelsPanel({
     return spells
       .filter((spell) => {
         if (!spell.name.toLowerCase().includes(searchTerm.toLowerCase())) return false;
-        if (wizardForbiddenSchools.includes(spell.school)) return false;
+        if (isSpellForbidden(spell, wizardForbiddenSchools)) return false;
         if (spellListKey) {
           const spellLevel = spell.levels[spellListKey];
           if (spellLevel === undefined) return false;
@@ -144,7 +146,7 @@ export function LevelsPanel({
               .slice(0, levelIndex + 1)
               .filter((l) => l.class === lvl.class).length;
             const isWizard = lvl.class === 'Wizard';
-            const maxCastableSpellLevel = isWizard ? Math.ceil(classLevelAtThisPoint / 2) : null;
+            const maxCastableLevel = isWizard ? maxCastableSpellLevel(classLevelAtThisPoint) : null;
             // Level 1: 3 + Int modifier 1st-level spells; each subsequent level: 2 spells
             const spellsToLearn = isWizard
               ? classLevelAtThisPoint === 1
@@ -155,7 +157,7 @@ export function LevelsPanel({
             const spellSearchResults = getSpellSearchResults(
               lvl.level,
               spellListKey,
-              maxCastableSpellLevel,
+              maxCastableLevel,
             );
 
             const available = calculateSkillPointsAvailableAtLevel(levelIndex, levels, intModifier);
@@ -315,8 +317,8 @@ export function LevelsPanel({
                         </span>
                         <span className="level-spells-hint">
                           {classLevelAtThisPoint === 1
-                            ? `Starting spellbook — up to level ${maxCastableSpellLevel} spells (3 + Int mod)`
-                            : `Spells added to spellbook this level — up to level ${maxCastableSpellLevel}`}
+                            ? `Starting spellbook — up to level ${maxCastableLevel} spells (3 + Int mod)`
+                            : `Spells added to spellbook this level — up to level ${maxCastableLevel}`}
                         </span>
                       </div>
                     )}
@@ -325,7 +327,7 @@ export function LevelsPanel({
                         type="text"
                         placeholder={
                           isWizard
-                            ? `Search Sor/Wiz spells (level 0–${maxCastableSpellLevel})…`
+                            ? `Search Sor/Wiz spells (level 0–${maxCastableLevel})…`
                             : 'Search spells...'
                         }
                         value={spellSearchTerms[lvl.level] ?? ''}
@@ -401,7 +403,7 @@ export function LevelsPanel({
                           : isWizard
                             ? classLevelAtThisPoint === 1
                               ? `Search to choose your starting ${spellsToLearn} spells (Sor/Wiz level 1).`
-                              : `Search to choose ${spellsToLearn} spells learned this wizard level (up to spell level ${maxCastableSpellLevel}).`
+                              : `Search to choose ${spellsToLearn} spells learned this wizard level (up to spell level ${maxCastableLevel}).`
                             : 'Search above to add spells for this level.'}
                       </div>
                     )}

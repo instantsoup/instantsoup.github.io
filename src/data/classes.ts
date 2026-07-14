@@ -1,6 +1,6 @@
 // src/data/classes.ts
 import { type Class, ClassesFileSchema } from '../types/class';
-import rawClasses from './classes.json' assert { type: 'json' };
+import rawClasses from './classes.json' with { type: 'json' };
 
 const parsed = ClassesFileSchema.parse(rawClasses);
 export const classes: Class[] = parsed;

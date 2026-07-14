@@ -106,7 +106,7 @@ const tooltip = [
   .join('\n');
 ```
 
-`CalculationBreakdown` is defined in `src/lib/progressions.ts`:
+`CalculationBreakdown` is defined in `src/rules/character/bab.ts`:
 
 ```ts
 interface CalculationBreakdown {
@@ -200,25 +200,28 @@ Mode toggle button lives in `TabNav` (right-aligned pill). Always routes to `'ch
 
 `conditionPenalties` is computed via `useMemo` in `useCharacter.ts` from `extras.statusEffects` using `computeConditionPenalties()`, then passed into `useCharacterScores`.
 
-### Calculations Library (`src/lib/`)
+### Rules Engine (`src/rules/`)
+
+The sole holder of D&D 3.5e rule logic — `src/data` → `src/rules` → UI, enforced by ESLint. See
+`claude.md` for the full layering contract and module map.
 
 ```ts
-// progressions.ts
+// rules/character/bab.ts, saves.ts, hp.ts, skills.ts
 calculateTotalBAB(levels)              → { total, components[] }
 calculateTotalSave(levels, saveType)   → { total, components[] }
 calculateMaxHP(levels, conMod)         → { total, components[] }
-calculateCumulativeSkillRanks(levels)  → Record<skillName, ranks>
+cumulativeSkillRanks(levels)           → Record<skillName, ranks>
 
-// encumbrance.ts — PHB Table 9-1
-getHeavyLoad(str)                      → number (lbs)
-getLightLoad(str)                      → number
-getMediumLoad(str)                     → number
-getLoadCategory(weight, str)           → 'light' | 'medium' | 'heavy' | 'overloaded'
-getEncumbranceMaxDex(cat)              → Infinity | 3 | 1
-getEncumbranceACP(cat)                 → 0 | 3 | 6
-getEncumbranceSpeed(baseSpeed, cat)    → number (PHB ×3/4 rounded to 5 ft)
+// rules/character/encumbrance.ts — PHB Table 9-1
+heavyLoad(str)                         → number (lbs)
+lightLoad(str)                         → number
+mediumLoad(str)                        → number
+loadCategory(weight, str)              → 'light' | 'medium' | 'heavy' | 'overloaded'
+encumbranceMaxDex(cat)                 → Infinity | 3 | 1
+encumbranceACP(cat)                    → 0 | 3 | 6
+encumbranceSpeed(baseSpeed, cat)       → number (PHB ×3/4 rounded to 5 ft)
 
-// conditions.ts
+// rules/character/conditions.ts
 computeConditionPenalties(statusEffects) → ConditionPenalties
 ```
 
@@ -336,7 +339,7 @@ src/
 ## Testing
 
 - **Vitest** with v8 coverage
-- **269 tests**, all passing
+- Comprehensive test suite, all passing (`npm test` prints the current count)
 - Tests co-located with source: `foo.ts` → `foo.test.ts`
 - All `src/data/*.ts` modules have test coverage
 - Coverage: ~97% statements, ~94% branches on covered files
@@ -391,4 +394,4 @@ Adjust toward 28-point buy:
 - If total > 28: drop lowest stat(s) round-robin until ≤ 28
 - If total < 28: raise highest stat(s) round-robin until ≥ 28
 - Clamp scores 3–18
-- Verified by `lib/statline.test.ts`
+- Verified by `src/rules/__tests__/ability-scores.test.ts`

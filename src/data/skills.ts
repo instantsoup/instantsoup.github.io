@@ -2,7 +2,7 @@
 import { z } from 'zod';
 
 import { AbilityKey, type Skill, SkillsFileSchema } from '../types/skill';
-import rawSkills from './skills.json' assert { type: 'json' };
+import rawSkills from './skills.json' with { type: 'json' };
 
 const parsed = SkillsFileSchema.parse(rawSkills);
 export const skills: Skill[] = parsed;

@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 
 import type { ConditionPenalties } from '../data/conditions';
-import { computeMods } from '../lib/mods';
-import { getRacialMods } from '../lib/progressions';
+import { getRacialMods } from '../data/races';
+import { computeMods } from '../rules/character';
 import type { AbilityDamage, Character } from '../schema/schema';
 import { emptyScores, type Scores } from '../types';
 

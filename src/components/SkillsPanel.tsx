@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { classes } from '../data/classes';
 import { skills } from '../data/skills';
-import { calculateCumulativeSkillRanks } from '../lib/progressions';
+import { cumulativeSkillRanks as calculateCumulativeSkillRanks } from '../rules/character';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 
