@@ -98,6 +98,21 @@ describe('localStorage migration (v1 → v2)', () => {
     localStorage.clear();
   });
 
+  it('loadLocal returns an empty character instead of throwing when localStorage.getItem itself throws', () => {
+    const original = localStorage.getItem;
+    localStorage.getItem = () => {
+      throw new Error('SecurityError: localStorage unavailable');
+    };
+    try {
+      expect(() => loadLocal()).not.toThrow();
+      const char = loadLocal();
+      expect(char.version).toBe(2);
+      expect(char.name).toBe('');
+    } finally {
+      localStorage.getItem = original;
+    }
+  });
+
   it('loadLocal migrates a v1 character to v2', () => {
     const v1Character = {
       version: 1,

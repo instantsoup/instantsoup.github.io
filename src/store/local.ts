@@ -39,15 +39,24 @@ function emptyCharacter(): Character {
 }
 
 export function loadLocal(): Character {
-  const raw = localStorage.getItem(KEY);
+  let raw: string | null;
+  try {
+    raw = localStorage.getItem(KEY);
+  } catch {
+    return emptyCharacter();
+  }
   if (!raw) return emptyCharacter();
   try {
     return parseCharacter(JSON.parse(raw));
   } catch (e) {
     console.warn('Saved character could not be loaded; backing up raw data.', e);
     // Don't clobber an earlier backup with this failure's own corrupt data.
-    if (!localStorage.getItem(BACKUP_KEY)) {
-      localStorage.setItem(BACKUP_KEY, raw);
+    try {
+      if (!localStorage.getItem(BACKUP_KEY)) {
+        localStorage.setItem(BACKUP_KEY, raw);
+      }
+    } catch {
+      // localStorage unavailable (private mode, quota) - nothing more we can do.
     }
     return emptyCharacter();
   }

@@ -71,6 +71,14 @@ describe('isCaster', () => {
     expect(isCaster(levels(['Wizard', 'Tainted Scholar']))).toBe(true);
   });
 
+  it('returns true for a character with ONLY Tainted Scholar levels (the isCaster drift case)', () => {
+    // Tainted Scholar has castingType: null of its own - it only grants caster
+    // levels via advancesSpellcastingOf. This is the exact case the rules
+    // version of isCaster fixes over the old lib/progressions.ts copy, which
+    // checked castingType only and would return false here.
+    expect(isCaster(levels(['Tainted Scholar']))).toBe(true);
+  });
+
   it('returns false for Fighter', () => {
     expect(isCaster(levels(['Fighter']))).toBe(false);
   });
