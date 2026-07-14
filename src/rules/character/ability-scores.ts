@@ -22,22 +22,22 @@ export function computeMods(scores: Scores): Scores {
  * Scores outside 3–18 are clamped at the table boundary.
  */
 const POINT_BUY_COST: Record<number, number> = {
-  3: -6,
-  4: -5,
-  5: -4,
-  6: -3,
-  7: -2,
-  8: -1,
+  3: -5,
+  4: -4,
+  5: -3,
+  6: -2,
+  7: -1,
+  8: 0,
   9: 1,
   10: 2,
   11: 3,
   12: 4,
   13: 5,
-  14: 7,
-  15: 9,
-  16: 12,
-  17: 15,
-  18: 19,
+  14: 6,
+  15: 8,
+  16: 10,
+  17: 13,
+  18: 16,
 };
 
 export function pointBuyCost(score: number): number {

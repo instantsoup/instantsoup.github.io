@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
+import { costOf } from '../../lib/statline';
 import type { Scores } from '../../types';
 import {
   abilityMod,
@@ -32,10 +33,19 @@ describe('computeMods', () => {
 });
 
 describe('pointBuyCost', () => {
-  it('score 8 costs -1 point', () => expect(pointBuyCost(8)).toBe(-1));
+  it('score 8 costs 0 points', () => expect(pointBuyCost(8)).toBe(0));
   it('score 10 costs 2 points', () => expect(pointBuyCost(10)).toBe(2));
-  it('score 14 costs 7 points', () => expect(pointBuyCost(14)).toBe(7));
-  it('score 18 costs 19 points', () => expect(pointBuyCost(18)).toBe(19));
+  it('score 14 costs 6 points', () => expect(pointBuyCost(14)).toBe(6));
+  it('score 18 costs 16 points', () => expect(pointBuyCost(18)).toBe(16));
+
+  it('agrees with lib/statline.costOf for every score 3-18', () => {
+    // Cross-check against the pre-existing, independently-verified point-buy
+    // table until src/lib/statline.ts is folded into this module (Phase 1.3)
+    // and eventually deleted (Phase 3.1).
+    for (let s = 3; s <= 18; s++) {
+      expect(pointBuyCost(s)).toBe(costOf(s));
+    }
+  });
 });
 
 describe('totalPointBuyCost', () => {
@@ -45,8 +55,8 @@ describe('totalPointBuyCost', () => {
   });
 
   it('standard array (15/14/13/12/10/8) costs expected total', () => {
-    // 9 + 7 + 5 + 4 + 2 + (-1) = 26
+    // 8 + 6 + 5 + 4 + 2 + 0 = 25
     const scores: Scores = { str: 15, dex: 14, con: 13, int: 12, wis: 10, cha: 8 };
-    expect(totalPointBuyCost(scores)).toBe(26);
+    expect(totalPointBuyCost(scores)).toBe(25);
   });
 });
