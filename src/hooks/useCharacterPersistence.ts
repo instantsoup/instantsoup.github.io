@@ -3,7 +3,7 @@ import { ZodError } from 'zod';
 
 import { downloadJson } from '../lib/download';
 import { type Character, CharacterSchema } from '../schema/schema';
-import { clearLocal, saveLocal } from '../store/local';
+import { clearLocal, parseCharacter, saveLocal } from '../store/local';
 
 type LoadCallback = (char: Character) => void;
 
@@ -42,7 +42,7 @@ export function useCharacterPersistence(
     try {
       const text = await file.text();
       const json = JSON.parse(text);
-      const parsed = CharacterSchema.parse(json);
+      const parsed = parseCharacter(json);
       loadAll(parsed);
       saveLocal(parsed);
       setError(null);
