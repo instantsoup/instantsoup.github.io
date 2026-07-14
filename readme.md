@@ -394,4 +394,4 @@ Adjust toward 28-point buy:
 - If total > 28: drop lowest stat(s) round-robin until ≤ 28
 - If total < 28: raise highest stat(s) round-robin until ≥ 28
 - Clamp scores 3–18
-- Verified by `lib/statline.test.ts`
+- Verified by `src/rules/__tests__/ability-scores.test.ts`

@@ -1,6 +1,7 @@
 src/components → UI elements
 src/hooks → state and logic
-src/lib → pure functions and helpers
+src/rules → D&D 3.5e rule logic (BAB, saves, HP, skills, spell slots, etc.)
+src/lib → true utilities only (dice, download)
 src/store → localStorage and persistence
 src/schema.ts → JSON shape definitions
 src/types.ts → static TypeScript types
@@ -25,12 +26,13 @@ These rules define how GitHub Copilot (chat or Agent Mode) should behave in this
 
 - `src/components/` — UI elements (named exports only; `App.tsx` is the sole default export)
 - `src/hooks/` — state and logic (named exports)
-- `src/lib/` — pure helpers (e.g., dice, statline, progressions)
+- `src/rules/` — all D&D 3.5e rule logic (BAB, saves, HP, skills, encumbrance, spell slots, etc.); no React/DOM dependencies, imports only `src/data` and `src/types` (see `claude.md`)
+- `src/lib/` — true utilities only, no game-rule content (dice, download)
 - `src/store/` — localStorage and persistence logic
 - `src/data/` — all game data (JSON + helpers)
 - `src/types/` — Zod schemas and static types
 - `src/styles/` — modular CSS, imported globally via `index.css`
-- Tests are co-located: e.g., `lib/statline.test.ts` tests `lib/statline.ts`
+- Tests are co-located: e.g., `rules/__tests__/ability-scores.test.ts` tests `rules/character/ability-scores.ts`
 
 ## Coding Standards & Patterns
 
