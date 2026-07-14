@@ -1,4 +1,4 @@
-import { calculateTotalBAB } from '../lib/progressions';
+import { calculateTotalBAB } from '../rules/character';
 import type { CombatStats } from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';

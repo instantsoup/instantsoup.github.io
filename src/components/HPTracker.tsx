@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { calculateMaxHP } from '../lib/progressions';
+import { calculateMaxHP } from '../rules/character';
 import type { CombatStats } from '../schema/schema';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';

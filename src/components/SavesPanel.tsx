@@ -1,5 +1,5 @@
 import { saves } from '../data/saves';
-import { calculateTotalSave } from '../lib/progressions';
+import { calculateTotalSave } from '../rules/character';
 import type { Scores } from '../types';
 import type { Level } from '../types/level';
 
