@@ -213,9 +213,12 @@ Extract ALL of the following that appear in this chunk:
   "advancesSpellcastingOf": string|null,  // CRITICAL: for prestige classes that grant "+1 caster level" advancement, set this to the BASE class name they advance (e.g. "Wizard", "Cleric"). null for base classes or PrCs that don't advance casting.
   "hasDomains": boolean,  // true only for classes that grant Cleric-style domain spell slots
   "spellListKey": string|null,  // the spell-list key this class draws from (e.g. "Sor/Wiz", "Clr"); null if non-caster
-  "classSkills": [string],
   "spellSlotsPerDay": null  // leave null unless you have the full 20-row slot table; do not guess
 }
+// Do NOT include a classSkills field - class skill lists are tracked separately
+// (src/data/classes.json) and aren't part of this ingestion pipeline's contract
+// (src/types/class-progression.ts's ClassProgressionSchema has no such field, so
+// it would be silently discarded during validation - don't waste output on it).
 
 3. FEATS — one object per feat:
 {

@@ -111,11 +111,24 @@ if (review.additions.length === 0 && review.updates.length === 0) {
 }
 
 const proposed = [...review.additions, ...review.updates.map((u) => u.proposed)];
-const outPath = rulebookPath.replace(/\.json$/, '.classes.proposed.json');
+// Written to a "proposed" subdirectory, never directly alongside the source
+// rulebook JSON: if that source file lives in src/data/rulebooks/ (the
+// normal ingest-rulebook.mts output location), a sibling *.json file would
+// be picked up by rulebook-loader.ts's `./rulebooks/*.json` glob, fail
+// RulebookFileSchema validation (it's an array, not a RulebookFile), and log
+// an error on every app load. A one-level-deeper subdirectory isn't matched
+// by that non-recursive glob.
+const outDir = path.join(path.dirname(rulebookPath), 'proposed');
+fs.mkdirSync(outDir, { recursive: true });
+const outPath = path.join(
+  outDir,
+  path.basename(rulebookPath).replace(/\.json$/, '.classes.proposed.json'),
+);
 fs.writeFileSync(outPath, JSON.stringify(proposed, null, 2));
 console.log(`Proposed entries (${proposed.length}) written to: ${outPath}`);
 console.log(
-  '\nThis file was NOT merged automatically. Review each entry, then manually copy the\n' +
-    'ones you approve into src/data/class-progressions.json, and run:\n' +
+  '\nThis file was NOT merged automatically, and it will NOT be picked up by the app (it lives\n' +
+    'outside src/data/rulebooks/ itself, in a proposed/ subdirectory). Review each entry, then\n' +
+    'manually copy the ones you approve into src/data/class-progressions.json, and run:\n' +
     '  npx vitest run src/data/class-progressions.test.ts\n',
 );
