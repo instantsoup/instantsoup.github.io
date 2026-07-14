@@ -1,6 +1,6 @@
 // src/data/races.ts
 import { type Race, RacesFileSchema } from '../types/race';
-import rawRaces from './races.json' assert { type: 'json' };
+import rawRaces from './races.json' with { type: 'json' };
 
 const parsed = RacesFileSchema.parse(rawRaces);
 export const races: Race[] = parsed;

@@ -1,6 +1,6 @@
 // src/data/saves.ts
 import { type Save, SavesFileSchema } from '../types/save';
-import rawSaves from './saves.json' assert { type: 'json' };
+import rawSaves from './saves.json' with { type: 'json' };
 
 const parsed = SavesFileSchema.parse(rawSaves);
 export const saves: Save[] = parsed;

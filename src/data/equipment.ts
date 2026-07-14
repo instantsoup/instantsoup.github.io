@@ -1,5 +1,5 @@
 import { type EquipmentRef } from '../types/equipment-ref';
-import rawEquipment from './equipment.json' assert { type: 'json' };
+import rawEquipment from './equipment.json' with { type: 'json' };
 
 export const equipmentRefs: EquipmentRef[] = rawEquipment as EquipmentRef[];
 

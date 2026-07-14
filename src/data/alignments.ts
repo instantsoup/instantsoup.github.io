@@ -1,6 +1,6 @@
 // src/data/alignments.ts
 import { type Alignment, AlignmentsFileSchema } from '../types/alignment';
-import rawAlignments from './alignments.json' assert { type: 'json' };
+import rawAlignments from './alignments.json' with { type: 'json' };
 
 const parsed = AlignmentsFileSchema.parse(rawAlignments);
 export const alignments: Alignment[] = parsed;

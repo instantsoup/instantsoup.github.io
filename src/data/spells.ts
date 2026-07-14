@@ -1,7 +1,7 @@
 // src/data/spells.ts
 import { type Spell } from '../types/spell';
 import { findRulebookSpell, rulebookSpells } from './rulebook-loader';
-import rawSpells from './spells.json' assert { type: 'json' };
+import rawSpells from './spells.json' with { type: 'json' };
 
 // SRD spells
 export const spells: Spell[] = rawSpells as Spell[];

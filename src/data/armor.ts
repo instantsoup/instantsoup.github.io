@@ -1,5 +1,5 @@
 import { type ArmorRef } from '../types/armor-ref';
-import rawArmor from './armor.json' assert { type: 'json' };
+import rawArmor from './armor.json' with { type: 'json' };
 
 export const armorRefs: ArmorRef[] = rawArmor as ArmorRef[];
 

@@ -1,7 +1,7 @@
 // src/types/skill.ts
 import { z } from 'zod';
 
-import sourceAbbrevs from '../data/sourcebook-abbrevs.json' assert { type: 'json' };
+import sourceAbbrevs from '../data/sourcebook-abbrevs.json' with { type: 'json' };
 
 // Reuse canonical source abbreviations (PHB, DMG, etc.)
 const SourceAbbrev = z.enum(sourceAbbrevs as [string, ...string[]]);

@@ -1,5 +1,5 @@
 import { type WeaponRef } from '../types/weapon-ref';
-import rawWeapons from './weapons.json' assert { type: 'json' };
+import rawWeapons from './weapons.json' with { type: 'json' };
 
 export const weaponRefs: WeaponRef[] = rawWeapons as WeaponRef[];
 
