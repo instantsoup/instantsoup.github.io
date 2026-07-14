@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { adjustTo28, rollStatLine, type StatLine, totalCost } from '../lib/statline';
+import { adjustTo28, rollStatLine, type StatLine, totalCost } from '../rules/character';
 
 const sortDesc = (arr: number[]) => [...arr].sort((a, b) => b - a);
 
