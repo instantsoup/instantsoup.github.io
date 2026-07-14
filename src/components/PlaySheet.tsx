@@ -1,7 +1,5 @@
 import { alignments } from '../data/alignments';
 import type { ConditionPenalties } from '../data/conditions';
-import { getEncumbranceSummary } from '../lib/encumbrance';
-import { getHeavyLoad, getLightLoad, getMediumLoad } from '../lib/encumbrance';
 import {
   calculateTotalBAB,
   calculateTotalSave,
@@ -10,6 +8,12 @@ import {
   getPrimarySpellcastingAbility,
   xpForLevel,
 } from '../lib/progressions';
+import {
+  getEncumbranceSummary,
+  heavyLoad as getHeavyLoad,
+  lightLoad as getLightLoad,
+  mediumLoad as getMediumLoad,
+} from '../rules/character';
 import type {
   AbilityDamage,
   CombatStats,
