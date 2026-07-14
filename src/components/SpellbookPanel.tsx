@@ -6,7 +6,13 @@ import {
   effectiveWizardLevels,
   wizardClassLevels as getWizardClassLevels,
 } from '../rules/wizard/levels';
-import { freeSpellbookSlots, maxLearnableSpellLevel } from '../rules/wizard/spellbook';
+import { maxForbiddenSchools, toggleForbiddenSchool } from '../rules/wizard/specialist';
+import {
+  copySpellCost,
+  freeSpellbookSlots,
+  maxLearnableSpellLevel,
+  researchSpellCost,
+} from '../rules/wizard/spellbook';
 import type { CombatStats, SpellbookEntry } from '../schema/schema';
 import type { Level } from '../types/level';
 import { SpellDetail } from './SpellDetail';
@@ -54,6 +60,7 @@ type Props = {
   levels: Level[];
   intMod: number;
   combatStats: CombatStats;
+  /** Specialist-adjusted spell slots (see calculateEffectiveSlots). */
   calculatedSlots: Record<string, number>;
   memorizedSpells: Record<string, string[]>;
   memorizedSpellsUsed: Record<string, boolean[]>;
@@ -120,11 +127,9 @@ export function SpellbookPanel({
 
   const slotsMax = combatStats.spellSlotsMax ?? {};
 
-  // Specialist bonus: +1 slot per accessible spell level
-  const effectiveSlots = useMemo<Record<string, number>>(() => {
-    if (!wizardSpecialty) return calculatedSlots;
-    return Object.fromEntries(Object.entries(calculatedSlots).map(([k, v]) => [k, v + 1]));
-  }, [calculatedSlots, wizardSpecialty]);
+  // calculatedSlots already includes the specialist +1-per-level bonus
+  // (computed once via calculateEffectiveSlots in App.tsx).
+  const effectiveSlots = calculatedSlots;
 
   // Spellbook entries indexed by wizard spell level
   const spellbookByLevel = useMemo(() => {
@@ -186,9 +191,9 @@ export function SpellbookPanel({
     const spellLvl = spell.levels['Sor/Wiz'] ?? 0;
     const goldPaid =
       addSource === 'purchased'
-        ? 100 * Math.max(1, spellLvl)
+        ? copySpellCost(spellLvl)
         : addSource === 'researched'
-          ? 1000 * Math.max(1, spellLvl)
+          ? researchSpellCost(spellLvl)
           : 0;
     addSpellbookEntry({
       spellName: spell.name,
@@ -215,13 +220,12 @@ export function SpellbookPanel({
   };
 
   const handleToggleForbidden = (school: string) => {
-    const current = wizardForbiddenSchools;
-    const maxForbidden = wizardSpecialty === 'Divination' ? 1 : 2;
-    if (current.includes(school)) {
-      setWizardForbiddenSchools(current.filter((s) => s !== school));
-    } else if (current.length < maxForbidden) {
-      setWizardForbiddenSchools([...current, school]);
-      if (addSchoolFilter === school) setAddSchoolFilter('');
+    if (!wizardSpecialty) return;
+    const wasForbidden = wizardForbiddenSchools.includes(school);
+    const updated = toggleForbiddenSchool(school, wizardForbiddenSchools, wizardSpecialty);
+    if (updated !== wizardForbiddenSchools) {
+      setWizardForbiddenSchools(updated);
+      if (!wasForbidden && addSchoolFilter === school) setAddSchoolFilter('');
     }
     onBlur();
   };
@@ -564,7 +568,7 @@ export function SpellbookPanel({
               {wizardSpecialty && (
                 <>
                   <p className="spellbook-specialist__label">
-                    Forbidden schools (choose {wizardSpecialty === 'Divination' ? 1 : 2}):
+                    Forbidden schools (choose {maxForbiddenSchools(wizardSpecialty)}):
                   </p>
                   <div className="spellbook-specialist__schools">
                     {WIZARD_SCHOOLS.filter((s) => s !== 'Universal' && s !== wizardSpecialty).map(
@@ -717,9 +721,9 @@ export function SpellbookPanel({
                     const isSpecialty = spell.school === wizardSpecialty;
                     const cost =
                       addSource === 'purchased'
-                        ? `${100 * Math.max(1, lvl)} gp`
+                        ? `${copySpellCost(lvl)} gp`
                         : addSource === 'researched'
-                          ? `${1000 * Math.max(1, lvl)} gp`
+                          ? `${researchSpellCost(lvl)} gp`
                           : null;
                     const addKey = `add-${spell.name}`;
                     const isExpanded = expandedSpell === addKey;

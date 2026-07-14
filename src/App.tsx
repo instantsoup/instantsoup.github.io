@@ -26,7 +26,7 @@ import { getRacialMods } from './data/races';
 import { allSpells } from './data/spells';
 import { useCharacter } from './hooks/useCharacter';
 import {
-  calculateSpellSlots,
+  calculateEffectiveSlots,
   calculateTotalBAB,
   getCasterSummary,
   getEncumbranceSummary,
@@ -152,12 +152,9 @@ export function App() {
     error,
   } = useCharacter();
 
-  // Spell system derived values
-  const calculatedSlots = calculateSpellSlots(levels, effectiveScores);
-  // Specialist wizards get +1 slot per accessible spell level for their specialty school
-  const effectiveSlots = wizardSpecialty
-    ? Object.fromEntries(Object.entries(calculatedSlots).map(([k, v]) => [k, v + 1]))
-    : calculatedSlots;
+  // Spell system derived values.
+  // Specialist wizards get +1 slot per accessible spell level for their specialty school.
+  const effectiveSlots = calculateEffectiveSlots(levels, effectiveScores, wizardSpecialty);
   const casterSummary = getCasterSummary(levels, effectiveScores);
   const primaryCaster = casterSummary[0] ?? null;
   const primaryCastingMod = primaryCaster?.castingMod;
@@ -575,7 +572,7 @@ export function App() {
                   levels={levels}
                   intMod={mods.int}
                   combatStats={combatStats}
-                  calculatedSlots={calculatedSlots}
+                  calculatedSlots={effectiveSlots}
                   memorizedSpells={memorizedSpells}
                   memorizedSpellsUsed={memorizedSpellsUsed}
                   spellbook={spellbook}

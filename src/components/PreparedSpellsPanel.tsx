@@ -1,5 +1,6 @@
 import { Fragment, useMemo, useState } from 'react';
 
+import { spellDC } from '../rules/caster/caster-summary';
 import type { CombatStats } from '../schema/schema';
 import { SpellDetail } from './SpellDetail';
 
@@ -160,7 +161,7 @@ export function PreparedSpellsPanel({
                 {castingMod !== undefined && (
                   <span className="spellbook-level-section__dc">
                     {' '}
-                    DC {10 + Number(lvl) + castingMod}
+                    DC {spellDC(Number(lvl), castingMod)}
                   </span>
                 )}
               </span>
