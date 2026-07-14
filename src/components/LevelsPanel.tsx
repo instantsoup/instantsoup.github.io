@@ -5,9 +5,9 @@ import { classes } from '../data/classes';
 import { feats } from '../data/feats';
 import { spells } from '../data/spells';
 import {
-  calculateSkillPointsAvailableAtLevel,
-  calculateSkillPointsSpentAtLevel,
-} from '../lib/progressions';
+  skillPointsAvailableAtLevel as calculateSkillPointsAvailableAtLevel,
+  skillPointsSpentAtLevel as calculateSkillPointsSpentAtLevel,
+} from '../rules/character';
 import { isSpellForbidden } from '../rules/wizard/eligibility';
 import { maxCastableSpellLevel } from '../rules/wizard/spellbook';
 import type { ClassName } from '../schema/schema';

@@ -3,11 +3,11 @@ import { useMemo, useState } from 'react';
 import { classes } from '../data/classes';
 import { skills } from '../data/skills';
 import {
-  calculateCumulativeSkillRanks,
-  calculateMaxRanks,
-  calculateSkillPointsAvailableAtLevel,
-  calculateSkillPointsSpentAtLevel,
-} from '../lib/progressions';
+  cumulativeSkillRanks as calculateCumulativeSkillRanks,
+  maxSkillRanks as calculateMaxRanks,
+  skillPointsAvailableAtLevel as calculateSkillPointsAvailableAtLevel,
+  skillPointsSpentAtLevel as calculateSkillPointsSpentAtLevel,
+} from '../rules/character';
 import type { Level } from '../types/level';
 
 interface SkillSpendingPanelProps {
