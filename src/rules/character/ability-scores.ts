@@ -48,3 +48,80 @@ export function pointBuyCost(score: number): number {
 export function totalPointBuyCost(scores: Scores): number {
   return Object.values(scores).reduce((sum, s) => sum + pointBuyCost(s), 0);
 }
+
+// -- 28-point-buy stat-line adjustment and 3d6 rolling, folded in from
+// -- src/lib/statline.ts. Names kept as-is so RollCharacterPanel's migration
+// -- (Phase 2.6) is a pure import-path swap.
+
+export type StatLine = number[];
+
+/** Alias of pointBuyCost, kept for statline-derived call sites. */
+export const costOf = pointBuyCost;
+
+export function totalCost(stats: StatLine): number {
+  return stats.reduce((t, s) => t + costOf(s), 0);
+}
+
+/**
+ * Adjusts a 6-score stat line to exactly 28 point-buy points, decreasing the
+ * lowest scores first when over budget and increasing the highest scores
+ * first when under budget, one step at a time, without ever crossing 28.
+ */
+export function adjustTo28(stats: StatLine): StatLine {
+  if (stats.length !== 6) throw new Error('Stat line must have 6 scores');
+  const arr = [...stats];
+  let total = totalCost(arr);
+
+  // -------- Decrease toward 28: LOWEST → HIGHEST, one step per stat per pass
+  while (total > 28) {
+    const startTotal = total;
+    const order = [...arr.keys()].sort((a, b) => arr[a] - arr[b] || a - b);
+
+    for (const i of order) {
+      if (total <= 28) break;
+      const s = arr[i];
+      if (s <= 3) continue;
+      const stepDelta = costOf(s) - costOf(s - 1);
+      const remaining = total - 28;
+      if (stepDelta <= remaining) {
+        const before = costOf(s);
+        arr[i] = s - 1;
+        total += costOf(arr[i]) - before;
+      }
+    }
+
+    if (total === startTotal) break;
+  }
+
+  // -------- Increase toward 28: HIGHEST → LOWEST, one step per stat per pass
+  while (total < 28) {
+    const startTotal = total;
+    const order = [...arr.keys()].sort((a, b) => arr[b] - arr[a] || a - b);
+
+    for (const i of order) {
+      if (total >= 28) break;
+      const s = arr[i];
+      if (s >= 18) continue;
+      const stepDelta = costOf(s + 1) - costOf(s);
+      const remaining = 28 - total;
+      if (stepDelta <= remaining) {
+        const before = costOf(s);
+        arr[i] = s + 1;
+        total += costOf(arr[i]) - before;
+      }
+    }
+
+    if (total === startTotal) break;
+  }
+
+  return arr;
+}
+
+export function roll3d6(): number {
+  const d6 = () => Math.floor(Math.random() * 6) + 1;
+  return d6() + d6() + d6();
+}
+
+export function rollStatLine(): StatLine {
+  return Array.from({ length: 6 }, roll3d6);
+}

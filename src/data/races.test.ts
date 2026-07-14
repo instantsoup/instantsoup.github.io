@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { findRace, RACE_NAMES, races } from './races';
+import { findRace, getRacialMods, RACE_NAMES, races } from './races';
 
 describe('races data', () => {
   it('loads all 7 core races from JSON', () => {
@@ -91,5 +91,27 @@ describe('findRace', () => {
 
   it('returns undefined for an unknown race', () => {
     expect(findRace('Tiefling')).toBeUndefined();
+  });
+});
+
+describe('getRacialMods', () => {
+  it('returns an empty object for an undefined race', () => {
+    expect(getRacialMods(undefined)).toEqual({});
+  });
+
+  it('returns an empty object for an unknown race name', () => {
+    expect(getRacialMods('Tiefling')).toEqual({});
+  });
+
+  it('returns the correct modifiers for Dwarf', () => {
+    expect(getRacialMods('Dwarf')).toEqual({ con: 2, cha: -2 });
+  });
+
+  it('returns the correct modifiers for Half-Orc', () => {
+    expect(getRacialMods('Half-Orc')).toEqual({ str: 2, int: -2, cha: -2 });
+  });
+
+  it('returns an empty object for Human (no modifiers)', () => {
+    expect(getRacialMods('Human')).toEqual({});
   });
 });
