@@ -79,9 +79,26 @@ describe('splitChunkInHalf', () => {
     expect(b).toBe('345');
   });
 
-  it('the two halves concatenate back to the original', () => {
+  it('the two halves concatenate back to the original when overlapChars is 0 (default)', () => {
     const original = 'the quick brown fox jumps over the lazy dog';
     const [a, b] = splitChunkInHalf(original);
     expect(a + b).toBe(original);
+  });
+
+  it('overlaps symmetrically around the midpoint when overlapChars is given', () => {
+    // "TARGET" (6 chars) sits right across the midpoint of this 16-char string.
+    const text = 'AAAAATARGETBBBBB'; // length 16, midpoint at 8
+    const [a, b] = splitChunkInHalf(text, 6);
+    // midpoint 8, halfOverlap 3 -> first ends at 11, second starts at 5
+    expect(a).toBe(text.slice(0, 11));
+    expect(b).toBe(text.slice(5));
+    expect(a.includes('TARGET') || b.includes('TARGET')).toBe(true);
+  });
+
+  it('does not throw when overlapChars exceeds the chunk length', () => {
+    expect(() => splitChunkInHalf('short', 10_000)).not.toThrow();
+    const [a, b] = splitChunkInHalf('short', 10_000);
+    expect(a).toBe('short');
+    expect(b).toBe('short');
   });
 });

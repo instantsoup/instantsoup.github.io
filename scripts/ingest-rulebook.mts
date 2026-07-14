@@ -337,7 +337,7 @@ async function extractChunk(
 
   if (response.stop_reason === 'max_tokens' && depth < MAX_SPLIT_DEPTH) {
     console.warn(`  ${label}: hit max_tokens, splitting in half and retrying (depth ${depth + 1})`);
-    const [first, second] = splitChunkInHalf(text);
+    const [first, second] = splitChunkInHalf(text, OVERLAP_CHARS);
     const merged: Results = { spells: [], classes: [], feats: [], races: [], items: [] };
     mergeInto(merged, await extractChunk(first, chunkIdx, totalChunks, `${label}a`, depth + 1));
     mergeInto(merged, await extractChunk(second, chunkIdx, totalChunks, `${label}b`, depth + 1));

@@ -29,10 +29,18 @@ export function chunkText(text: string, chunkChars: number, overlapChars: number
 }
 
 /**
- * Splits a single chunk into two roughly equal halves, for re-requesting a
- * chunk that hit the model's max_tokens output limit.
+ * Splits a single chunk into two halves around its midpoint, for
+ * re-requesting a chunk that hit the model's max_tokens output limit.
+ * `overlapChars` extends both halves symmetrically across the midpoint (half
+ * of `overlapChars` on each side) so an entry straddling the split still
+ * appears whole in at least one half - the same reasoning as chunkText's
+ * overlap, applied to the split point instead of the original chunk
+ * boundaries.
  */
-export function splitChunkInHalf(chunk: string): [string, string] {
+export function splitChunkInHalf(chunk: string, overlapChars = 0): [string, string] {
   const mid = Math.floor(chunk.length / 2);
-  return [chunk.slice(0, mid), chunk.slice(mid)];
+  const halfOverlap = Math.floor(overlapChars / 2);
+  const firstEnd = Math.min(chunk.length, mid + halfOverlap);
+  const secondStart = Math.max(0, mid - halfOverlap);
+  return [chunk.slice(0, firstEnd), chunk.slice(secondStart)];
 }
