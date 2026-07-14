@@ -18,6 +18,18 @@ describe('load thresholds (STR 10)', () => {
   it('light = 33 lbs', () => expect(lightLoad(str)).toBe(33));
 });
 
+describe('heavyLoad edge cases', () => {
+  it('returns 0 for STR ≤ 0', () => {
+    expect(heavyLoad(0)).toBe(0);
+    expect(heavyLoad(-5)).toBe(0);
+  });
+
+  it('multiplies by 4 per 10 points above STR 29', () => {
+    expect(heavyLoad(30)).toBe(1600); // STR 20 (400) × 4
+    expect(heavyLoad(40)).toBe(6400); // STR 30 (1600) × 4
+  });
+});
+
 describe('loadCategory', () => {
   it('≤ light is light', () => expect(loadCategory(33, 10)).toBe('light'));
   it('> light but ≤ medium is medium', () => expect(loadCategory(50, 10)).toBe('medium'));

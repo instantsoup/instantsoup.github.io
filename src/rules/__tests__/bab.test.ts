@@ -42,6 +42,17 @@ describe('babForClass', () => {
 });
 
 describe('calculateTotalBAB', () => {
+  it('returns 0 for no levels', () => {
+    const result = calculateTotalBAB([]);
+    expect(result.total).toBe(0);
+    expect(result.components).toHaveLength(0);
+  });
+
+  it('singularizes the label for a single level', () => {
+    const result = calculateTotalBAB([level('Rogue')]);
+    expect(result.components[0].label).toBe('Rogue (1 level)');
+  });
+
   it('pure Fighter 5 has BAB +5', () => {
     const levels: Level[] = Array(5)
       .fill(null)
@@ -95,11 +106,19 @@ describe('getIterativeAttacks', () => {
     // BAB 10, STR +4 → total +14, still only 2 iteratives (BAB < 11)
     expect(getIterativeAttacks(14, 10)).toEqual([14, 9]);
   });
+
+  it('works with a negative total attack bonus', () => {
+    expect(getIterativeAttacks(-1, 3)).toEqual([-1]);
+  });
 });
 
 describe('formatAttacks', () => {
   it('formats positive and negative attacks with sign', () => {
     expect(formatAttacks([11, 6, 1])).toBe('+11/+6/+1');
     expect(formatAttacks([-1])).toBe('-1');
+  });
+
+  it('formats mixed-sign attacks', () => {
+    expect(formatAttacks([2, -3])).toBe('+2/-3');
   });
 });

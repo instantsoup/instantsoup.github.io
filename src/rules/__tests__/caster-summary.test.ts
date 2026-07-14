@@ -96,6 +96,10 @@ describe('getPrimarySpellcastingAbility', () => {
     );
     expect(result).toBe('int');
   });
+
+  it('returns null for an empty level array', () => {
+    expect(getPrimarySpellcastingAbility([])).toBeNull();
+  });
 });
 
 describe('spellDC', () => {

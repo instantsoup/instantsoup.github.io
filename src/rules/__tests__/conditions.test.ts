@@ -69,6 +69,12 @@ describe('computeConditionPenalties', () => {
     expect(p.loseDexToAC).toBe(true);
   });
 
+  it('Prone: -4 attack, -4 AC', () => {
+    const p = computeConditionPenalties(active(['Prone']));
+    expect(p.attack).toBe(-4);
+    expect(p.ac).toBe(-4);
+  });
+
   it('inactive conditions have no effect', () => {
     const p = computeConditionPenalties({ Shaken: { active: false } });
     expect(p.attack).toBe(0);

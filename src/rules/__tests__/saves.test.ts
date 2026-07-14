@@ -31,6 +31,17 @@ describe('saveForClass', () => {
 });
 
 describe('calculateTotalSave', () => {
+  it('returns 0 for no levels', () => {
+    const result = calculateTotalSave([], 'fortitude');
+    expect(result.total).toBe(0);
+    expect(result.components).toHaveLength(0);
+  });
+
+  it('singularizes the label for a single level', () => {
+    const result = calculateTotalSave([level('Cleric')], 'fortitude');
+    expect(result.components[0].label).toBe('Cleric (1 level)');
+  });
+
   it('Cleric 5 has good Will, good Fortitude, poor Reflex', () => {
     const levels: Level[] = Array(5)
       .fill(null)

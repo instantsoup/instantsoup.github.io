@@ -17,6 +17,8 @@ describe('abilityMod', () => {
   it('score 18 → mod +4', () => expect(abilityMod(18)).toBe(4));
   it('score 3 → mod -4', () => expect(abilityMod(3)).toBe(-4));
   it('score 20 → mod +5', () => expect(abilityMod(20)).toBe(5));
+  it('score 1 → mod -5', () => expect(abilityMod(1)).toBe(-5));
+  it('score 0 → mod -5', () => expect(abilityMod(0)).toBe(-5));
 });
 
 describe('computeMods', () => {

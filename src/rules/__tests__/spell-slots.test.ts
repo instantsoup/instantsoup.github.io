@@ -75,6 +75,21 @@ describe('calculateSpellSlots (Wizard)', () => {
   });
 });
 
+describe('calculateSpellSlots (Paladin, a partial caster)', () => {
+  it('has no spell slots at levels 1-3 (casting starts at level 4)', () => {
+    const slots = calculateSpellSlots(levels(Array(3).fill('Paladin')), BASE_SCORES);
+    expect(Object.keys(slots)).toHaveLength(0);
+  });
+
+  it('level 4 with WIS 12 (+1) grants a bonus 1st-level slot with 0 base', () => {
+    const scores: Scores = { ...BASE_SCORES, wis: 12 };
+    const slots = calculateSpellSlots(levels(Array(4).fill('Paladin')), scores);
+    // Paladin level-4 row: 0 base 1st-level slots; bonus for mod=1 at spell level 1 is 1
+    expect(slots['1']).toBe(1);
+    expect(slots['0']).toBeUndefined(); // cantrips are inaccessible for Paladin
+  });
+});
+
 describe('calculateSpellSlots (Wizard + Tainted Scholar)', () => {
   it('Wizard 5 / Tainted Scholar 3 gives effective level 8 slots', () => {
     const wizard8 = calculateSpellSlots(levels(Array(8).fill('Wizard')), BASE_SCORES);
