@@ -13,5 +13,10 @@
     "types": ["vitest/globals"],
     "useUnknownInCatchVariables": true
   },
-  "include": ["src", "scripts/convert-feats.mjs"]
+  "include": [
+    "src",
+    "scripts/convert-feats.mjs",
+    "scripts/ingest-rulebook.mts",
+    "scripts/ambient.d.ts"
+  ]
 }

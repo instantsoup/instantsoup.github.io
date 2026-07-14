@@ -17,9 +17,10 @@ export default [
   js.configs.recommended,
   ...tseslint.configs.recommended,
 
-  // React/TS app files (browser)
+  // React/TS app files (browser), plus .mts/.cts (Node ESM/CJS TS scripts -
+  // these get Node globals from the scripts override block below)
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['**/*.{ts,tsx,mts,cts}'],
     languageOptions: {
       parser: tseslint.parser,
       parserOptions: {
@@ -113,7 +114,7 @@ export default [
   // Node CLI / scripts (e.g., scripts/*.mjs, tool configs)
   {
     files: [
-      'scripts/**/*.{js,mjs,ts}',
+      'scripts/**/*.{js,mjs,ts,mts}',
       'vite.config.*',
       'vitest.config.*',
       'eslint.config.*',

@@ -115,6 +115,17 @@ describe('IngestedSpellSchema (chunk-level, pre-source-assignment)', () => {
     const result = IngestedSpellSchema.parse(minimalSpellWithoutSource);
     expect(result.page).toBeNull();
   });
+
+  it('defaults missing descriptive-text fields to empty strings instead of failing', () => {
+    const sparse: Partial<typeof minimalSpellWithoutSource> = { ...minimalSpellWithoutSource };
+    delete sparse.components;
+    delete sparse.castingTime;
+    delete sparse.description;
+    const result = IngestedSpellSchema.parse(sparse);
+    expect(result.components).toBe('');
+    expect(result.castingTime).toBe('');
+    expect(result.description).toBe('');
+  });
 });
 
 describe('ChunkResultSchema', () => {

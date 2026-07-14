@@ -1,32 +1,50 @@
 #!/usr/bin/env node
+/// <reference types="node" />
 /**
- * ingest-rulebook.mjs
+ * ingest-rulebook.mts
  *
  * Extracts spells, classes, feats, races, and items from a D&D 3.5e PDF rulebook
  * and writes structured JSON to src/data/rulebooks/<slug>.json.
  *
  * Usage:
- *   node scripts/ingest-rulebook.mjs <path-to-pdf> [--abbr ABBR] [--name "Full Name"]
+ *   node scripts/ingest-rulebook.mts <path-to-pdf> [--abbr ABBR] [--name "Full Name"]
  *
  * Example:
- *   node scripts/ingest-rulebook.mjs "Books/spell_compendium.pdf" --abbr SC --name "Spell Compendium"
+ *   node scripts/ingest-rulebook.mts "Books/spell_compendium.pdf" --abbr SC --name "Spell Compendium"
  *
  * Requirements:
- *   npm install pdf-parse @anthropic-ai/sdk zod  (one-time setup, dev only)
+ *   npm install pdf-parse @anthropic-ai/sdk  (one-time setup, dev only)
  *
  * Env:
  *   ANTHROPIC_API_KEY  must be set
  *
- * Output shape is compatible with the rules engine:
- *   - Spell.levels keys match D&D 3.5e class spell-list keys ("Sor/Wiz", "Clr", etc.)
- *   - Class entries include `advancesSpellcastingOf` for prestige classes that grant
- *     caster level advancement, which the rules engine uses to compute effective caster level.
+ * Output conforms exactly to src/types/rulebook.ts's RulebookFileSchema, which
+ * is the same schema shared with src/data/rulebook-loader.ts. In particular:
+ *   - each spell fully conforms to the app's real SpellSchema (src/types/spell.ts),
+ *     including a `source: { abbr, page }` object - not a script-local shape
+ *   - class entries include `advancesSpellcastingOf` for prestige classes that grant
+ *     caster level advancement, which the rules engine uses to compute effective
+ *     caster level, plus `hasDomains`/`spellListKey` for other rule-variant hooks
+ *   - the script never writes a file that doesn't pass RulebookFileSchema.parse()
  */
 
-import { createRequire } from 'module';
 import fs from 'fs';
+import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { z } from 'zod';
+
+import { ClassProgressionSchema } from '../src/types/class-progression.ts';
+import {
+  ChunkResultSchema,
+  type IngestedSpell,
+  IngestedSpellSchema,
+  RulebookFeatSchema,
+  RulebookFileSchema,
+  RulebookItemSchema,
+  RulebookRaceSchema,
+} from '../src/types/rulebook.ts';
+import { SourceAbbrev } from '../src/types/spell.ts';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -38,14 +56,14 @@ const OUT_DIR = path.join(ROOT, 'src', 'data', 'rulebooks');
 const args = process.argv.slice(2);
 if (args.length === 0 || args[0] === '--help') {
   console.log(
-    `Usage: node scripts/ingest-rulebook.mjs <pdf-path> [--abbr ABBR] [--name "Book Name"]`,
+    `Usage: node scripts/ingest-rulebook.mts <pdf-path> [--abbr ABBR] [--name "Book Name"]`,
   );
   process.exit(0);
 }
 
 const pdfPath = args[0];
-let abbr = null;
-let bookName = null;
+let abbr: string | null = null;
+let bookName: string | null = null;
 for (let i = 1; i < args.length; i++) {
   if (args[i] === '--abbr') abbr = args[++i];
   if (args[i] === '--name') bookName = args[++i];
@@ -61,9 +79,30 @@ if (!process.env.ANTHROPIC_API_KEY) {
   process.exit(1);
 }
 
+// Fail fast, before any PDF/API work: every spell's source.abbr must be a
+// recognized sourcebook abbreviation or every spell in the book fails
+// load-time validation in rulebook-loader.ts.
+if (abbr && !SourceAbbrev.safeParse(abbr).success) {
+  console.error(
+    `Error: "--abbr ${abbr}" is not a recognized sourcebook abbreviation.\n` +
+      `Add it to src/data/sourcebook-abbrevs.json first, then re-run this script.`,
+  );
+  process.exit(1);
+}
+
 // ── Load dependencies ────────────────────────────────────────────────────────
 
-let pdfParse, Anthropic, z;
+let pdfParse: (buf: Buffer) => Promise<{ text: string; numpages: number }>;
+let Anthropic: new (opts: { apiKey: string }) => {
+  messages: {
+    create: (opts: {
+      model: string;
+      max_tokens: number;
+      system: string;
+      messages: Array<{ role: string; content: string }>;
+    }) => Promise<{ content: Array<{ text?: string }>; stop_reason: string }>;
+  };
+};
 try {
   pdfParse = require('pdf-parse');
 } catch {
@@ -72,16 +111,9 @@ try {
 }
 try {
   const mod = await import('@anthropic-ai/sdk');
-  Anthropic = mod.default ?? mod.Anthropic;
+  Anthropic = (mod.default ?? mod.Anthropic) as typeof Anthropic;
 } catch {
   console.error('@anthropic-ai/sdk not found. Run: npm install @anthropic-ai/sdk');
-  process.exit(1);
-}
-try {
-  const mod = await import('zod');
-  z = mod.z ?? mod.default;
-} catch {
-  console.error('zod not found. Run: npm install zod');
   process.exit(1);
 }
 
@@ -89,80 +121,12 @@ const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 // ── Slugify ──────────────────────────────────────────────────────────────────
 
-function slugify(str) {
+function slugify(str: string): string {
   return str
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
 }
-
-// ── Validation schemas (mirrors the rules engine's expected shapes) ───────────
-
-const SpellSchema = z.object({
-  name: z.string().min(1),
-  school: z.string().min(1),
-  subschool: z.string().nullable().optional(),
-  descriptor: z.string().nullable().optional(),
-  levels: z.record(z.string(), z.number()).default({}),
-  components: z.string().optional(),
-  castingTime: z.string().optional(),
-  range: z.string().optional(),
-  duration: z.string().optional(),
-  savingThrow: z.string().optional(),
-  spellResistance: z.string().optional(),
-  description: z.string().optional(),
-});
-
-const ClassSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  hitDie: z.number().int().positive(),
-  babProgression: z.enum(['high', 'medium', 'low']),
-  fortitudeProgression: z.enum(['good', 'poor']),
-  reflexProgression: z.enum(['good', 'poor']),
-  willProgression: z.enum(['good', 'poor']),
-  skillPointsPerLevel: z.number().int().nonnegative(),
-  spellcastingAbility: z.enum(['int', 'wis', 'cha']).nullable().default(null),
-  castingType: z.enum(['prepared', 'spontaneous']).nullable().default(null),
-  // Key rules-engine field: prestige class caster level advancement
-  advancesSpellcastingOf: z.string().nullable().default(null),
-  classSkills: z.array(z.string()).default([]),
-  spellSlotsPerDay: z.array(z.array(z.number())).nullable().default(null),
-});
-
-const FeatSchema = z.object({
-  name: z.string().min(1),
-  type: z.string().optional(),
-  prerequisites: z.string().optional(),
-  benefit: z.string().optional(),
-  special: z.string().optional(),
-});
-
-const RaceSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  abilityMods: z.record(z.string(), z.number()).default({}),
-  size: z.string().optional(),
-  speed: z.number().optional(),
-  racialTraits: z.array(z.string()).default([]),
-});
-
-const ItemSchema = z.object({
-  name: z.string().min(1),
-  type: z.string().optional(),
-  cost: z.string().optional(),
-  weight: z.number().optional(),
-  description: z.string().optional(),
-  properties: z.string().optional(),
-});
-
-const ChunkResultSchema = z.object({
-  spells: z.array(SpellSchema).default([]),
-  classes: z.array(ClassSchema).default([]),
-  feats: z.array(FeatSchema).default([]),
-  races: z.array(RaceSchema).default([]),
-  items: z.array(ItemSchema).default([]),
-});
 
 // ── Extract text from PDF ────────────────────────────────────────────────────
 
@@ -173,21 +137,33 @@ const fullText = pdfData.text;
 const pageCount = pdfData.numpages;
 
 if (!bookName) bookName = path.basename(pdfPath, path.extname(pdfPath)).replace(/[-_]/g, ' ');
-if (!abbr)
+if (!abbr) {
   abbr = bookName
     .split(/\s+/)
     .map((w) => w[0])
     .join('')
     .toUpperCase()
     .slice(0, 4);
+  if (!SourceAbbrev.safeParse(abbr).success) {
+    console.error(
+      `Error: no --abbr given and the derived abbreviation "${abbr}" is not in ` +
+        `src/data/sourcebook-abbrevs.json. Pass --abbr explicitly.`,
+    );
+    process.exit(1);
+  }
+}
+const abbrValue = abbr;
+const bookNameValue = bookName;
 
-const slug = slugify(bookName);
-console.log(`Book: "${bookName}" (${abbr}), ${pageCount} pages, ${fullText.length} chars`);
+const slug = slugify(bookNameValue);
+console.log(
+  `Book: "${bookNameValue}" (${abbrValue}), ${pageCount} pages, ${fullText.length} chars`,
+);
 
 // ── Chunk text ───────────────────────────────────────────────────────────────
 
 const CHUNK_CHARS = 80000; // ~20k tokens per chunk
-const chunks = [];
+const chunks: string[] = [];
 for (let i = 0; i < fullText.length; i += CHUNK_CHARS) {
   chunks.push(fullText.slice(i, i + CHUNK_CHARS));
 }
@@ -199,8 +175,8 @@ const SYSTEM = `You are a D&D 3.5e rules expert extracting structured game data 
 Extract only what is clearly present in the provided text. Do not invent or guess.
 Return valid JSON only — no prose, no markdown fences, no code blocks.`;
 
-function chunkPrompt(chunk, chunkIdx, totalChunks) {
-  return `This is chunk ${chunkIdx + 1} of ${totalChunks} from the rulebook "${bookName}" (abbreviation: ${abbr}).
+function chunkPrompt(chunk: string, chunkIdx: number, totalChunks: number): string {
+  return `This is chunk ${chunkIdx + 1} of ${totalChunks} from the rulebook "${bookNameValue}" (abbreviation: ${abbrValue}).
 
 Extract ALL of the following that appear in this chunk:
 
@@ -209,7 +185,8 @@ Extract ALL of the following that appear in this chunk:
   "name": string,
   "school": string (e.g. "Evocation"),
   "subschool": string|null,
-  "descriptor": string|null (e.g. "Fire"),
+  "descriptor": string[] (e.g. ["Fire"]; empty array if the spell has no descriptors),
+  "page": number|null (the page number within this book where this spell is printed, if you can determine it; null if not),
   "levels": { "<classKey>": <level> },   // class keys: "Sor/Wiz", "Clr", "Drd", "Brd", "Pal", "Rgr", "Arc", "Div"
   "components": string,
   "castingTime": string,
@@ -223,7 +200,6 @@ Extract ALL of the following that appear in this chunk:
 2. CLASSES (base or prestige) — one object per class:
 {
   "name": string,
-  "description": string,
   "hitDie": number (e.g. 6, 8, 10, 12),
   "babProgression": "high"|"medium"|"low",
   "fortitudeProgression": "good"|"poor",
@@ -233,6 +209,8 @@ Extract ALL of the following that appear in this chunk:
   "spellcastingAbility": "int"|"wis"|"cha"|null,
   "castingType": "prepared"|"spontaneous"|null,
   "advancesSpellcastingOf": string|null,  // CRITICAL: for prestige classes that grant "+1 caster level" advancement, set this to the BASE class name they advance (e.g. "Wizard", "Cleric"). null for base classes or PrCs that don't advance casting.
+  "hasDomains": boolean,  // true only for classes that grant Cleric-style domain spell slots
+  "spellListKey": string|null,  // the spell-list key this class draws from (e.g. "Sor/Wiz", "Clr"); null if non-caster
   "classSkills": [string],
   "spellSlotsPerDay": null  // leave null unless you have the full 20-row slot table; do not guess
 }
@@ -281,8 +259,16 @@ ${chunk}`;
 
 // ── Call Claude API per chunk ─────────────────────────────────────────────────
 
-const results = { spells: [], classes: [], feats: [], races: [], items: [] };
-const validationWarnings = [];
+type Results = {
+  spells: IngestedSpell[];
+  classes: z.infer<typeof ChunkResultSchema>['classes'];
+  feats: z.infer<typeof ChunkResultSchema>['feats'];
+  races: z.infer<typeof ChunkResultSchema>['races'];
+  items: z.infer<typeof ChunkResultSchema>['items'];
+};
+
+const results: Results = { spells: [], classes: [], feats: [], races: [], items: [] };
+const validationWarnings: Array<{ chunk: number; count: number }> = [];
 
 for (let i = 0; i < chunks.length; i++) {
   console.log(`\nProcessing chunk ${i + 1}/${chunks.length}…`);
@@ -300,16 +286,15 @@ for (let i = 0; i < chunks.length; i++) {
       .replace(/\n?```$/, '')
       .trim();
 
-    let parsed;
+    let parsed: unknown;
     try {
       parsed = JSON.parse(json);
     } catch (e) {
-      console.error(`  Chunk ${i + 1}: JSON parse error — ${e.message}`);
+      console.error(`  Chunk ${i + 1}: JSON parse error — ${(e as Error).message}`);
       console.error(`  Raw response (first 500 chars): ${raw.slice(0, 500)}`);
       continue;
     }
 
-    // Validate with Zod if requested or always at the chunk level
     const validated = ChunkResultSchema.safeParse(parsed);
     if (!validated.success) {
       const issues = validated.error.issues
@@ -321,44 +306,43 @@ for (let i = 0; i < chunks.length; i++) {
       for (const issue of issues) console.warn(`    - ${issue}`);
       validationWarnings.push({ chunk: i + 1, count: validated.error.issues.length });
 
-      // Use the partial data that did parse correctly
-      for (const key of Object.keys(results)) {
-        if (Array.isArray(parsed[key])) {
-          // Filter to only valid entries
-          const valid = [];
-          for (const item of parsed[key]) {
-            const schema = {
-              spells: SpellSchema,
-              classes: ClassSchema,
-              feats: FeatSchema,
-              races: RaceSchema,
-              items: ItemSchema,
-            }[key];
-            const r = schema?.safeParse(item);
-            if (r?.success) valid.push(r.data);
-          }
-          results[key].push(...valid);
+      // Fall back to validating each entry individually so one bad entry in a
+      // chunk doesn't discard every entry of that type from the chunk.
+      const parsedObj = parsed as Record<string, unknown>;
+      const schemas = {
+        spells: IngestedSpellSchema,
+        classes: ClassProgressionSchema,
+        feats: RulebookFeatSchema,
+        races: RulebookRaceSchema,
+        items: RulebookItemSchema,
+      } as const;
+      for (const key of Object.keys(results) as Array<keyof Results>) {
+        const arr = parsedObj[key];
+        if (!Array.isArray(arr)) continue;
+        for (const item of arr) {
+          const r = schemas[key].safeParse(item);
+          if (r.success) (results[key] as unknown[]).push(r.data);
         }
       }
     } else {
-      for (const key of Object.keys(results)) {
-        results[key].push(...(validated.data[key] ?? []));
+      for (const key of Object.keys(results) as Array<keyof Results>) {
+        (results[key] as unknown[]).push(...validated.data[key]);
       }
     }
 
     const counts = Object.entries(results)
-      .map(([k, v]) => `${v.length} ${k}`)
+      .map(([k, v]) => `${(v as unknown[]).length} ${k}`)
       .join(', ');
     console.log(`  Chunk ${i + 1} done. Running totals: ${counts}`);
   } catch (err) {
-    console.error(`  Chunk ${i + 1} failed: ${err.message}`);
+    console.error(`  Chunk ${i + 1} failed: ${(err as Error).message}`);
   }
 }
 
 // ── Deduplicate by name ───────────────────────────────────────────────────────
 
-function dedupe(arr) {
-  const seen = new Set();
+function dedupe<T extends { name?: string }>(arr: T[]): T[] {
+  const seen = new Set<string>();
   return arr.filter((item) => {
     const key = item.name?.toLowerCase();
     if (!key || seen.has(key)) return false;
@@ -367,10 +351,10 @@ function dedupe(arr) {
   });
 }
 
-for (const key of Object.keys(results)) {
-  const before = results[key].length;
-  results[key] = dedupe(results[key]);
-  const dupes = before - results[key].length;
+for (const key of Object.keys(results) as Array<keyof Results>) {
+  const before = (results[key] as unknown[]).length;
+  (results[key] as unknown[]) = dedupe(results[key] as Array<{ name?: string }>);
+  const dupes = before - (results[key] as unknown[]).length;
   if (dupes > 0) console.log(`  Deduped ${dupes} duplicate ${key}`);
 }
 
@@ -384,19 +368,41 @@ if (advancingClasses.length > 0) {
   }
 }
 
-// ── Build final output ────────────────────────────────────────────────────────
+// ── Assign each spell's real `source` object (Decision B: conform to SpellSchema) ─
+
+const finalSpells = results.spells.map(({ page, ...spell }) => ({
+  ...spell,
+  source: { abbr: abbrValue, page: page ?? null },
+}));
+
+// ── Build and validate final output ───────────────────────────────────────────
 
 const output = {
-  name: bookName,
-  abbreviation: abbr,
+  name: bookNameValue,
+  abbreviation: abbrValue,
   slug,
   pageCount,
   extractedAt: new Date().toISOString(),
-  ...results,
+  spells: finalSpells,
+  classes: results.classes,
+  feats: results.feats,
+  races: results.races,
+  items: results.items,
 };
 
+const finalValidation = RulebookFileSchema.safeParse(output);
+if (!finalValidation.success) {
+  console.error(
+    `\nError: extracted output does not conform to RulebookFileSchema. This file was NOT written.`,
+  );
+  for (const issue of finalValidation.error.issues.slice(0, 20)) {
+    console.error(`  - ${issue.path.join('.')}: ${issue.message}`);
+  }
+  process.exit(1);
+}
+
 const counts = Object.entries(results)
-  .map(([k, v]) => `${v.length} ${k}`)
+  .map(([k, v]) => `${(v as unknown[]).length} ${k}`)
   .join(', ');
 console.log(`\nExtraction complete: ${counts}`);
 
@@ -410,9 +416,11 @@ if (validationWarnings.length > 0) {
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 const outPath = path.join(OUT_DIR, `${slug}.json`);
-fs.writeFileSync(outPath, JSON.stringify(output, null, 2));
+fs.writeFileSync(outPath, JSON.stringify(finalValidation.data, null, 2));
 console.log(`\nWritten to: ${outPath}`);
 console.log('\nNext steps:');
 console.log('  1. Review extracted data, especially advancesSpellcastingOf on classes');
-console.log('  2. Copy class entries to src/data/class-progressions.json if needed');
+console.log(
+  '  2. Run node scripts/merge-rulebook-classes.mts to review/merge class entries into src/data/class-progressions.json',
+);
 console.log('  3. npm run build to include the new spell/feat data\n');

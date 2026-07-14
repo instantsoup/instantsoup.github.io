@@ -18,9 +18,22 @@ import { SpellSchema } from './spell.ts';
  * doesn't know the book's source abbreviation (the script injects that
  * afterward from --abbr), so `page` is a bare nullable number here instead
  * of the full `{ abbr, page }` object the app's SpellSchema requires.
+ *
+ * SpellSchema's descriptive-text fields (components, castingTime, range,
+ * duration, savingThrow, spellResistance, description) are required,
+ * non-empty-optional strings there, but extraction from real rulebook text
+ * sometimes misses one - default those to '' here rather than dropping the
+ * whole spell for one missing field.
  */
 export const IngestedSpellSchema = SpellSchema.omit({ source: true }).extend({
   page: z.number().int().positive().nullable().optional().default(null),
+  components: z.string().optional().default(''),
+  castingTime: z.string().optional().default(''),
+  range: z.string().optional().default(''),
+  duration: z.string().optional().default(''),
+  savingThrow: z.string().optional().default(''),
+  spellResistance: z.string().optional().default(''),
+  description: z.string().optional().default(''),
 });
 export type IngestedSpell = z.infer<typeof IngestedSpellSchema>;
 
