@@ -101,5 +101,12 @@ export const RulebookFileSchema = z.object({
   feats: z.array(RulebookFeatSchema).default([]),
   races: z.array(RulebookRaceSchema).default([]),
   items: z.array(RulebookItemSchema).default([]),
+  /**
+   * 1-based indices of text chunks the ingest script couldn't extract after
+   * retrying (unparseable model output, or still too large after a
+   * max_tokens split-and-retry). Absent/empty means full coverage. Purely
+   * informational for the operator - the app doesn't read this field.
+   */
+  discardedChunks: z.array(z.number().int().positive()).optional().default([]),
 });
 export type RulebookFile = z.infer<typeof RulebookFileSchema>;

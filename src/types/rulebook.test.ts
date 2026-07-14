@@ -70,6 +70,17 @@ describe('RulebookFileSchema', () => {
     expect(result.feats).toEqual([]);
     expect(result.races).toEqual([]);
     expect(result.items).toEqual([]);
+    expect(result.discardedChunks).toEqual([]);
+  });
+
+  it('accepts a discardedChunks array recording incomplete extraction coverage', () => {
+    const result = RulebookFileSchema.parse({
+      name: 'Partial Book',
+      abbreviation: 'PHB',
+      slug: 'partial-book',
+      discardedChunks: [3, 7],
+    });
+    expect(result.discardedChunks).toEqual([3, 7]);
   });
 
   it('rejects a spell missing the required source.abbr (the app Spell contract)', () => {

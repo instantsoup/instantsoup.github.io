@@ -45,6 +45,7 @@ import {
   RulebookRaceSchema,
 } from '../src/types/rulebook.ts';
 import { SourceAbbrev } from '../src/types/spell.ts';
+import { chunkText, splitChunkInHalf } from './lib/chunk.ts';
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -163,11 +164,12 @@ console.log(
 // ── Chunk text ───────────────────────────────────────────────────────────────
 
 const CHUNK_CHARS = 80000; // ~20k tokens per chunk
-const chunks: string[] = [];
-for (let i = 0; i < fullText.length; i += CHUNK_CHARS) {
-  chunks.push(fullText.slice(i, i + CHUNK_CHARS));
-}
-console.log(`Split into ${chunks.length} chunk(s) for processing`);
+// Overlap so an entry (spell, class, etc.) whose text straddles a chunk
+// boundary appears whole in at least one chunk; the name-based dedupe step
+// below absorbs the resulting duplicate extraction.
+const OVERLAP_CHARS = 6000;
+const chunks = chunkText(fullText, CHUNK_CHARS, OVERLAP_CHARS);
+console.log(`Split into ${chunks.length} chunk(s) for processing (${OVERLAP_CHARS}-char overlap)`);
 
 // ── Build extraction prompt ───────────────────────────────────────────────────
 
@@ -267,76 +269,134 @@ type Results = {
   items: z.infer<typeof ChunkResultSchema>['items'];
 };
 
+const ITEM_SCHEMAS = {
+  spells: IngestedSpellSchema,
+  classes: ClassProgressionSchema,
+  feats: RulebookFeatSchema,
+  races: RulebookRaceSchema,
+  items: RulebookItemSchema,
+} as const;
+
+function mergeInto(target: Results, source: Results) {
+  for (const key of Object.keys(target) as Array<keyof Results>) {
+    (target[key] as unknown[]).push(...(source[key] as unknown[]));
+  }
+}
+
+/** Validates a parsed chunk-response object, tolerating entry-level failures. */
+function validateChunkResponse(parsed: unknown, label: string): Results {
+  const out: Results = { spells: [], classes: [], feats: [], races: [], items: [] };
+  const validated = ChunkResultSchema.safeParse(parsed);
+  if (validated.success) {
+    mergeInto(out, validated.data);
+    return out;
+  }
+
+  const issues = validated.error.issues.slice(0, 5).map((e) => `${e.path.join('.')}: ${e.message}`);
+  console.warn(`  ${label}: ${validated.error.issues.length} validation issue(s). First 5:`);
+  for (const issue of issues) console.warn(`    - ${issue}`);
+
+  // Fall back to validating each entry individually so one bad entry doesn't
+  // discard every entry of that type from this response.
+  const parsedObj = (parsed ?? {}) as Record<string, unknown>;
+  for (const key of Object.keys(out) as Array<keyof Results>) {
+    const arr = parsedObj[key];
+    if (!Array.isArray(arr)) continue;
+    for (const item of arr) {
+      const r = ITEM_SCHEMAS[key].safeParse(item);
+      if (r.success) (out[key] as unknown[]).push(r.data);
+    }
+  }
+  return out;
+}
+
+const MAX_SPLIT_DEPTH = 2; // 80k chars can split down to ~20k chars before giving up
+
+/**
+ * Requests extraction for a single piece of chunk text. On a max_tokens stop
+ * reason, splits the text in half and recursively extracts each half
+ * (up to MAX_SPLIT_DEPTH), merging the results. Throws on JSON parse failure
+ * or API error so the caller can retry.
+ */
+async function extractChunk(
+  text: string,
+  chunkIdx: number,
+  totalChunks: number,
+  label: string,
+  depth = 0,
+): Promise<Results> {
+  const response = await client.messages.create({
+    model: 'claude-opus-4-8',
+    max_tokens: 8192,
+    system: SYSTEM,
+    messages: [{ role: 'user', content: chunkPrompt(text, chunkIdx, totalChunks) }],
+  });
+
+  if (response.stop_reason === 'max_tokens' && depth < MAX_SPLIT_DEPTH) {
+    console.warn(`  ${label}: hit max_tokens, splitting in half and retrying (depth ${depth + 1})`);
+    const [first, second] = splitChunkInHalf(text);
+    const merged: Results = { spells: [], classes: [], feats: [], races: [], items: [] };
+    mergeInto(merged, await extractChunk(first, chunkIdx, totalChunks, `${label}a`, depth + 1));
+    mergeInto(merged, await extractChunk(second, chunkIdx, totalChunks, `${label}b`, depth + 1));
+    return merged;
+  }
+
+  const raw = response.content[0]?.text ?? '';
+  const json = raw
+    .replace(/^```(?:json)?\n?/, '')
+    .replace(/\n?```$/, '')
+    .trim();
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(json);
+  } catch (e) {
+    console.error(`  ${label}: JSON parse error — ${(e as Error).message}`);
+    console.error(`  Raw response (first 500 chars): ${raw.slice(0, 500)}`);
+    throw e;
+  }
+
+  return validateChunkResponse(parsed, label);
+}
+
 const results: Results = { spells: [], classes: [], feats: [], races: [], items: [] };
-const validationWarnings: Array<{ chunk: number; count: number }> = [];
+const discardedChunks: number[] = [];
 
 for (let i = 0; i < chunks.length; i++) {
-  console.log(`\nProcessing chunk ${i + 1}/${chunks.length}…`);
-  try {
-    const response = await client.messages.create({
-      model: 'claude-opus-4-8',
-      max_tokens: 8192,
-      system: SYSTEM,
-      messages: [{ role: 'user', content: chunkPrompt(chunks[i], i, chunks.length) }],
-    });
-    const raw = response.content[0]?.text ?? '';
-    // Strip markdown code fences if present
-    const json = raw
-      .replace(/^```(?:json)?\n?/, '')
-      .replace(/\n?```$/, '')
-      .trim();
+  const chunkNum = i + 1;
+  console.log(`\nProcessing chunk ${chunkNum}/${chunks.length}…`);
 
-    let parsed: unknown;
+  let chunkResults: Results | null = null;
+  for (let attempt = 1; attempt <= 2 && chunkResults === null; attempt++) {
     try {
-      parsed = JSON.parse(json);
-    } catch (e) {
-      console.error(`  Chunk ${i + 1}: JSON parse error — ${(e as Error).message}`);
-      console.error(`  Raw response (first 500 chars): ${raw.slice(0, 500)}`);
-      continue;
-    }
-
-    const validated = ChunkResultSchema.safeParse(parsed);
-    if (!validated.success) {
-      const issues = validated.error.issues
-        .slice(0, 5)
-        .map((e) => `${e.path.join('.')}: ${e.message}`);
-      console.warn(
-        `  Chunk ${i + 1}: ${validated.error.issues.length} validation issue(s). First 5:`,
+      chunkResults = await extractChunk(chunks[i], i, chunks.length, `Chunk ${chunkNum}`);
+    } catch (err) {
+      const willRetry = attempt === 1;
+      console.error(
+        `  Chunk ${chunkNum} attempt ${attempt} failed: ${(err as Error).message}${
+          willRetry ? ' — retrying once' : ' — giving up on this chunk'
+        }`,
       );
-      for (const issue of issues) console.warn(`    - ${issue}`);
-      validationWarnings.push({ chunk: i + 1, count: validated.error.issues.length });
-
-      // Fall back to validating each entry individually so one bad entry in a
-      // chunk doesn't discard every entry of that type from the chunk.
-      const parsedObj = parsed as Record<string, unknown>;
-      const schemas = {
-        spells: IngestedSpellSchema,
-        classes: ClassProgressionSchema,
-        feats: RulebookFeatSchema,
-        races: RulebookRaceSchema,
-        items: RulebookItemSchema,
-      } as const;
-      for (const key of Object.keys(results) as Array<keyof Results>) {
-        const arr = parsedObj[key];
-        if (!Array.isArray(arr)) continue;
-        for (const item of arr) {
-          const r = schemas[key].safeParse(item);
-          if (r.success) (results[key] as unknown[]).push(r.data);
-        }
-      }
-    } else {
-      for (const key of Object.keys(results) as Array<keyof Results>) {
-        (results[key] as unknown[]).push(...validated.data[key]);
-      }
     }
-
-    const counts = Object.entries(results)
-      .map(([k, v]) => `${(v as unknown[]).length} ${k}`)
-      .join(', ');
-    console.log(`  Chunk ${i + 1} done. Running totals: ${counts}`);
-  } catch (err) {
-    console.error(`  Chunk ${i + 1} failed: ${(err as Error).message}`);
   }
+
+  if (chunkResults === null) {
+    discardedChunks.push(chunkNum);
+    continue;
+  }
+
+  mergeInto(results, chunkResults);
+  const counts = Object.entries(results)
+    .map(([k, v]) => `${(v as unknown[]).length} ${k}`)
+    .join(', ');
+  console.log(`  Chunk ${chunkNum} done. Running totals: ${counts}`);
+}
+
+if (discardedChunks.length > 0) {
+  console.warn(
+    `\n${discardedChunks.length} chunk(s) could not be extracted after retrying: ${discardedChunks.join(', ')}. ` +
+      `Coverage of this book is incomplete; the discarded chunk numbers are recorded in the output file.`,
+  );
 }
 
 // ── Deduplicate by name ───────────────────────────────────────────────────────
@@ -388,6 +448,7 @@ const output = {
   feats: results.feats,
   races: results.races,
   items: results.items,
+  discardedChunks,
 };
 
 const finalValidation = RulebookFileSchema.safeParse(output);
@@ -405,12 +466,6 @@ const counts = Object.entries(results)
   .map(([k, v]) => `${(v as unknown[]).length} ${k}`)
   .join(', ');
 console.log(`\nExtraction complete: ${counts}`);
-
-if (validationWarnings.length > 0) {
-  console.warn(
-    `\nValidation warnings occurred in ${validationWarnings.length} chunk(s). Some entries may have been skipped.`,
-  );
-}
 
 // ── Write output ──────────────────────────────────────────────────────────────
 
