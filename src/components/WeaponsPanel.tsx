@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { formatAttacks, getIterativeAttacks } from '../lib/progressions';
+import { formatAttacks, getIterativeAttacks } from '../rules/character';
 import type { Weapon } from '../schema/schema';
 import type { Scores } from '../types';
 
