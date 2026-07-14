@@ -10,6 +10,7 @@ import {
   heavyLoad as getHeavyLoad,
   lightLoad as getLightLoad,
   mediumLoad as getMediumLoad,
+  spellDC,
   xpForLevel,
 } from '../rules';
 import type {
@@ -220,7 +221,7 @@ export function PlaySheet({
   const iterativeBABStr = formatAttacks(getIterativeAttacks(bab, bab));
 
   const spellAbility = getPrimarySpellcastingAbility(levels);
-  const spellDC = spellAbility !== null ? 10 + mods[spellAbility as keyof Scores] : null;
+  const baseSpellDC = spellAbility !== null ? spellDC(0, mods[spellAbility as keyof Scores]) : null;
   const spellDCTooltip =
     spellAbility !== null
       ? `10 base\n${spellAbility.toUpperCase()}: ${fmt(mods[spellAbility as keyof Scores])}\n(add spell level for per-spell DC)`
@@ -374,10 +375,10 @@ export function PlaySheet({
             <span className="play-sheet__stat-value">{combatStats.spellResistance}</span>
           </div>
         )}
-        {spellDC !== null && (
+        {baseSpellDC !== null && (
           <div className="play-sheet__stat" title={spellDCTooltip}>
             <span className="play-sheet__stat-label">Spell DC</span>
-            <span className="play-sheet__stat-value">{spellDC}+</span>
+            <span className="play-sheet__stat-value">{baseSpellDC}+</span>
           </div>
         )}
         <div
