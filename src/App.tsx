@@ -8,14 +8,13 @@ import { FlawsPanel } from './components/FlawsPanel';
 import { LanguagesPanel } from './components/LanguagesPanel';
 import { LeftSidebar } from './components/LeftSidebar';
 import { LevelsPanel } from './components/LevelsPanel';
-import { MemorizedSpellsPanel } from './components/MemorizedSpellsPanel';
 import { NotesPanel } from './components/NotesPanel';
 import { PanelSection } from './components/PanelSection';
 import { PlaySheet } from './components/PlaySheet';
-import { PreparedSpellsPanel } from './components/PreparedSpellsPanel';
 import { RaceSelector } from './components/RaceSelector';
 import { SkillsPanel } from './components/SkillsPanel';
 import { SpellbookPanel } from './components/SpellbookPanel';
+import { SpellPreparation } from './components/SpellPreparation';
 import { SpellSlotsPanel } from './components/SpellSlotsPanel';
 import { SpellsSummary } from './components/SpellsSummary';
 import { type Tab, TabNav } from './components/TabNav';
@@ -28,15 +27,21 @@ import { useCharacter } from './hooks/useCharacter';
 import {
   calculateEffectiveSlots,
   calculateTotalBAB,
+  classListCandidates,
   getCasterSummary,
   getEncumbranceSummary,
+  getSpellbookItems,
+  isWizardCharacter,
+  resolveSlotMaximums,
+  spellbookCandidates,
+  wizardClassLevels,
   xpForLevel,
 } from './rules';
-import { isWizardCharacter } from './rules/wizard/levels';
 
 export function App() {
   const [tab, setTab] = useState<Tab>('character');
   const [mode, setMode] = useState<'build' | 'play'>('play');
+  const [wizardSpellsView, setWizardSpellsView] = useState<'prepare' | 'spellbook'>('prepare');
   const [theme, setTheme] = useState<'light' | 'dark'>(
     () => (localStorage.getItem('theme') as 'light' | 'dark') ?? 'dark',
   );
@@ -131,7 +136,6 @@ export function App() {
     memorizedSpellsUsed,
     addMemorizedSpell,
     removeMemorizedSpell,
-    clearMemorizedSpells,
     castMemorizedSpell,
     uncastMemorizedSpell,
     newDaySpells,
@@ -160,31 +164,28 @@ export function App() {
   const primaryCastingMod = primaryCaster?.castingMod;
   const isPreparedCaster = casterSummary.some((c) => c.castingType === 'prepared');
   const isWizard = isWizardCharacter(levels);
-  const accessibleSpellLevels = Object.keys(effectiveSlots);
+  const slotMaxByLevel = useMemo(
+    () => resolveSlotMaximums(combatStats.spellSlotsMax, effectiveSlots),
+    [combatStats.spellSlotsMax, effectiveSlots],
+  );
 
-  // For non-wizard prepared casters: build class spell list keyed by spell level
+  // What each prepared caster can pick from: a wizard's spellbook, otherwise the class list.
   const primaryPreparedClass = casterSummary.find((c) => c.castingType === 'prepared');
-  const classSpellsByLevel = useMemo(() => {
-    if (isWizard || !primaryPreparedClass) return {};
-    const prog = findClassProgression(primaryPreparedClass.className);
-    if (!prog?.spellListKey) return {};
-    const key = prog.spellListKey;
-    const byLevel: Record<string, { name: string; school: string; description?: string }[]> = {};
-    for (const spell of allSpells) {
-      const lvl = spell.levels[key];
-      if (lvl === undefined) continue;
-      const k = String(lvl);
-      (byLevel[k] ??= []).push({
-        name: spell.name,
-        school: spell.school,
-        description: spell.description ?? undefined,
-      });
+  const prepCandidatesByLevel = useMemo(() => {
+    if (isWizard) {
+      const items = getSpellbookItems(
+        spellbook,
+        allSpells,
+        wizardForbiddenSchools,
+        wizardClassLevels(levels) > 0,
+      );
+      return spellbookCandidates(items);
     }
-    for (const arr of Object.values(byLevel)) {
-      arr.sort((a, b) => a.name.localeCompare(b.name));
-    }
-    return byLevel;
-  }, [isWizard, primaryPreparedClass, allSpells]);
+    const listKey = primaryPreparedClass
+      ? findClassProgression(primaryPreparedClass.className)?.spellListKey
+      : undefined;
+    return listKey ? classListCandidates(allSpells, listKey) : {};
+  }, [isWizard, spellbook, wizardForbiddenSchools, levels, primaryPreparedClass]);
 
   const hasDomains = useMemo(
     () =>
@@ -479,9 +480,28 @@ export function App() {
                   updateLevelSkillRanks={updateLevelSkillRanks}
                   intModifier={mods.int}
                   wizardForbiddenSchools={wizardForbiddenSchools}
+                  spellbook={spellbook}
                   onBlur={persistLocal}
                 />
               </PanelSection>
+
+              {isWizard && (
+                <PanelSection title="Spellbook" defaultOpen>
+                  <SpellbookPanel
+                    levels={levels}
+                    intMod={mods.int}
+                    spellbook={spellbook}
+                    wizardSpecialty={wizardSpecialty}
+                    wizardForbiddenSchools={wizardForbiddenSchools}
+                    memorizedSpells={memorizedSpells}
+                    addSpellbookEntry={addSpellbookEntry}
+                    removeSpellbookEntry={removeSpellbookEntry}
+                    setWizardSpecialty={setWizardSpecialty}
+                    setWizardForbiddenSchools={setWizardForbiddenSchools}
+                    onBlur={persistLocal}
+                  />
+                </PanelSection>
+              )}
 
               <PanelSection title="Armor Class, Initiative & BAB" defaultOpen>
                 <CombatStatsPanel
@@ -506,26 +526,15 @@ export function App() {
                 />
               </PanelSection>
 
-              {isPreparedCaster && (
-                <PanelSection title="Memorized Spells" defaultOpen={false}>
-                  <MemorizedSpellsPanel
-                    memorizedSpells={memorizedSpells}
-                    accessibleLevels={accessibleSpellLevels}
-                    onAdd={addMemorizedSpell}
-                    onRemove={removeMemorizedSpell}
-                    onClearLevel={clearMemorizedSpells}
-                    onBlur={persistLocal}
-                  />
-                </PanelSection>
-              )}
-
               <PanelSection title="Feats" defaultOpen={false}>
                 <FeatsSummary levels={levels} />
               </PanelSection>
 
-              <PanelSection title="Known Spells" defaultOpen={false}>
-                <SpellsSummary levels={levels} />
-              </PanelSection>
+              {!isWizard && (
+                <PanelSection title="Known Spells" defaultOpen={false}>
+                  <SpellsSummary levels={levels} />
+                </PanelSection>
+              )}
 
               <PanelSection title="Weapons" defaultOpen={false}>
                 <WeaponsPanel
@@ -568,40 +577,73 @@ export function App() {
           {tab === 'spells' && (
             <div className="tab-content">
               {isWizard ? (
-                <SpellbookPanel
-                  levels={levels}
-                  intMod={mods.int}
-                  combatStats={combatStats}
-                  calculatedSlots={effectiveSlots}
-                  memorizedSpells={memorizedSpells}
-                  memorizedSpellsUsed={memorizedSpellsUsed}
-                  spellbook={spellbook}
-                  wizardSpecialty={wizardSpecialty}
-                  wizardForbiddenSchools={wizardForbiddenSchools}
-                  primaryCastingMod={primaryCastingMod}
-                  addMemorizedSpell={addMemorizedSpell}
-                  removeMemorizedSpell={removeMemorizedSpell}
-                  castMemorizedSpell={castMemorizedSpell}
-                  uncastMemorizedSpell={uncastMemorizedSpell}
-                  newDaySpells={newDaySpells}
-                  addSpellbookEntry={addSpellbookEntry}
-                  removeSpellbookEntry={removeSpellbookEntry}
-                  setWizardSpecialty={setWizardSpecialty}
-                  setWizardForbiddenSchools={setWizardForbiddenSchools}
-                  onBlur={persistLocal}
-                />
+                <div className="spellbook-panel">
+                  <div className="spellbook-panel__tabs">
+                    <button
+                      className={`spellbook-panel__tab${wizardSpellsView === 'prepare' ? ' spellbook-panel__tab--active' : ''}`}
+                      onClick={() => setWizardSpellsView('prepare')}
+                    >
+                      Today's Spells
+                    </button>
+                    <button
+                      className={`spellbook-panel__tab${wizardSpellsView === 'spellbook' ? ' spellbook-panel__tab--active' : ''}`}
+                      onClick={() => setWizardSpellsView('spellbook')}
+                    >
+                      My Spellbook
+                      {spellbook.length > 0 && (
+                        <span className="spellbook-panel__count">{spellbook.length}</span>
+                      )}
+                    </button>
+                  </div>
+                  <div className="spellbook-panel__body">
+                    {wizardSpellsView === 'prepare' ? (
+                      <SpellPreparation
+                        slotMax={slotMaxByLevel}
+                        memorizedSpells={memorizedSpells}
+                        memorizedSpellsUsed={memorizedSpellsUsed}
+                        candidatesByLevel={prepCandidatesByLevel}
+                        castingMod={primaryCastingMod}
+                        candidateSource="spellbook"
+                        specialty={wizardSpecialty}
+                        forbiddenSchools={wizardForbiddenSchools}
+                        onOpenSpellbook={() => setWizardSpellsView('spellbook')}
+                        addMemorizedSpell={addMemorizedSpell}
+                        removeMemorizedSpell={removeMemorizedSpell}
+                        castMemorizedSpell={castMemorizedSpell}
+                        uncastMemorizedSpell={uncastMemorizedSpell}
+                        newDaySpells={newDaySpells}
+                        onBlur={persistLocal}
+                      />
+                    ) : (
+                      <SpellbookPanel
+                        levels={levels}
+                        intMod={mods.int}
+                        spellbook={spellbook}
+                        wizardSpecialty={wizardSpecialty}
+                        wizardForbiddenSchools={wizardForbiddenSchools}
+                        memorizedSpells={memorizedSpells}
+                        addSpellbookEntry={addSpellbookEntry}
+                        removeSpellbookEntry={removeSpellbookEntry}
+                        setWizardSpecialty={setWizardSpecialty}
+                        setWizardForbiddenSchools={setWizardForbiddenSchools}
+                        onBlur={persistLocal}
+                      />
+                    )}
+                  </div>
+                </div>
               ) : (
                 <>
                   {isPreparedCaster ? (
                     <PanelSection title="Prepared Spells" defaultOpen>
-                      <PreparedSpellsPanel
-                        combatStats={combatStats}
-                        effectiveSlots={effectiveSlots}
+                      <SpellPreparation
+                        slotMax={slotMaxByLevel}
                         memorizedSpells={memorizedSpells}
                         memorizedSpellsUsed={memorizedSpellsUsed}
+                        candidatesByLevel={prepCandidatesByLevel}
                         castingMod={primaryCastingMod}
-                        classSpellsByLevel={classSpellsByLevel}
+                        candidateSource="class list"
                         hasDomains={hasDomains}
+                        zeroLevelLabel="Orisons"
                         addMemorizedSpell={addMemorizedSpell}
                         removeMemorizedSpell={removeMemorizedSpell}
                         castMemorizedSpell={castMemorizedSpell}

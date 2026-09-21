@@ -522,29 +522,78 @@
   gap: 6px;
 }
 
-.spellbook-budget {
+/* ── Cost / free-spell summary ───────────── */
+
+.spellbook-costs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.spellbook-costs__cell {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 2px;
   padding: 8px 12px;
   background: var(--clr-accent-green-bg);
   border: 1px solid var(--clr-accent-green-border);
   border-radius: 6px;
-  margin-bottom: 14px;
-  flex-wrap: wrap;
-  gap: 4px;
-}
-
-.spellbook-budget__label {
-  font-size: 13px;
-  font-weight: 600;
   color: var(--clr-accent-green-text);
 }
 
-.spellbook-budget__rates {
+.spellbook-costs__cell--total {
+  background: var(--clr-accent-amber-bg);
+  border-color: var(--clr-accent-amber-border);
+  color: var(--clr-accent-amber-text);
+}
+
+.spellbook-costs__cell--over {
+  background: var(--clr-danger-bg);
+  border-color: var(--clr-danger-border);
+  color: var(--clr-danger-border);
+}
+
+.spellbook-costs__label {
   font-size: 11px;
-  color: var(--clr-accent-green-text);
-  opacity: 0.8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.85;
+}
+
+.spellbook-costs__value {
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.spellbook-costs__sub {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.spellbook-warning {
+  margin: 8px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--clr-accent-amber-text);
+}
+
+.spellbook-forbidden-note {
+  font-size: 11px;
+  font-style: italic;
+  color: var(--clr-danger-border);
+}
+
+.spellbook-add-form__note {
+  font-size: 12px;
+  color: var(--clr-text-muted);
+}
+
+.spellbook-add-form__note p {
+  margin: 6px 0 0;
 }
 
 /* ── Add Spell Form ──────────────────────── */
@@ -801,11 +850,6 @@
   background: var(--clr-panel-open-bg);
   color: var(--clr-panel-open-fg);
   border-color: #374151;
-}
-
-[data-theme='dark'] .spellbook-budget {
-  background: #14532d33;
-  border-color: #166534;
 }
 
 [data-theme='dark'] .spellbook-specialist__editor,

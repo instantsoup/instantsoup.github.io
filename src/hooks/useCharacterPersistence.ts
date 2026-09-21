@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { ZodError } from 'zod';
 
 import { downloadJson } from '../lib/download';
@@ -15,8 +15,16 @@ export function useCharacterPersistence(
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Handlers routinely call a state setter and then persistLocal() in the same tick, when
+  // `getCurrent` still closes over the pre-update state. Saving on the next tick from a ref
+  // to the latest render's `getCurrent` persists what the user actually just did.
+  const getCurrentRef = useRef(getCurrent);
+  useLayoutEffect(() => {
+    getCurrentRef.current = getCurrent;
+  });
+
   const persistLocal = () => {
-    saveLocal(getCurrent());
+    setTimeout(() => saveLocal(getCurrentRef.current()), 0);
     setError(null);
   };
 

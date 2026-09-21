@@ -44,10 +44,29 @@ Play tabs:   character  skills  spells
 tab==='character' && mode==='build'  →  identity editing panels
 tab==='character' && mode==='play'   →  PlaySheet (compact play dashboard)
 tab==='skills'                       →  SkillsPanel readOnly
-tab==='spells'                       →  SpellSlotsPanel readOnly + SpellsSummary
+tab==='spells'                       →  wizard: SpellPreparation | SpellbookPanel (sub-tabs)
+                                        other prepared casters: SpellPreparation (class list)
+                                        everyone else: SpellSlotsPanel readOnly + SpellsSummary
 ```
 
 Mode toggle button is in `TabNav` (right-aligned pill). Always lands on `'character'` in both directions.
+
+### Spells: one spellbook, one preparation flow
+
+- **`character.spellbook`** (`SpellbookEntry[]`, `src/types/spellbook.ts`) is the single record of what a
+  wizard knows. `Level.spells` is no longer used for Wizard levels — `parseCharacter` folds legacy picks into
+  the spellbook (`foldWizardLevelSpellsIntoSpellbook`). Every non-forbidden 0-level spell is _derived_ into the
+  book (`getSpellbookItems`), never stored, and costs nothing.
+- **`SpellbookPanel`** = the book: specialist/forbidden schools, free-spell budget + gold/time totals
+  (`summarizeSpellbook`), learn form (`canAddToSpellbook` enforces school, castable-level, free budget), contents.
+  Rendered in Build (its own section) and Play (My Spellbook sub-tab).
+- **`SpellPreparation`** = daily preparation for every prepared caster (wizard candidates = spellbook, cleric/druid
+  = class list). Slot limits come from `resolveSlotMaximums` (manual override else calculated); `canPrepareSpell`
+  reserves a specialist's bonus slot for their school and rejects forbidden schools.
+- Costs live in `rules/wizard/spellbook.ts` as named constants (copy: 8 h study + 24 h scribing, 100 gp/page,
+  optional +50 gp/level borrowing fee, Spellcraft DC 15 + level; research: 1,000 gp and a week per level).
+- `persistLocal()` saves on the next tick from a ref to the latest state, so calling it right after a state
+  setter persists the new value (it used to save the pre-update state).
 
 ### Hook Composition
 
@@ -96,11 +115,11 @@ exactly the bug this layer was created to fix (see `docs/plans/rules-engine-migr
 
 Module map — import from the top-level barrel `src/rules` (re-exports all three):
 
-| Module             | Owns                                                                                |
-| ------------------ | ----------------------------------------------------------------------------------- |
-| `rules/character/` | ability scores/point-buy, BAB, saves, HP, skills, encumbrance, conditions, XP       |
-| `rules/caster/`    | caster summary/DC, effective caster level (prestige-class advancement), spell slots |
-| `rules/wizard/`    | specialist eligibility, spellbook rules, level progression                          |
+| Module             | Owns                                                                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| `rules/character/` | ability scores/point-buy, BAB, saves, HP, skills, encumbrance, conditions, XP                                                  |
+| `rules/caster/`    | caster summary/DC, effective caster level (prestige-class advancement), spell slots, daily preparation limits/candidates       |
+| `rules/wizard/`    | specialist eligibility, spellbook (free spells, copy/research gold + time, contents), level progression, legacy-save migration |
 
 Every module returns pure functions; calculation-breakdown functions return:
 
@@ -271,6 +290,8 @@ New fields: use `.optional().default(value)` for backward compatibility. Existin
 | ------------------------------------------- | ------------------------------------------------------------------- |
 | `src/App.tsx`                               | Mode/tab routing, all prop wiring                                   |
 | `src/components/PlaySheet.tsx`              | Compact play mode character tab                                     |
+| `src/components/SpellbookPanel.tsx`         | Wizard spellbook: learn spells, costs, forbidden schools, contents  |
+| `src/components/SpellPreparation.tsx`       | Daily prepare/cast/new-day for all prepared casters                 |
 | `src/components/WeaponsPanel.tsx`           | Weapon CRUD (build) and attack cards (play)                         |
 | `src/components/EquipmentPanel.tsx`         | Equipment list with weight/encumbrance                              |
 | `src/components/SkillsPanel.tsx`            | Skills list (build + play, readOnly)                                |
