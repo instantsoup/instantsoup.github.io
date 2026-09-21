@@ -39,3 +39,18 @@ export function toggleForbiddenSchool(
   }
   return current; // at cap, no change
 }
+
+/**
+ * Reconcile the forbidden-school list with the current specialty: no specialty means
+ * nothing is forbidden; otherwise drop the specialty itself and Universal (neither can
+ * be forbidden) and keep no more than the specialty allows.
+ */
+export function normalizeForbiddenSchools(
+  specialty: string | undefined,
+  forbiddenSchools: string[],
+): string[] {
+  if (specialty === undefined) return [];
+  return forbiddenSchools
+    .filter((s) => s !== specialty && canForbidSchool(s))
+    .slice(0, maxForbiddenSchools(specialty));
+}

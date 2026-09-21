@@ -198,3 +198,41 @@ describe('parseCharacter', () => {
     expect(() => parseCharacter({ version: 2, name: 'Broken' })).toThrow();
   });
 });
+
+describe('parseCharacter — wizard spell consolidation', () => {
+  const wizardLevel = (n: number, spells: string[]) => ({
+    level: n,
+    class: 'Wizard',
+    feats: [],
+    spells,
+    skillRanks: {},
+    unspentSkillPoints: 0,
+  });
+
+  it('folds legacy per-level wizard spells into the spellbook', () => {
+    const char = parseCharacter({
+      ...minimalV2,
+      levels: [wizardLevel(1, ['Sleep']), wizardLevel(2, ['Web'])],
+      spellbook: [],
+    });
+    expect(char.levels.every((l) => l.spells.length === 0)).toBe(true);
+    expect(char.spellbook.map((e) => [e.spellName, e.source])).toEqual([
+      ['Sleep', 'starting'],
+      ['Web', 'free-levelup'],
+    ]);
+  });
+
+  it('is stable when the result is parsed again', () => {
+    const first = parseCharacter({ ...minimalV2, levels: [wizardLevel(1, ['Sleep'])] });
+    const second = parseCharacter(JSON.parse(JSON.stringify(first)));
+    expect(second.spellbook).toEqual(first.spellbook);
+  });
+
+  it('defaults borrowed to false on spellbook entries saved before the field existed', () => {
+    const char = parseCharacter({
+      ...minimalV2,
+      spellbook: [{ spellName: 'Sleep', source: 'purchased', goldPaid: 100, addedAtCharLevel: 1 }],
+    });
+    expect(char.spellbook[0].borrowed).toBe(false);
+  });
+});

@@ -1,3 +1,4 @@
+import { foldWizardLevelSpellsIntoSpellbook } from '../rules/wizard/migration';
 import { type Character, CharacterSchema } from '../schema/schema';
 import { emptyScores } from '../types';
 
@@ -19,9 +20,15 @@ function migrateCharacter(raw: unknown): unknown {
   return migrated;
 }
 
-/** Migrate then validate a raw parsed-JSON value into a Character. Throws on invalid shape. */
+/**
+ * Migrate then validate a raw parsed-JSON value into a Character. Throws on invalid shape.
+ * Wizard levels' legacy per-level spell picks are folded into the spellbook here so
+ * old saves and imports converge on the single spellbook record.
+ */
 export function parseCharacter(raw: unknown): Character {
-  return CharacterSchema.parse(migrateCharacter(raw));
+  const parsed = CharacterSchema.parse(migrateCharacter(raw));
+  const folded = foldWizardLevelSpellsIntoSpellbook(parsed.levels, parsed.spellbook);
+  return { ...parsed, levels: folded.levels, spellbook: folded.spellbook };
 }
 
 function emptyCharacter(): Character {

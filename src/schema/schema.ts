@@ -4,6 +4,7 @@ import { ALIGNMENT_CODES } from '../data/alignments';
 import { CLASS_NAMES } from '../data/classes';
 import { RACE_NAMES } from '../data/races';
 import { LevelsArraySchema } from '../types/level';
+import { SpellbookEntrySchema } from '../types/spellbook';
 
 export const VERSION = 2;
 
@@ -35,17 +36,7 @@ export const ClassNameSchema = z.enum(CLASS_NAMES);
 
 export type ClassName = z.infer<typeof ClassNameSchema>;
 
-export const SpellbookEntrySchema = z.object({
-  spellName: z.string(),
-  /** How this spell was acquired. */
-  source: z.enum(['starting', 'free-levelup', 'purchased', 'researched', 'found']),
-  /** Gold paid to copy or research. 0 for free spells. */
-  goldPaid: z.number().int().min(0).default(0),
-  /** Character level when the entry was added. */
-  addedAtCharLevel: z.number().int().min(1).max(20).default(1),
-});
-
-export type SpellbookEntry = z.infer<typeof SpellbookEntrySchema>;
+export { type SpellbookEntry, SpellbookEntrySchema } from '../types/spellbook';
 
 export const CombatStatsSchema = z.object({
   currentHP: z.number().int().optional(),

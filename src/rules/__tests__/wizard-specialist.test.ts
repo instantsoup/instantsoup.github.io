@@ -4,6 +4,7 @@ import {
   canForbidSchool,
   forbiddenSchoolsComplete,
   maxForbiddenSchools,
+  normalizeForbiddenSchools,
   toggleForbiddenSchool,
 } from '../wizard/specialist';
 
@@ -82,5 +83,24 @@ describe('toggleForbiddenSchool', () => {
   it('Divination specialist cannot add a 2nd forbidden school', () => {
     const result = toggleForbiddenSchool('Illusion', ['Evocation'], 'Divination');
     expect(result).toEqual(['Evocation']); // no change
+  });
+});
+
+describe('normalizeForbiddenSchools', () => {
+  it('clears the list when there is no specialty', () => {
+    expect(normalizeForbiddenSchools(undefined, ['Evocation', 'Necromancy'])).toEqual([]);
+  });
+
+  it('drops the specialty school itself and Universal', () => {
+    expect(
+      normalizeForbiddenSchools('Evocation', ['Evocation', 'Universal', 'Necromancy']),
+    ).toEqual(['Necromancy']);
+  });
+
+  it('trims to the cap: 2 normally, 1 for Divination', () => {
+    expect(normalizeForbiddenSchools('Evocation', ['A', 'B', 'C'])).toEqual(['A', 'B']);
+    expect(normalizeForbiddenSchools('Divination', ['Evocation', 'Necromancy'])).toEqual([
+      'Evocation',
+    ]);
   });
 });

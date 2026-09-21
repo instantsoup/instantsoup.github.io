@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { RulesSpell, WizardContext } from '../types';
 import {
+  buildWizardContext,
   canAddToSpellbook,
   getLearnableSpells,
   getPreparableSpells,
@@ -67,7 +68,74 @@ describe('canAddToSpellbook', () => {
     const ctx: WizardContext = { ...BASE_CTX, effectiveWizardLevels: 1 };
     const result = canAddToSpellbook(spell, ctx);
     expect(result.eligible).toBe(false);
-    expect(result.reason).toMatch(/Requires caster level/);
+    expect(result.reason).toMatch(/Requires caster level 9/);
+  });
+
+  describe('by acquisition route', () => {
+    const teleport = makeSpell('Teleport', 'Conjuration', 5);
+    const lowLevel: WizardContext = { ...BASE_CTX, effectiveWizardLevels: 1 };
+
+    it('free spells must be of a castable level, even with the override', () => {
+      const result = canAddToSpellbook(teleport, lowLevel, {
+        source: 'free-levelup',
+        freeRemaining: 2,
+        allowAboveLevelCap: true,
+      });
+      expect(result.eligible).toBe(false);
+    });
+
+    it('researched spells must be of a castable level', () => {
+      const result = canAddToSpellbook(teleport, lowLevel, {
+        source: 'researched',
+        allowAboveLevelCap: true,
+      });
+      expect(result.eligible).toBe(false);
+    });
+
+    it('copied and found spells may exceed the cap only when asked', () => {
+      for (const source of ['purchased', 'found'] as const) {
+        expect(canAddToSpellbook(teleport, lowLevel, { source }).eligible).toBe(false);
+        expect(
+          canAddToSpellbook(teleport, lowLevel, { source, allowAboveLevelCap: true }).eligible,
+        ).toBe(true);
+      }
+    });
+
+    it('forbidden schools can never be learned, whatever the route', () => {
+      const ctx: WizardContext = { ...lowLevel, wizardForbiddenSchools: ['Conjuration'] };
+      const result = canAddToSpellbook(teleport, ctx, {
+        source: 'purchased',
+        allowAboveLevelCap: true,
+      });
+      expect(result.eligible).toBe(false);
+      expect(result.reason).toMatch(/forbidden school/);
+    });
+
+    it('free spells are refused once the budget is spent', () => {
+      const spell = makeSpell('Magic Missile', 'Evocation', 1);
+      const spent = canAddToSpellbook(spell, BASE_CTX, {
+        source: 'free-levelup',
+        freeRemaining: 0,
+      });
+      expect(spent.eligible).toBe(false);
+      expect(spent.reason).toMatch(/No free spells/);
+      expect(
+        canAddToSpellbook(spell, BASE_CTX, { source: 'free-levelup', freeRemaining: 1 }).eligible,
+      ).toBe(true);
+    });
+
+    it('copying is still allowed when the free budget is spent', () => {
+      const spell = makeSpell('Magic Missile', 'Evocation', 1);
+      expect(
+        canAddToSpellbook(spell, BASE_CTX, { source: 'purchased', freeRemaining: 0 }).eligible,
+      ).toBe(true);
+    });
+  });
+
+  it('cantrips are never learnable by a wizard — every one is already in the book', () => {
+    const result = canAddToSpellbook(makeSpell('Light', 'Evocation', 0), BASE_CTX);
+    expect(result.eligible).toBe(false);
+    expect(result.reason).toMatch(/0-level/);
   });
 
   it('ineligible when spell is already in spellbook', () => {
@@ -76,6 +144,40 @@ describe('canAddToSpellbook', () => {
     const result = canAddToSpellbook(spell, ctx);
     expect(result.eligible).toBe(false);
     expect(result.reason).toMatch(/Already in spellbook/);
+  });
+});
+
+describe('buildWizardContext', () => {
+  const lvl = (n: number, cls: string) =>
+    ({
+      level: n,
+      class: cls,
+      feats: [],
+      spells: [],
+      skillRanks: {},
+      unspentSkillPoints: 0,
+    }) as never;
+  const levels = [lvl(1, 'Wizard'), lvl(2, 'Fighter'), lvl(3, 'Wizard'), lvl(4, 'Wizard')];
+  const opts = {
+    intMod: 2,
+    specialty: 'Evocation',
+    forbiddenSchools: ['Necromancy'],
+    spellbookNames: new Set(['sleep']),
+  };
+
+  it('counts wizard levels only up to the chosen character level', () => {
+    expect(buildWizardContext(levels, 1, opts).wizardClassLevels).toBe(1);
+    expect(buildWizardContext(levels, 2, opts).wizardClassLevels).toBe(1);
+    expect(buildWizardContext(levels, 3, opts).wizardClassLevels).toBe(2);
+    expect(buildWizardContext(levels, 4, opts).effectiveWizardLevels).toBe(3);
+  });
+
+  it('passes the specialist and spellbook details through', () => {
+    const ctx = buildWizardContext(levels, 4, opts);
+    expect(ctx.wizardSpecialty).toBe('Evocation');
+    expect(ctx.wizardForbiddenSchools).toEqual(['Necromancy']);
+    expect(ctx.intMod).toBe(2);
+    expect(ctx.spellbookNames.has('sleep')).toBe(true);
   });
 });
 
